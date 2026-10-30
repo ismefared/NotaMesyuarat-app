@@ -1,0 +1,18 @@
+{
+  "name": "Isyarat",
+  "short_name": "Isyarat",
+  "description": "Prototype komunikasi dua hala menggunakan teks, suara dan Bahasa Isyarat Malaysia.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f1ea",
+  "theme_color": "#176b63",
+  "lang": "ms",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
