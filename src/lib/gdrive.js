@@ -14,11 +14,21 @@
  */
 
 const SCOPE = 'https://www.googleapis.com/auth/drive';
+// SEC-002: prinsip keistimewaan minimum — drive.file cukup untuk fail yang
+// dicipta app (folder app, muat naik, muat turun). Skop penuh hanya dipinta
+// bila pengguna mengaktifkan mod "cari keseluruhan Drive".
+const SCOPE_MINIMAL = 'https://www.googleapis.com/auth/drive.file';
 const APP_FOLDER = 'notamesyuarat';
+
+/** Skop diperlukan ikut operasi: searchAll perlu akses seluruh Drive. */
+export function scopeFor(searchAll) {
+  return searchAll ? SCOPE : SCOPE_MINIMAL;
+}
 
 let tokenClient = null;
 let accessToken = null;
 let tokenExpiry = 0;
+let tokenScope = null;
 
 /**
  * Pastikan pustaka GIS dimuat dan tokenClient sedia.
@@ -74,8 +84,9 @@ function loadGSI() {
  * Dapatkan token akses dengan Client ID pengguna.
  * Kembalikan access token. Bentol ralat jika gagal.
  */
-export async function getAccessToken(clientId) {
-  if (accessToken && Date.now() < tokenExpiry) return accessToken;
+export async function getAccessToken(clientId, scope = SCOPE_MINIMAL) {
+  // Token cache hanya sah jika skopnya sepadan
+  if (accessToken && tokenScope === scope && Date.now() < tokenExpiry) return accessToken;
   if (!clientId) throw new Error('Masukkan Google OAuth Client ID dahulu.');
 
   await loadGSI();
@@ -87,11 +98,12 @@ export async function getAccessToken(clientId) {
       const factory = typeof oauth2.initTokenClient === 'function' ? oauth2.initTokenClient : oauth2.tokenClient;
       factory({
         client_id: clientId,
-        scope: SCOPE,
+        scope,
         callback: (resp) => {
           if (resp.error) reject(new Error(`Google OAuth: ${resp.error}`));
           else {
             tokenExpiry = Date.now() + (resp.expires_in - 60) * 1000;
+            tokenScope = scope;
             resolve(resp.access_token);
           }
         },

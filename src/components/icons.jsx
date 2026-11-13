@@ -1,7 +1,6 @@
 /**
- * Pustaka ikon SVG inline untuk NotaMesyuarat.
+ * Ikon SVG inline untuk NotaMesyuarat.
  * Satu set konsisten: stroke 2px, hujung bulat, 16x16 default.
- * Ikon dipilih ikut fungsi sebenar menu (R-04) — tiada ikon hiasan.
  */
 
 function Icon({ children, size = 16, ...props }) {
@@ -47,11 +46,11 @@ export function UploadIcon(props) {
 export function WaveformIcon(props) {
   return (
     <Icon {...props}>
-      <line x1="3" y1="12" x2="3" y2="12" />
-      <line x1="7" y1="8" x2="7" y2="16" />
-      <line x1="12" y1="4" x2="12" y2="20" />
-      <line x1="17" y1="8" x2="17" y2="16" />
-      <line x1="21" y1="11" x2="21" y2="13" />
+      <line x1="4" y1="10" x2="4" y2="14" />
+      <line x1="8" y1="7" x2="8" y2="17" />
+      <line x1="12" y1="3" x2="12" y2="21" />
+      <line x1="16" y1="7" x2="16" y2="17" />
+      <line x1="20" y1="10" x2="20" y2="14" />
     </Icon>
   );
 }
@@ -101,6 +100,26 @@ export function CloudIcon(props) {
   return (
     <Icon {...props}>
       <path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.6 1.6A4 4 0 0 0 7 19z" />
+    </Icon>
+  );
+}
+
+export function CloudDownloadIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M16 16 12 20 8 16" />
+      <line x1="12" y1="20" x2="12" y2="11" />
+      <path d="M20.4 14.9A5 5 0 0 0 18 5h-1.3A8 8 0 1 0 4 14.5" />
+    </Icon>
+  );
+}
+
+export function CloudUploadIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M16 16 12 12 8 16" />
+      <line x1="12" y1="12" x2="12" y2="21" />
+      <path d="M20.4 14.9A5 5 0 0 0 18 5h-1.3A8 8 0 1 0 4 14.5" />
     </Icon>
   );
 }
@@ -193,26 +212,6 @@ export function ShieldIcon(props) {
   );
 }
 
-export function CloudUploadIcon(props) {
-  return (
-    <Icon {...props}>
-      <path d="M16 16 12 12 8 16" />
-      <line x1="12" y1="12" x2="12" y2="21" />
-      <path d="M20.4 14.9A5 5 0 0 0 18 5h-1.3A8 8 0 1 0 4 14.5" />
-    </Icon>
-  );
-}
-
-export function CloudDownloadIcon(props) {
-  return (
-    <Icon {...props}>
-      <path d="M16 16 12 20 8 16" />
-      <line x1="12" y1="20" x2="12" y2="11" />
-      <path d="M20.4 14.9A5 5 0 0 0 18 5h-1.3A8 8 0 1 0 4 14.5" />
-    </Icon>
-  );
-}
-
 export function SettingsIcon(props) {
   return (
     <Icon {...props}>
@@ -236,6 +235,87 @@ export function CloseIcon(props) {
     <Icon {...props}>
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
+    </Icon>
+  );
+}
+
+export function CalendarIcon(props) {
+  return (
+    <Icon {...props}>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </Icon>
+  );
+}
+
+export function GlobeIcon(props) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </Icon>
+  );
+}
+
+export function KebabIcon(props) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="5" r="1" />
+      <circle cx="12" cy="12" r="1" />
+      <circle cx="12" cy="19" r="1" />
+    </Icon>
+  );
+}
+
+export function ArrowRightIcon(props) {
+  return (
+    <Icon {...props}>
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </Icon>
+  );
+}
+
+export function ChevronLeftIcon(props) {
+  return (
+    <Icon {...props}>
+      <polyline points="15 18 9 12 15 6" />
+    </Icon>
+  );
+}
+
+export function ChevronRightIcon(props) {
+  return (
+    <Icon {...props}>
+      <polyline points="9 18 15 12 9 6" />
+    </Icon>
+  );
+}
+
+export function ChevronDownIcon(props) {
+  return (
+    <Icon {...props}>
+      <polyline points="6 9 12 15 18 9" />
+    </Icon>
+  );
+}
+
+export function SparkleIcon(props) {
+  return (
+    <Icon {...props}>
+      <path d="M12 2l2.4 6.2L20 10l-5.6 1.8L12 18l-2.4-6.2L4 10l5.6-1.8z" />
+    </Icon>
+  );
+}
+
+export function ClockIcon(props) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
     </Icon>
   );
 }

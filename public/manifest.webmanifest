@@ -1,11 +1,11 @@
 {
-  "name": "Isyarat",
-  "short_name": "Isyarat",
-  "description": "Prototype komunikasi dua hala menggunakan teks, suara dan Bahasa Isyarat Malaysia.",
+  "name": "NotaMesyuarat",
+  "short_name": "NotaMesyuarat",
+  "description": "Rakam mesyuarat, jana transkrip dan minit mesyuarat secara automatik — semuanya dalam pelayar anda.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f4f1ea",
-  "theme_color": "#176b63",
+  "theme_color": "#0f766e",
   "lang": "ms",
   "icons": [
     {

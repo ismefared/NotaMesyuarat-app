@@ -54,11 +54,11 @@ function authHeaders(cfg, extra = {}) {
 /** Uji sambungan ke folder awan. Kembalikan true jika OK, atau bentol ralat. */
 export async function testCloud(cfg) {
   if (cfg.cloudType === 'gdrive') {
-    const { getAccessToken, ensureGDriveFolder } = await import('./gdrive');
+    const { getAccessToken, ensureGDriveFolder, scopeFor } = await import('./gdrive');
     if (!cfg.gdriveClientId) {
       throw new Error('Masukkan Google OAuth Client ID dahulu.');
     }
-    const token = await getAccessToken(cfg.gdriveClientId);
+    const token = await getAccessToken(cfg.gdriveClientId, scopeFor(!!cfg.searchAll));
     await ensureGDriveFolder(token);
     return true;
   }
@@ -82,7 +82,7 @@ export async function testCloud(cfg) {
 export async function uploadToCloud(blob, filename, cfg) {
   if (cfg.cloudType === 'gdrive') {
     const { getAccessToken, ensureGDriveFolder, gDriveUpload } = await import('./gdrive');
-    const token = await getAccessToken(cfg.gdriveClientId);
+    const token = await getAccessToken(cfg.gdriveClientId, scopeFor(!!cfg.searchAll));
     const folderId = await ensureGDriveFolder(token);
     const id = await gDriveUpload(token, folderId, blob, filename);
     return `gdrive:${id}`;
@@ -109,7 +109,7 @@ export async function getCloudFolderWebUrl(cfg) {
   if (cfg.cloudType === 'gdrive') {
     const { getAccessToken, ensureGDriveFolder } = await import('./gdrive');
     if (!cfg.gdriveClientId) throw new Error('Masukkan Google OAuth Client ID dahulu.');
-    const token = await getAccessToken(cfg.gdriveClientId);
+    const token = await getAccessToken(cfg.gdriveClientId, scopeFor(!!cfg.searchAll));
     const folderId = await ensureGDriveFolder(token);
     return `https://drive.google.com/drive/folders/${folderId}`;
   }
@@ -125,9 +125,9 @@ export function isCloudConfigured(cfg) {
 /** Senarai fail audio dalam folder awan (WebDAV atau Google Drive). */
 export async function listCloudFiles(cfg) {
   if (cfg.cloudType === 'gdrive') {
-    const { getAccessToken, ensureGDriveFolder, gDriveList, gDriveSearchAll } = await import('./gdrive');
+    const { getAccessToken, ensureGDriveFolder, gDriveList, gDriveSearchAll, scopeFor } = await import('./gdrive');
     if (!cfg.gdriveClientId) throw new Error('Masukkan Google OAuth Client ID dahulu.');
-    const token = await getAccessToken(cfg.gdriveClientId);
+    const token = await getAccessToken(cfg.gdriveClientId, scopeFor(!!cfg.searchAll));
     if (cfg.searchAll) return await gDriveSearchAll(token);
     const folderId = await ensureGDriveFolder(token);
     return await gDriveList(token, folderId);
@@ -180,8 +180,8 @@ export async function downloadFromCloud(fileRef, cfg, onProgress) {
   let url = fileRef;
   let headers = {};
   if (fileRef.startsWith('gdrive:')) {
-    const { getAccessToken, gapiHeaders } = await import('./gdrive');
-    const token = await getAccessToken(cfg.gdriveClientId);
+    const { getAccessToken, gapiHeaders, scopeFor } = await import('./gdrive');
+    const token = await getAccessToken(cfg.gdriveClientId, scopeFor(!!cfg.searchAll));
     headers = gapiHeaders(token);
     url = `https://www.googleapis.com/drive/v3/files/${fileRef.slice(7)}?alt=media`;
   } else {

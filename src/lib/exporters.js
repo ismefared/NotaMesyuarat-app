@@ -19,6 +19,9 @@ function inline(md) {
     .replace(/_(.+?)_/g, '<em>$1</em>');
 }
 
+// Dijana untuk ujian unit (exporters.test.js) — tidak dimaksudkan untuk import pengguna
+export const markdownToHTMLInternal = markdownToHTML;
+
 function markdownToHTML(markdown) {
   const lines = markdown.split('\n');
   let html = '';

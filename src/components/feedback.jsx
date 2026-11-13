@@ -2,6 +2,7 @@
  * Komponen maklum balas proses: spinner, penunjuk fasa, dan bar kemajuan.
  * Animasi hanya berlaku semasa proses sebenar (R-19) — tiada loop tanpa tujuan.
  */
+import { useEffect, useState } from 'react';
 
 export function Spinner({ size = 16 }) {
   return <span className="spinner" style={{ width: size, height: size }} aria-hidden="true" />;
@@ -31,13 +32,24 @@ export function ProcessTracker({ phases, currentKey, doneKeys = [] }) {
   );
 }
 
-/** Butang dengan spinner terbina — ganti teks semasa sibuk */
+/** Butang dengan spinner terbina — ganti teks semasa sibuk.
+ * UX-AUDIT #6: spinner hanya muncul jika operasi > 300ms — elak kelip
+ * untuk operasi hampir-segera (garis panduan "Loading Indicators"). */
 export function BusyButton({ busy, busyLabel, icon: IconComp, children, ...props }) {
+  const [showSpinner, setShowSpinner] = useState(false);
+  useEffect(() => {
+    if (!busy) {
+      setShowSpinner(false);
+      return;
+    }
+    const t = setTimeout(() => setShowSpinner(true), 300);
+    return () => clearTimeout(t);
+  }, [busy]);
   return (
-    <button {...props} className={`btn ${props.className || 'primary'}`}>
+    <button {...props} className={`btn ${props.className || 'primary'}`} aria-busy={busy || undefined}>
       {busy ? (
         <>
-          <Spinner size={14} />
+          {showSpinner && <Spinner size={14} />}
           {busyLabel || 'Memproses...'}
         </>
       ) : (
@@ -47,5 +59,33 @@ export function BusyButton({ busy, busyLabel, icon: IconComp, children, ...props
         </>
       )}
     </button>
+  );
+}
+
+/**
+ * Skeleton loading (UX-AUDIT #3): pembetulan layout stabil semasa data dimuat.
+ * `lines`: bilangan baris skeleton untuk senarai/teks. `aria-hidden` — maklumat
+ * sebenar disampaikan melalui aria-busy pada bekas induk, bukan skeleton itu sendiri.
+ */
+export function Skeleton({ lines = 1, className = '' }) {
+  return (
+    <span className={`skeleton ${className}`} aria-hidden="true" data-lines={lines}>
+      {Array.from({ length: lines }, (_, i) => (
+        <span key={i} className="skeleton-line" style={{ width: `${88 - i * 18}%` }} />
+      ))}
+    </span>
+  );
+}
+
+/** Baris skeleton ala-senarai mesyuarat: bulatan tarikh + dua baris teks */
+export function SkeletonMeetingRow() {
+  return (
+    <div className="meeting-item skeleton-meeting" aria-hidden="true">
+      <span className="skeleton skeleton-block" style={{ width: 46, height: 46 }} />
+      <span className="meeting-info">
+        <Skeleton lines={1} className="skeleton-inline" />
+        <Skeleton lines={1} className="skeleton-inline" />
+      </span>
+    </div>
   );
 }

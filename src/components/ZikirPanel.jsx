@@ -1,11 +1,17 @@
 /**
- * Panel zikir — satu zikir dipaparkan bagi setiap sesi (pageload),
+ * Panel Inspirasi — satu zikir dipaparkan bagi setiap sesi (pageload),
  * bertukar secara automatik mengikut giliran setiap kali app dibuka.
  * Bilangan sesi disimpan dalam localStorage supaya giliran berterusan.
  */
 import { useEffect, useState } from 'react';
+import { SparkleIcon } from './icons';
 
 const ZIKIR_LIST = [
+  {
+    arab: 'أستغفر الله',
+    rumi: 'Astaghfirullah',
+    makna: 'Aku memohon keampunan Allah',
+  },
   {
     arab: 'سبحان الله',
     rumi: 'Subhanallah',
@@ -27,11 +33,6 @@ const ZIKIR_LIST = [
     makna: 'Tiada tuhan selain Allah',
   },
   {
-    arab: 'أستغفر الله',
-    rumi: 'Astaghfirullah',
-    makna: 'Aku memohon keampunan Allah',
-  },
-  {
     arab: 'سبحان الله وبحمده',
     rumi: 'Subhanallahi wa bihamdih',
     makna: 'Maha Suci Allah dan segala puji bagi-Nya',
@@ -46,28 +47,40 @@ const ZIKIR_LIST = [
 const ZIKIR_KEY = 'notamesyuarat:zikir-count';
 
 export default function ZikirPanel() {
-  const [zikir, setZikir] = useState(ZIKIR_LIST[0]);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     // Giliran bertambah setiap sesi — zikir berbeza setiap kali app dibuka
     const count = Number(localStorage.getItem(ZIKIR_KEY) || '0');
-    const next = count % ZIKIR_LIST.length;
+    setIndex(count % ZIKIR_LIST.length);
     localStorage.setItem(ZIKIR_KEY, String(count + 1));
-    setZikir(ZIKIR_LIST[next]);
   }, []);
+
+  const zikir = ZIKIR_LIST[index];
 
   return (
     <div className="panel zikir-panel">
-      <div className="zikir-ornament" aria-hidden="true">❋</div>
-      <h2 className="sidebar-title zikir-title">Inspirasi Rohani</h2>
-      <p className="zikir-arab" lang="ar" dir="rtl">
-        {zikir.arab}
-      </p>
-      <div className="zikir-divider" aria-hidden="true">
-        <span>❖</span>
+      <div className="zikir-head">
+        <h2 className="sidebar-title zikir-title">
+          <SparkleIcon size={16} />
+          Inspirasi Rohani
+        </h2>
       </div>
-      <p className="zikir-rumi">{zikir.rumi}</p>
-      <p className="zikir-makna">{zikir.makna}</p>
+
+      <div className="zikir-card">
+        <div className="zikir-arch" aria-hidden="true">
+          <span className="zikir-lantern lantern-left" />
+          <span className="zikir-lantern lantern-right" />
+          <p className="zikir-arab" lang="ar" dir="rtl">
+            {zikir.arab}
+          </p>
+        </div>
+        <div className="zikir-divider" aria-hidden="true">
+          <span>❖</span>
+        </div>
+        <p className="zikir-rumi">{zikir.rumi}</p>
+        <p className="zikir-makna">{zikir.makna}</p>
+      </div>
     </div>
   );
 }

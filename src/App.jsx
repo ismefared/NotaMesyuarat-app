@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { get, set, del } from 'idb-keyval';
-import { Recorder, formatDuration } from './lib/recorder';
+import { Recorder, formatClock } from './lib/recorder';
 import { transcribe, loadASR, MODELS, LANGUAGES } from './lib/whisper';
 import {
   transcribeWithOpenCode,
@@ -10,9 +10,6 @@ import {
   OPENCODE_MODELS,
 } from './lib/opencode';
 import { generateMinutes, transcriptToMarkdown } from './lib/minutes';
-import { exportPDF, exportWord } from './lib/exporters';
-import { Spinner, ProcessTracker, BusyButton } from './components/feedback';
-import ZikirPanel from './components/ZikirPanel';
 import {
   getCloudConfig,
   saveCloudConfig,
@@ -23,6 +20,8 @@ import {
   getCloudFolderWebUrl,
   isCloudConfigured,
 } from './lib/cloud';
+import { Spinner, ProcessTracker, BusyButton, Skeleton, SkeletonMeetingRow } from './components/feedback';
+import ZikirPanel from './components/ZikirPanel';
 import {
   MicIcon,
   UploadIcon,
@@ -40,25 +39,27 @@ import {
   FileIcon,
   DownloadIcon,
   CopyIcon,
-  ShieldIcon,
-  CloudUploadIcon,
   CloudDownloadIcon,
+  CloudUploadIcon,
   SettingsIcon,
   RefreshIcon,
   CloseIcon,
+  CalendarIcon,
+  GlobeIcon,
+  KebabIcon,
+  ChevronDownIcon,
+  ClockIcon,
 } from './components/icons';
 
 const MEETINGS_KEY = 'notamesyuarat:meetings';
 const THEME_KEY = 'notamesyuarat:theme';
 
 // Tetapkan tema pada <html> dan pulangkan nilai seterusnya.
-// 'system' mengikut keutamaan pelayar pengguna.
 function applyTheme(theme) {
   const dark =
     theme === 'dark' ||
     (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  // Meta theme-color ikut tema supaya chrome pelayar selari (R-34)
   document.querySelector('meta[name="theme-color"]')?.setAttribute(
     'content',
     dark ? '#191714' : '#0f766e'
@@ -68,6 +69,37 @@ function applyTheme(theme) {
 
 function getStoredTheme() {
   return localStorage.getItem(THEME_KEY) || 'system';
+}
+
+// Aksesibiliti: navigasi anak panah bagi corak ARIA tablist — fokus mengikut
+// ArrowLeft/Right mengaktifkan tab (activation follows focus).
+function tablistKeyDown(e) {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  const tabs = [...e.currentTarget.querySelectorAll('[role="tab"]')];
+  const i = tabs.indexOf(document.activeElement);
+  if (i === -1) return;
+  e.preventDefault();
+  const next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+  next.focus();
+  next.click();
+}
+
+// Aksesibiliti: perangkap fokus modal — Tab tidak boleh keluar daripada dialog.
+function modalTrapFocus(e) {
+  if (e.key !== 'Tab') return;
+  const els = [
+    ...e.currentTarget.querySelectorAll('button, input, select, textarea, a[href]'),
+  ].filter((el) => !el.disabled);
+  if (!els.length) return;
+  const first = els[0];
+  const last = els[els.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
 }
 
 function download(filename, text) {
@@ -86,6 +118,7 @@ function formatBytes(bytes) {
 }
 
 const EMPTY_DETAILS = {
+  tajuk: '',
   tarikh: '',
   masa: '',
   lokasi: '',
@@ -94,9 +127,9 @@ const EMPTY_DETAILS = {
 };
 
 const STEPS = [
-  { n: 1, label: 'Audio', Icon: WaveformIcon },
-  { n: 2, label: 'Transkrip', Icon: ClipboardIcon },
-  { n: 3, label: 'Nota', Icon: NoteIcon },
+  { n: 1, label: 'Audio', sub: 'Rakam atau muat naik audio', Icon: MicIcon },
+  { n: 2, label: 'Transkrip', sub: 'Tukar audio kepada teks', Icon: ClipboardIcon },
+  { n: 3, label: 'Nota', sub: 'Jana minit mesyuarat', Icon: NoteIcon },
 ];
 
 export default function App() {
@@ -114,6 +147,11 @@ export default function App() {
   const timerRef = useRef(null);
   const rafRef = useRef(null);
 
+  // peranti mic
+  const [mics, setMics] = useState([]);
+  const [micId, setMicId] = useState('');
+  const [micStatus, setMicStatus] = useState('belum'); // 'belum' | 'aktif' | 'tiada'
+
   // aliran kerja
   const [step, setStep] = useState(1);
 
@@ -128,7 +166,6 @@ export default function App() {
   const [minutes, setMinutes] = useState('');
   const [useAI, setUseAI] = useState(false);
   const [modelKey, setModelKey] = useState('base');
-  const [language, setLanguage] = useState('auto');
   const [source, setSource] = useState('device');
   const [apiKey, setKey] = useState(getAPIKey());
   const [noteModel, setNoteModel] = useState('glm-5.3-flash-free');
@@ -137,8 +174,9 @@ export default function App() {
   // butiran mesyuarat (pilihan)
   const [details, setDetails] = useState(EMPTY_DETAILS);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [language, setLanguage] = useState('ms');
 
-  // awan (WebDAV)
+  // awan (WebDAV / Google Drive)
   const [cloudCfg, setCloudCfg] = useState(getCloudConfig);
   const [cloudModalOpen, setCloudModalOpen] = useState(false);
   const [cloudBusy, setCloudBusy] = useState(false);
@@ -147,15 +185,35 @@ export default function App() {
 
   // storan
   const [meetings, setMeetings] = useState([]);
+  const [meetingsLoading, setMeetingsLoading] = useState(true); // UX-AUDIT #3
+  const [savedSig, setSavedSig] = useState(null); // DEF-FUNC-005
   const [toast, setToast] = useState('');
   const [theme, setTheme] = useState(getStoredTheme());
+  const [kebabOpen, setKebabOpen] = useState(null);
+
+  const showToast = useCallback((msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 2600);
+  }, []);
+
+  const loadMeetings = useCallback(async () => {
+    const ids = (await get(MEETINGS_KEY)) || [];
+    const items = await Promise.all(ids.map((id) => get(`${MEETINGS_KEY}:${id}`)));
+    const list = items.filter(Boolean);
+    list.sort((a, b) => b.createdAt - a.createdAt);
+    setMeetings(list);
+    setMeetingsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    loadMeetings();
+  }, [loadMeetings]);
 
   useEffect(() => {
     applyTheme(theme);
     localStorage.setItem(THEME_KEY, theme);
   }, [theme]);
 
-  // Ikut perubahan tema sistem secara langsung bila mod 'system'
   useEffect(() => {
     if (theme !== 'system') return;
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -164,134 +222,43 @@ export default function App() {
     return () => mq.removeEventListener('change', onChange);
   }, [theme]);
 
-  const showToast = useCallback((msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(''), 2600);
-  }, []);
-
-  const loadMeetings = useCallback(async () => {
-    // MEETINGS_KEY menyimpan senarai ID; objek penuh setiap mesyuarat
-    // disimpan di kekunci sendiri. Ambil dan susun mengikut tarikh.
-    const ids = (await get(MEETINGS_KEY)) || [];
-    const items = await Promise.all(ids.map((id) => get(`${MEETINGS_KEY}:${id}`)));
-    const list = items.filter(Boolean);
-    list.sort((a, b) => b.createdAt - a.createdAt);
-    setMeetings(list);
-  }, []);
-
+  // Senarai peranti mic — muat serta dengar perubahan peranti
   useEffect(() => {
-    loadMeetings();
-  }, [loadMeetings]);
+    const refresh = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const mics = devices.filter((d) => d.kind === 'audioinput');
+        setMics(mics);
+        setMicStatus(mics.length ? 'aktif' : 'tiada');
+      } catch {
+        setMicStatus('tiada');
+      }
+    };
+    refresh();
+    navigator.mediaDevices.addEventListener?.('devicechange', refresh);
+    return () => navigator.mediaDevices.removeEventListener?.('devicechange', refresh);
+  }, []);
 
-  // Tutup modal awan dengan Escape (R-32)
+  // Tutup menu kebab bila klik di luar / Escape
+  useEffect(() => {
+    if (kebabOpen === null) return;
+    const onKey = (e) => e.key === 'Escape' && setKebabOpen(null);
+    const onClick = () => setKebabOpen(null);
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('click', onClick);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('click', onClick);
+    };
+  }, [kebabOpen]);
+
+  // Tutup modal awan dengan Escape
   useEffect(() => {
     if (!cloudModalOpen) return;
-    const onKey = (e) => {
-      if (e.key === 'Escape') setCloudModalOpen(false);
-    };
+    const onKey = (e) => e.key === 'Escape' && setCloudModalOpen(false);
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [cloudModalOpen]);
-
-  // Auto-upload ke awan bila konfigurasi ada dan autoUpload aktif.
-  // Tidak menyekat aliran utama: kegagalan hanya memaparkan toast.
-  const maybeAutoUpload = useCallback(
-    async (blob, filename) => {
-      const cfg = getCloudConfig();
-      if (!cfg.baseUrl || !cfg.autoUpload) return;
-      try {
-        await uploadToCloud(blob, filename, cfg);
-        showToast(`Audio dihantar ke awan: ${filename}`);
-      } catch (err) {
-        console.error(err);
-        showToast(`Auto-upload awan gagal: ${err.message}`);
-      }
-    },
-    [showToast]
-  );
-
-  const fetchCloudFiles = useCallback(async (cfg = cloudCfg) => {
-    setCloudBusy(true);
-    setCloudMsg('');
-    try {
-      const files = await listCloudFiles(cfg);
-      // Normalisasi: WebDAV beri {href}, GDrive beri {id}. Simpan rujukan seragam.
-      const normalized = files.map((f) => ({
-        ...f,
-        ref: f.href || `gdrive:${f.id}`,
-      }));
-      setCloudFiles(normalized);
-      if (normalized.length === 0) setCloudMsg('Tiada fail audio dalam folder awan ini.');
-    } catch (err) {
-      console.error(err);
-      setCloudMsg(`Gagal senarai fail: ${err.message}`);
-      setCloudFiles(null);
-    } finally {
-      setCloudBusy(false);
-    }
-  }, [cloudCfg]);
-
-  const downloadCloudFile = async (file) => {
-    setCloudBusy(true);
-    setCloudMsg(`Memuat turun ${file.name}... 0%`);
-    try {
-      const blob = await downloadFromCloud(file.ref, cloudCfg, (percent) => {
-        setCloudMsg(`Memuat turun ${file.name}... ${percent}%`);
-      });
-      const ext = file.name.split('.').pop()?.toLowerCase();
-      const mimeMap = {
-        mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav', webm: 'audio/webm',
-        ogg: 'audio/ogg', oga: 'audio/ogg', mp4: 'audio/mp4', mov: 'video/quicktime',
-        aac: 'audio/aac', flac: 'audio/flac',
-      };
-      const downloaded = new File([blob], file.name, {
-        type: mimeMap[ext] || blob.type || 'audio/mpeg',
-      });
-      acceptFile(downloaded);
-    } catch (err) {
-      console.error(err);
-      setCloudMsg(`Muat turun gagal: ${err.message}`);
-    } finally {
-      setCloudBusy(false);
-    }
-  };
-
-  const openCloudFolder = async () => {
-    setCloudBusy(true);
-    setCloudMsg('');
-    try {
-      const url = await getCloudFolderWebUrl(cloudCfg);
-      window.open(url, '_blank', 'noopener');
-      // Buka folder biasanya bermakna pengguna mahu lihat kandungan — segarkan senarai
-      await fetchCloudFiles();
-    } catch (err) {
-      console.error(err);
-      setCloudMsg(`Gagal membuka folder: ${err.message}`);
-    } finally {
-      setCloudBusy(false);
-    }
-  };
-
-  const saveCloudSettings = async () => {
-    setCloudBusy(true);
-    setCloudMsg('');
-    try {
-      await testCloud(cloudCfg);
-      saveCloudConfig(cloudCfg);
-      setCloudMsg('Sambungan berjaya dan tetapan disimpan.');
-      showToast('Tetapan awan disimpan');
-    } catch (err) {
-      console.error(err);
-      setCloudMsg(`Sambungan gagal: ${err.message}`);
-    } finally {
-      setCloudBusy(false);
-    }
-  };
-
-  const updateCloudCfg = (field, value) => {
-    const next = { ...cloudCfg, [field]: value };
-    setCloudCfg(next);
-  };
 
   const drawWave = useCallback(() => {
     const canvas = canvasRef.current;
@@ -318,13 +285,14 @@ export default function App() {
     try {
       recorderRef.current = new Recorder();
       recorderRef.current.onLevel = () => {};
-      await recorderRef.current.start();
+      await recorderRef.current.start(micId || null);
       setIsRecording(true);
       setElapsed(0);
       setAudioBlob(null);
       setTranscript('');
       setMinutes('');
       setStatus('');
+      setMicStatus('aktif');
       timerRef.current = setInterval(() => setElapsed((e) => e + 1), 1000);
       rafRef.current = requestAnimationFrame(drawWave);
     } catch {
@@ -445,6 +413,7 @@ export default function App() {
 
   const saveMeeting = async () => {
     const title =
+      details.tajuk ||
       minutes.match(/^# (.+)$/m)?.[1] ||
       `Mesyuarat ${new Date().toLocaleDateString('ms-MY')}`;
     const item = {
@@ -455,14 +424,21 @@ export default function App() {
       minutes,
       mode,
       details,
+      status: 'Selesai',
+      durationSec: elapsed,
+      language,
     };
     await set(`${MEETINGS_KEY}:${item.id}`, item);
     await set(MEETINGS_KEY, [...((await get(MEETINGS_KEY)) || []), item.id]);
     await loadMeetings();
+    // DEF-FUNC-005: ingat apa yang telah disimpan — elak pendua tanpa pengesahan
+    setSavedSig(`${transcript}|${minutes}|${mode}`);
     showToast('Mesyuarat disimpan');
   };
 
   const removeMeeting = async (id) => {
+    // DEF-UX-004: pengesahan sebelum pemadaman kekal
+    if (!window.confirm('Padam mesyuarat ini secara kekal?')) return;
     await del(`${MEETINGS_KEY}:${id}`);
     const ids = ((await get(MEETINGS_KEY)) || []).filter((x) => x !== id);
     await set(MEETINGS_KEY, ids);
@@ -477,9 +453,11 @@ export default function App() {
     setMinutes(item.minutes || '');
     setMode(item.mode || 'minit');
     setDetails(item.details || EMPTY_DETAILS);
+    setLanguage(item.language || 'ms');
     setAudioBlob(null);
     setAudioUrl(null);
     setAudioName('');
+    setSavedSig(null); // DEF-FUNC-005: mesyuarat lain — butang Simpan aktif semula
     setStatus('Dibuka daripada simpanan.');
     setStep(3);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -503,21 +481,27 @@ export default function App() {
     showToast('Nota disalin');
   };
 
-  const exportMinutesPDF = () => {
+  // DEF-PERF-007: eksport dimuat lengai — jsPDF (~233 kB) hanya dimuat bila diperlukan
+  const exportMinutesPDF = async () => {
     if (!minutes) return;
+    const { exportPDF } = await import('./lib/exporters');
     exportPDF(minutes, `minit-mesyuarat-${Date.now()}`);
     showToast('PDF dimuat turun');
   };
 
-  const exportMinutesWord = () => {
+  const exportMinutesWord = async () => {
     if (!minutes) return;
+    const { exportWord } = await import('./lib/exporters');
     exportWord(minutes, `minit-mesyuarat-${Date.now()}`);
     showToast('Fail Word dimuat turun');
   };
 
   const stepReached = { 1: true, 2: !!audioBlob, 3: !!transcript.trim() };
 
-  // Fasa proses transkripsi untuk ProcessTracker
+  // DEF-FUNC-005: butang Simpan dilumpuhkan bila kandungan tidak berubah sejak simpanan
+  const saveDisabled = minutes && savedSig === `${transcript}|${minutes}|${mode}`;
+
+  // Fasa proses transkripsi
   const transcribePhases = [
     { key: 'download', label: 'Model/Audio' },
     { key: 'transcribe', label: 'Transkripsi' },
@@ -526,71 +510,172 @@ export default function App() {
   const transcribeCurrent =
     busy === 'transcribe' ? (modelPercent !== null ? 'download' : 'transcribe') : 'done';
 
-  // Fasa proses penjanaan nota
   const generatePhases = [
     { key: 'read', label: 'Baca transkrip' },
     { key: 'generate', label: 'Menjana nota' },
     { key: 'done', label: 'Siap' },
   ];
-  const generateCurrent =
-    busy === 'minutes'
-      ? useAI && apiKey.trim()
-        ? 'generate'
-        : 'generate'
-      : 'done';
+  const generateCurrent = busy === 'minutes' ? 'generate' : 'done';
+
+  const fetchCloudFiles = useCallback(async (cfg = cloudCfg) => {
+    setCloudBusy(true);
+    setCloudMsg('');
+    try {
+      const files = await listCloudFiles(cfg);
+      const normalized = files.map((f) => ({
+        ...f,
+        ref: f.href || `gdrive:${f.id}`,
+      }));
+      setCloudFiles(normalized);
+      if (normalized.length === 0) setCloudMsg('Tiada fail audio dalam folder awan ini.');
+    } catch (err) {
+      console.error(err);
+      setCloudMsg(`Gagal senarai fail: ${err.message}`);
+      setCloudFiles(null);
+    } finally {
+      setCloudBusy(false);
+    }
+  }, [cloudCfg]);
+
+  const downloadCloudFile = async (file) => {
+    setCloudBusy(true);
+    setCloudMsg(`Memuat turun ${file.name}... 0%`);
+    try {
+      const blob = await downloadFromCloud(file.ref, cloudCfg, (percent) => {
+        setCloudMsg(`Memuat turun ${file.name}... ${percent}%`);
+      });
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      const mimeMap = {
+        mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav', webm: 'audio/webm',
+        ogg: 'audio/ogg', oga: 'audio/ogg', mp4: 'audio/mp4', mov: 'video/quicktime',
+        aac: 'audio/aac', flac: 'audio/flac',
+      };
+      const downloaded = new File([blob], file.name, {
+        type: mimeMap[ext] || blob.type || 'audio/mpeg',
+      });
+      acceptFile(downloaded);
+    } catch (err) {
+      console.error(err);
+      setCloudMsg(`Muat turun gagal: ${err.message}`);
+    } finally {
+      setCloudBusy(false);
+    }
+  };
+
+  const openCloudFolder = async () => {
+    setCloudBusy(true);
+    setCloudMsg('');
+    try {
+      const url = await getCloudFolderWebUrl(cloudCfg);
+      window.open(url, '_blank', 'noopener');
+      await fetchCloudFiles();
+    } catch (err) {
+      console.error(err);
+      setCloudMsg(`Gagal membuka folder: ${err.message}`);
+    } finally {
+      setCloudBusy(false);
+    }
+  };
+
+  const saveCloudSettings = async () => {
+    setCloudBusy(true);
+    setCloudMsg('');
+    try {
+      await testCloud(cloudCfg);
+      saveCloudConfig(cloudCfg);
+      setCloudMsg('Sambungan berjaya dan tetapan disimpan.');
+      showToast('Tetapan awan disimpan');
+    } catch (err) {
+      console.error(err);
+      setCloudMsg(`Sambungan gagal: ${err.message}`);
+    } finally {
+      setCloudBusy(false);
+    }
+  };
+
+  const updateCloudCfg = (field, value) => {
+    const next = { ...cloudCfg, [field]: value };
+    setCloudCfg(next);
+  };
+
+  // DEF-FUNC-001: fungsi telah tertinggal semasa penstrukturan — dipulihkan.
+  // Auto-upload audio ke awan selepas rakam/muat naik jika diaktifkan.
+  const maybeAutoUpload = async (blob, name) => {
+    if (!cloudCfg.autoUpload || !isCloudConfigured(cloudCfg)) return;
+    try {
+      await uploadToCloud(blob, name, cloudCfg);
+      showToast(`"${name}" dimuat naik ke awan`);
+    } catch (err) {
+      console.error(err);
+      showToast(`Auto-upload awan gagal: ${err.message}`);
+    }
+  };
+
+  // Badge status mesyuarat
+  const statusBadge = (m) =>
+    m.status === 'Selesai' ? 'Selesai' : m.minutes ? 'Selesai' : m.transcript ? 'Transkrip' : 'Draf';
 
   return (
     <div className="shell">
       <header className="topbar">
-        <div className="wordmark">
-          <span className="wordmark-name">NotaMesyuarat</span>
-          <span className="wordmark-sub">Rakam, transkrip, jana minit. Semuanya dalam pelayar.</span>
+        <div className="brand">
+          <span className="brand-logo"><WaveformIcon size={22} /></span>
+          <div className="wordmark">
+            <span className="wordmark-name">NotaMesyuarat</span>
+            <span className="wordmark-sub">Rakaman, transkrip dan minit mesyuarat — semuanya dalam satu ruang kerja.</span>
+          </div>
         </div>
         <div className="topbar-actions">
           <button
-            className="btn ghost small"
+            className="icon-button"
             onClick={() => setCloudModalOpen(true)}
             aria-haspopup="dialog"
+            aria-label="Tetapan awan"
+            title="Tetapan awan"
           >
-            <SettingsIcon size={15} /> Awan
+            <SettingsIcon size={17} />
           </button>
           <div className="theme-toggle" role="radiogroup" aria-label="Tema">
-          {[
-            { id: 'light', label: 'Cerah', Icon: SunIcon },
-            { id: 'dark', label: 'Gelap', Icon: MoonIcon },
-            { id: 'system', label: 'Sistem', Icon: MonitorIcon },
-          ].map(({ id: tId, label, Icon: ThemeIcon }) => (
-            <button
-              key={tId}
-              role="radio"
-              aria-checked={theme === tId}
-              className={`theme-option${theme === tId ? ' theme-active' : ''}`}
-              onClick={() => setTheme(tId)}
-              title={label}
-            >
-              <ThemeIcon size={15} />
-              <span>{label}</span>
-            </button>
-          ))}
+            {[
+              { id: 'system', label: 'Sistem', Icon: MonitorIcon },
+              { id: 'light', label: 'Cerah', Icon: SunIcon },
+              { id: 'dark', label: 'Gelap', Icon: MoonIcon },
+            ].map(({ id: tId, label, Icon: ThemeIcon }) => (
+              <button
+                key={tId}
+                role="radio"
+                aria-checked={theme === tId}
+                className={`theme-option${theme === tId ? ' theme-active' : ''}`}
+                onClick={() => setTheme(tId)}
+              >
+                <ThemeIcon size={15} />
+                <span>{label}</span>
+              </button>
+            ))}
           </div>
         </div>
       </header>
 
-      <nav className="stepper" aria-label="Langkah kerja">
-        {STEPS.map(({ n, label, Icon: StepIcon }) => {
+      <nav className="stepper-card" aria-label="Langkah kerja">
+        {STEPS.map(({ n, label, sub, Icon: StepIcon }, i) => {
           const state = step === n ? 'current' : stepReached[n] ? 'done' : 'locked';
           return (
-            <button
-              key={n}
-              className={`step step-${state}`}
-              onClick={() => stepReached[n] && setStep(n)}
-              disabled={!stepReached[n]}
-              aria-current={step === n ? 'step' : undefined}
-            >
-              <span className="step-num">{step > n && stepReached[n] ? '✓' : n}</span>
-              <StepIcon size={15} />
-              <span className="step-label">{label}</span>
-            </button>
+            <div key={n} className="step-wrap">
+              {i > 0 && <span className="step-connector" aria-hidden="true" />}
+              <button
+                className={`step step-${state}`}
+                onClick={() => stepReached[n] && setStep(n)}
+                disabled={!stepReached[n]}
+                aria-current={step === n ? 'step' : undefined}
+              >
+                <span className="step-num">{step > n && stepReached[n] ? '✓' : n}</span>
+                <StepIcon size={18} className="step-icon" />
+                <span className="step-text">
+                  <span className="step-label">{label}</span>
+                  <span className="step-sub">{sub}</span>
+                </span>
+              </button>
+            </div>
           );
         })}
       </nav>
@@ -599,45 +684,58 @@ export default function App() {
         <main className="content">
           {step === 1 && (
             <section className="panel">
-              <div className="segmented" role="tablist" aria-label="Kaedah input">
-                <button
-                  className={inputMode === 'rakam' ? 'seg-active' : ''}
-                  onClick={() => setInputMode('rakam')}
-                >
-                  <MicIcon size={15} />
-                  Rakam
-                </button>
-                <button
-                  className={inputMode === 'upload' ? 'seg-active' : ''}
-                  onClick={() => setInputMode('upload')}
-                >
-                  <UploadIcon size={15} />
-                  Fail
-                </button>
-                <button
-                  className={inputMode === 'cloud' ? 'seg-active' : ''}
-                  onClick={() => {
-                    setInputMode('cloud');
-                    if (cloudFiles === null && isCloudConfigured(cloudCfg)) fetchCloudFiles();
-                  }}
-                >
-                  <CloudDownloadIcon size={15} />
-                  Dari awan
-                </button>
+              {/* Tab tiga mod dengan subtajuk */}
+              <div className="mode-tabs" role="tablist" aria-label="Kaedah input" onKeyDown={tablistKeyDown}>
+                {[
+                  { id: 'rakam', label: 'Rakam', sub: 'Rakam terus dari mikrofon', Icon: MicIcon },
+                  { id: 'upload', label: 'Muat naik fail', sub: 'Audio atau video fail', Icon: UploadIcon },
+                  { id: 'cloud', label: 'Import awan', sub: 'Google Drive, WebDAV', Icon: CloudDownloadIcon },
+                ].map(({ id: mId, label, sub, Icon: TabIcon }) => (
+                  <button
+                    key={mId}
+                    role="tab"
+                    aria-selected={inputMode === mId}
+                    className={`mode-tab${inputMode === mId ? ' mode-active' : ''}`}
+                    onClick={() => {
+                      setInputMode(mId);
+                      if (mId === 'cloud' && cloudFiles === null && isCloudConfigured(cloudCfg)) fetchCloudFiles();
+                    }}
+                  >
+                    <TabIcon size={20} className="mode-icon" />
+                    <span className="mode-text">
+                      <span className="mode-label">{label}</span>
+                      <span className="mode-sub">{sub}</span>
+                    </span>
+                  </button>
+                ))}
               </div>
 
+              {/* Butiran mesyuarat */}
               <div className="details-block">
                 <button
                   className="details-toggle"
                   onClick={() => setDetailsOpen(!detailsOpen)}
                   aria-expanded={detailsOpen}
                 >
-                  <NoteIcon size={15} />
-                  Butiran mesyuarat (pilihan)
-                  <span className={`details-chev${detailsOpen ? ' open' : ''}`} aria-hidden="true">▾</span>
+                  <NoteIcon size={16} />
+                  <span className="mode-text">
+                    <span className="mode-label">Butiran mesyuarat</span>
+                    <span className="mode-sub">Lengkapkan maklumat asas mesyuarat (pilihan)</span>
+                  </span>
+                  <ChevronDownIcon size={16} className={`details-chev${detailsOpen ? ' open' : ''}`} />
                 </button>
                 {detailsOpen && (
                   <div className="details-grid">
+                    <div className="details-field">
+                      <label htmlFor="d-tajuk">Tajuk mesyuarat</label>
+                      <input
+                        id="d-tajuk"
+                        type="text"
+                        placeholder="Contoh: Mesyuarat Pengurusan Mingguan"
+                        value={details.tajuk}
+                        onChange={(e) => setDetails({ ...details, tajuk: e.target.value })}
+                      />
+                    </div>
                     <div className="details-field">
                       <label htmlFor="d-tarikh">Tarikh</label>
                       <input
@@ -648,13 +746,16 @@ export default function App() {
                       />
                     </div>
                     <div className="details-field">
-                      <label htmlFor="d-masa">Masa</label>
-                      <input
-                        id="d-masa"
-                        type="time"
-                        value={details.masa}
-                        onChange={(e) => setDetails({ ...details, masa: e.target.value })}
-                      />
+                      <label htmlFor="lang-detail">Bahasa</label>
+                      <select
+                        id="lang-detail"
+                        value={language}
+                        onChange={(e) => setLanguage(e.target.value)}
+                      >
+                        {LANGUAGES.map((l) => (
+                          <option key={l.id} value={l.id}>{l.label}</option>
+                        ))}
+                      </select>
                     </div>
                     <div className="details-field">
                       <label htmlFor="d-lokasi">Lokasi</label>
@@ -694,24 +795,51 @@ export default function App() {
                 )}
               </div>
 
-              {inputMode === 'rakam' ? (
-                <div className="record-area">
+              {/* Kandungan ikut mod */}
+              {inputMode === 'rakam' && (
+                <div className="record-stage">
                   <canvas ref={canvasRef} className="waveform" width={420} height={56} />
-                  <div className="timer">{formatDuration(elapsed)}</div>
-                  {isRecording ? (
-                    <button className="mic-button recording" onClick={stopRecording} aria-label="Henti rakaman">
-                      <span className="mic-stop" />
-                    </button>
-                  ) : (
-                    <button className="mic-button" onClick={startRecording} aria-label="Mula rakaman">
-                      <span className="mic-icon" />
-                    </button>
-                  )}
-                  <p className="hint">
-                    {isRecording ? 'Sedang merakam. Tekan butang untuk berhenti.' : 'Tekan butang untuk mula merakam mesyuarat.'}
+                  <div className="timer">{formatClock(elapsed)}</div>
+                  <button
+                    className={isRecording ? 'mic-button recording' : 'mic-button'}
+                    onClick={isRecording ? stopRecording : startRecording}
+                    aria-label={isRecording ? 'Henti rakaman' : 'Mula rakaman'}
+                  >
+                    {isRecording ? <span className="mic-stop" /> : <span className="mic-icon" />}
+                  </button>
+                  <p className="record-question" aria-live="polite">
+                    {isRecording ? 'Sedang merakam...' : 'Sedia untuk merakam?'}
                   </p>
+                  <p className="record-hint">
+                    {isRecording ? 'Tekan butang untuk berhenti.' : 'Pastikan mikrofon anda aktif.'}
+                  </p>
+
+                  <div className="mic-bar">
+                    <span className={`mic-status${micStatus === 'aktif' ? ' ok' : ''}`}>
+                      <span className="mic-status-dot" />
+                      {micStatus === 'aktif' ? 'Mikrofon sedia' : micStatus === 'tiada' ? 'Mikrofon tidak dijumpai' : 'Mikrofon belum diaktifkan'}
+                    </span>
+                    <div className="mic-select-wrap">
+                      <MicIcon size={15} />
+                      <select
+                        value={micId}
+                        onChange={(e) => setMicId(e.target.value)}
+                        aria-label="Pilih mikrofon"
+                        disabled={isRecording || mics.length === 0}
+                      >
+                        <option value="">Mikrofon lalai</option>
+                        {mics.map((m, i) => (
+                          <option key={m.deviceId} value={m.deviceId}>
+                            {m.label || `Mikrofon ${i + 1}`}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
-              ) : inputMode === 'upload' ? (
+              )}
+
+              {inputMode === 'upload' && (
                 <div
                   className={`upload-area${dragOver ? ' dragover' : ''}`}
                   onDragOver={(e) => {
@@ -732,9 +860,11 @@ export default function App() {
                     style={{ display: 'none' }}
                     onChange={onFilePicked}
                   />
-                  <p className="hint">mp3, m4a, wav, webm, ogg, mov, mp4 dan lain-lain. Termasuk rakaman Zoom, Meet, atau video iPhone (mov).</p>
+                  <p className="hint">mp3, m4a, wav, webm, ogg, mov, mp4. Termasuk rakaman Zoom, Meet, atau video iPhone.</p>
                 </div>
-              ) : (
+              )}
+
+              {inputMode === 'cloud' && (
                 <div className="cloud-area">
                   {!isCloudConfigured(cloudCfg) ? (
                     <>
@@ -752,18 +882,10 @@ export default function App() {
                   ) : (
                     <>
                       <div className="action-row">
-                        <button
-                          className="btn secondary"
-                          onClick={() => fetchCloudFiles()}
-                          disabled={cloudBusy}
-                        >
+                        <button className="btn secondary" onClick={() => fetchCloudFiles()} disabled={cloudBusy}>
                           <RefreshIcon size={15} /> Segar semula
                         </button>
-                        <button
-                          className="btn secondary"
-                          onClick={openCloudFolder}
-                          disabled={cloudBusy}
-                        >
+                        <button className="btn secondary" onClick={openCloudFolder} disabled={cloudBusy}>
                           <FolderIcon size={15} /> Buka folder awan
                         </button>
                         <button className="btn ghost" onClick={() => setCloudModalOpen(true)}>
@@ -806,26 +928,33 @@ export default function App() {
                   </button>
                 </div>
               )}
+
+              {/* DEF-UX-008: maklum balas (cth. fail tidak disokong) mesti dilihat pada langkah 1 */}
+              {status && <p className="hint status-animated">{status}</p>}
             </section>
           )}
 
           {step === 2 && (
             <section className="panel">
-              <div className="segmented" role="tablist" aria-label="Enjin transkripsi">
-                <button
-                  className={source === 'device' ? 'seg-active' : ''}
-                  onClick={() => setSource('device')}
-                >
-                  <LaptopIcon size={15} />
-                  On-device
-                </button>
-                <button
-                  className={source === 'opencode' ? 'seg-active' : ''}
-                  onClick={() => setSource('opencode')}
-                >
-                  <CloudIcon size={15} />
-                  OpenCode (ketepatan tinggi)
-                </button>
+              <div className="mode-tabs" role="tablist" aria-label="Enjin transkripsi" onKeyDown={tablistKeyDown}>
+                {[
+                  { id: 'device', label: 'On-device', sub: 'Berjalan dalam pelayar', Icon: LaptopIcon },
+                  { id: 'opencode', label: 'OpenCode', sub: 'Ketepatan tinggi (Gemini)', Icon: CloudIcon },
+                ].map(({ id: mId, label, sub, Icon: TabIcon }) => (
+                  <button
+                    key={mId}
+                    role="tab"
+                    aria-selected={source === mId}
+                    className={`mode-tab${source === mId ? ' mode-active' : ''}`}
+                    onClick={() => setSource(mId)}
+                  >
+                    <TabIcon size={20} className="mode-icon" />
+                    <span className="mode-text">
+                      <span className="mode-label">{label}</span>
+                      <span className="mode-sub">{sub}</span>
+                    </span>
+                  </button>
+                ))}
               </div>
 
               {source === 'device' ? (
@@ -844,52 +973,22 @@ export default function App() {
                         ))}
                       </select>
                     </div>
-                    <div className="field-col">
-                      <label className="field-label" htmlFor="lang-select">Bahasa</label>
-                      <select
-                        id="lang-select"
-                        value={language}
-                        onChange={(e) => setLanguage(e.target.value)}
-                        disabled={busy !== null}
-                      >
-                        {LANGUAGES.map((l) => (
-                          <option key={l.id} value={l.id}>{l.label}</option>
-                        ))}
-                      </select>
-                    </div>
                   </div>
-                  <p className="hint">Berjalan dalam pelayar. Audio tidak dihantar ke mana-mana. Pilih "Melayu" jika mesyuarat dalam Bahasa Melayu untuk hasil lebih konsisten.</p>
+                  <p className="hint">Audio tidak dihantar ke mana-mana. Bahasa dipilih dalam Butiran mesyuarat.</p>
                 </div>
               ) : (
                 <div className="option-row">
-                  <div className="field-pair">
-                    <div className="field-col">
-                      <label className="field-label" htmlFor="api-key-input">OpenCode API key</label>
-                      <input
-                        id="api-key-input"
-                        type="password"
-                        placeholder="Tampal API key anda di sini"
-                        value={apiKey}
-                        onChange={(e) => {
-                          setKey(e.target.value);
-                          setAPIKey(e.target.value);
-                        }}
-                      />
-                    </div>
-                    <div className="field-col">
-                      <label className="field-label" htmlFor="lang-select-cloud">Bahasa</label>
-                      <select
-                        id="lang-select-cloud"
-                        value={language}
-                        onChange={(e) => setLanguage(e.target.value)}
-                        disabled={busy !== null}
-                      >
-                        {LANGUAGES.map((l) => (
-                          <option key={l.id} value={l.id}>{l.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
+                  <label className="field-label" htmlFor="api-key-input">OpenCode API key</label>
+                  <input
+                    id="api-key-input"
+                    type="password"
+                    placeholder="Tampal API key anda di sini"
+                    value={apiKey}
+                    onChange={(e) => {
+                      setKey(e.target.value);
+                      setAPIKey(e.target.value);
+                    }}
+                  />
                   <label className="check-row">
                     <input type="checkbox" checked={diarize} onChange={(e) => setDiarize(e.target.checked)} />
                     Kenal pasti pembicara (Pembicara 1, Pembicara 2, ...)
@@ -957,15 +1056,25 @@ export default function App() {
 
           {step === 3 && (
             <section className="panel">
-              <div className="segmented" role="tablist" aria-label="Jenis nota">
-                <button className={mode === 'minit' ? 'seg-active' : ''} onClick={() => setMode('minit')}>
-                  <ClipboardIcon size={15} />
-                  Minit mesyuarat
-                </button>
-                <button className={mode === 'skop' ? 'seg-active' : ''} onClick={() => setMode('skop')}>
-                  <TargetIcon size={15} />
-                  Skop keperluan
-                </button>
+              <div className="mode-tabs" role="tablist" aria-label="Jenis nota" onKeyDown={tablistKeyDown}>
+                {[
+                  { id: 'minit', label: 'Minit mesyuarat', sub: 'Rumasan, keputusan, tindakan', Icon: ClipboardIcon },
+                  { id: 'skop', label: 'Skop keperluan', sub: 'Draf keperluan projek', Icon: TargetIcon },
+                ].map(({ id: mId, label, sub, Icon: TabIcon }) => (
+                  <button
+                    key={mId}
+                    role="tab"
+                    aria-selected={mode === mId}
+                    className={`mode-tab${mode === mId ? ' mode-active' : ''}`}
+                    onClick={() => setMode(mId)}
+                  >
+                    <TabIcon size={20} className="mode-icon" />
+                    <span className="mode-text">
+                      <span className="mode-label">{label}</span>
+                      <span className="mode-sub">{sub}</span>
+                    </span>
+                  </button>
+                ))}
               </div>
 
               <div className="option-row">
@@ -1002,7 +1111,7 @@ export default function App() {
                 </BusyButton>
                 {minutes && (
                   <>
-                    <button className="btn secondary" onClick={saveMeeting}><SaveIcon size={15} /> Simpan</button>
+                    <button className="btn secondary" onClick={saveMeeting} disabled={!!saveDisabled}><SaveIcon size={15} /> Simpan</button>
                     <button className="btn ghost" onClick={exportMinutesPDF}><FileIcon size={15} /> PDF</button>
                     <button className="btn ghost" onClick={exportMinutesWord}><NoteIcon size={15} /> Word</button>
                     <button className="btn ghost" onClick={exportMinutes}><DownloadIcon size={15} /> Markdown</button>
@@ -1011,7 +1120,7 @@ export default function App() {
                 )}
               </div>
 
-              {busy === 'minutes' && status && <p className="hint">{status}</p>}
+              {busy === 'minutes' && status && <p className="hint status-animated">{status}</p>}
               <textarea
                 className="minutes"
                 placeholder="Nota akan dijana di sini berdasarkan transkrip."
@@ -1024,26 +1133,65 @@ export default function App() {
 
         <aside className="aside">
           <div className="sidebar">
-            <h2 className="sidebar-title">
-              <FolderIcon size={16} />
-              Mesyuarat tersimpan
-            </h2>
-            {meetings.length === 0 && (
-              <p className="empty-state">
-                Belum ada mesyuarat disimpan. Jana nota, kemudian tekan Simpan untuk melihatnya di sini.
-              </p>
+            <div className="sidebar-head">
+              <h2 className="sidebar-title">
+                <ClockIcon size={16} />
+                Mesyuarat terkini
+              </h2>
+            </div>
+            {meetingsLoading ? (
+              // UX-AUDIT #3: skeleton semasa IndexedDB dimuat — layout stabil, tiada lompat
+              <div aria-busy="true" className="meeting-skeleton-group">
+                <SkeletonMeetingRow />
+                <SkeletonMeetingRow />
+                <SkeletonMeetingRow />
+              </div>
+            ) : (
+              meetings.length === 0 && (
+                <p className="empty-state">
+                  Belum ada mesyuarat disimpan. Jana nota, kemudian tekan Simpan untuk melihatnya di sini.
+                </p>
+              )
             )}
-            {meetings.map((m) => (
-              <div className="meeting-item" key={m.id}>
-                <h3>{m.title || 'Tanpa tajuk'}</h3>
-                <time>
-                  {new Date(m.createdAt).toLocaleString('ms-MY', { dateStyle: 'medium', timeStyle: 'short' })}
-                </time>
-                <div className="action-row">
-                  <button className="btn secondary small" onClick={() => openMeeting(m.id)}>Buka</button>
-                  <button className="btn danger small" onClick={() => removeMeeting(m.id)}>Padam</button>
-                </div>            </div>
-            ))}
+            {meetings.slice(0, 5).map((m) => {
+              const d = new Date(m.createdAt);
+              return (
+                <div className="meeting-item" key={m.id}>
+                  <span className="meeting-date">
+                    <span className="meeting-day">{d.getDate()}</span>
+                    <span className="meeting-month">
+                      {d.toLocaleDateString('ms-MY', { month: 'short' })}
+                    </span>
+                  </span>
+                  <div className="meeting-info">
+                    <h3>{m.title || 'Tanpa tajuk'}</h3>
+                    <span className="meeting-meta">
+                      {d.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' })}
+                      {m.durationSec ? ` • ${Math.round(m.durationSec / 60)} min` : ''}
+                      {m.language ? ` • ${LANGUAGES.find((l) => l.id === m.language)?.label || m.language}` : ''}
+                    </span>
+                  </div>
+                  <span className={`badge badge-${(m.status || 'Draf').toLowerCase()}`}>
+                    {m.status || 'Draf'}
+                  </span>
+                  <div className="kebab-wrap" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      className="icon-button small"
+                      aria-label="Tindakan mesyuarat"
+                      onClick={() => setKebabOpen(kebabOpen === m.id ? null : m.id)}
+                    >
+                      <KebabIcon size={15} />
+                    </button>
+                    {kebabOpen === m.id && (
+                      <div className="kebab-menu">
+                        <button onClick={() => { openMeeting(m.id); setKebabOpen(null); }}>Buka</button>
+                        <button className="kebab-danger" onClick={() => { removeMeeting(m.id); setKebabOpen(null); }}>Padam</button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
           <ZikirPanel />
         </aside>
@@ -1051,24 +1199,28 @@ export default function App() {
 
       {cloudModalOpen && (
         <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setCloudModalOpen(false)}>
-          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="cloud-modal-title">
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="cloud-modal-title" onKeyDown={modalTrapFocus}>
             <div className="modal-head">
               <h2 id="cloud-modal-title">
-                <CloudIcon size={16} /> Tetapan Awan (WebDAV)
+                <CloudIcon size={16} /> Tetapan Awan
               </h2>
-              <button className="btn ghost small" onClick={() => setCloudModalOpen(false)} aria-label="Tutup">
+              <button className="icon-button small" onClick={() => setCloudModalOpen(false)} aria-label="Tutup">
                 <CloseIcon size={15} />
               </button>
             </div>
             <div className="modal-body">
-              <div className="segmented" role="tablist" aria-label="Jenis awan">
+              <div className="segmented" role="tablist" aria-label="Jenis awan" onKeyDown={tablistKeyDown}>
                 <button
+                  role="tab"
+                  aria-selected={cloudCfg.cloudType !== 'gdrive'}
                   className={cloudCfg.cloudType !== 'gdrive' ? 'seg-active' : ''}
                   onClick={() => updateCloudCfg('cloudType', 'webdav')}
                 >
                   <CloudIcon size={15} /> WebDAV
                 </button>
                 <button
+                  role="tab"
+                  aria-selected={cloudCfg.cloudType === 'gdrive'}
                   className={cloudCfg.cloudType === 'gdrive' ? 'seg-active' : ''}
                   onClick={() => updateCloudCfg('cloudType', 'gdrive')}
                 >
@@ -1088,8 +1240,8 @@ export default function App() {
                   />
                   <p className="hint">
                     Cipta di Google Cloud Console: aktifkan Google Drive API, cipta OAuth Client
-                    ID (Web application), dan tambah origin ini
-                    ({window.location.origin}) pada Authorized JavaScript origins.
+                    ID (Web application), dan tambah origin ini ({window.location.origin}) pada
+                    Authorized JavaScript origins.
                   </p>
                 </>
               ) : (
@@ -1154,8 +1306,8 @@ export default function App() {
               {cloudMsg && <p className="hint">{cloudMsg}</p>}
               <p className="hint">
                 {cloudCfg.cloudType === 'gdrive'
-                  ? 'Fail disimpan dalam folder "notamesyuarat" di Google Drive anda. Skop akses: keseluruhan Drive (perlu untuk melihat fail yang diupload manual).'
-                  : 'Kredensial disimpan dalam pelayar anda sahaja. Sesuai dengan Nextcloud, ownCloud, atau mana-mana pelayan WebDAV. Pastikan pelayan membenarkan akses CORS dari laman ini.'}
+                  ? 'Fail disimpan dalam folder "notamesyuarat" di Google Drive anda.'
+                  : 'Kredensial disimpan dalam pelayar anda sahaja. Sesuai dengan Nextcloud, ownCloud, atau mana-mana pelayan WebDAV.'}
               </p>
             </div>
             <div className="modal-foot">
