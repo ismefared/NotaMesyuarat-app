@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-11-13",
+  "environment": {
+    "browser": "Chromium headless (Playwright 1.59.1)",
+    "server": "http://localhost:4173 (npm run preview, binaan produksi)",
+    "viewportTested": ["1920x1080", "1366x768", "768x1024", "390x844", "360x800"]
+  },
+  "screenshots": [
+    { "file": "TC-01_DASHBOARD_DESKTOP_LOAD.png", "testId": "TC-01", "viewport": "1920x1080", "description": "App dimuat, langkah 1" },
+    { "file": "TC-03_UPLOAD_INVALID_TXT.png", "testId": "TC-03", "viewport": "1920x1080", "description": "Fail .txt ditolak" },
+    { "file": "TC-04_UPLOAD_WAV.png", "testId": "TC-04", "viewport": "1920x1080", "description": "WAV sah dimuat, langkah 2" },
+    { "file": "TC-05_OPENCODE_NO_KEY.png", "testId": "TC-05", "viewport": "1920x1080", "description": "Ralat tiada API key" },
+    { "file": "TC-06_TRANSCRIBE_TINY.png", "testId": "TC-06", "viewport": "1920x1080", "description": "Selepas transkripsi Whisper (langkah Nota aktif)" },
+    { "file": "TC-07_MINIT_GENERATED.png", "testId": "TC-07", "viewport": "1920x1080", "description": "Nota extractive dijana" },
+    { "file": "TC-09_SAVED.png", "testId": "TC-09", "viewport": "1920x1080", "description": "Mesyuarat disimpan, toast + sidebar" },
+    { "file": "TC-13_LIHAT_SEMUA.png", "testId": "TC-13", "viewport": "1920x1080", "description": "Selepas klik 'Lihat semua' — tiada perubahan" },
+    { "file": "TC-15_DARK_THEME.png", "testId": "TC-15", "viewport": "1920x1080", "description": "Tema gelap aktif" },
+    { "file": "TC-16_CLOUD_MODAL.png", "testId": "TC-16", "viewport": "1920x1080", "description": "Modal tetapan awan" },
+    { "file": "TC-17_WEBDAV_ERROR.png", "testId": "TC-17", "viewport": "1920x1080", "description": "Ralat WebDAV 'Sambungan gagal: Failed to fetch'" },
+    { "file": "TC-18_RESPONSIVE_1920x1080.png", "testId": "TC-18", "viewport": "1920x1080", "description": "Desktop besar" },
+    { "file": "TC-18_RESPONSIVE_1366x768.png", "testId": "TC-18", "viewport": "1366x768", "description": "Laptop" },
+    { "file": "TC-18_RESPONSIVE_768x1024.png", "testId": "TC-18", "viewport": "768x1024", "description": "Tablet — overflow mengufuk disahkan" },
+    { "file": "TC-18_RESPONSIVE_390x844.png", "testId": "TC-18", "viewport": "390x844", "description": "Mudah alih" },
+    { "file": "TC-18_RESPONSIVE_360x800.png", "testId": "TC-18", "viewport": "360x800", "description": "Kecil — overflow mengufuk disahkan" }
+  ],
+  "testFiles": [
+    { "file": "../test-cases/browser-test-results.json", "description": "Hasil penuh 20 kes Playwright" },
+    { "file": "uji-audio.wav", "description": "WAV sintetik 3s 16kHz (data ujian)" },
+    { "file": "bukan-audio.txt", "description": "Fail teks untuk ujian penolakan" }
+  ],
+  "consoleErrors": [
+    "ReferenceError: maybeAutoUpload is not defined (setiap muat naik/rakaman — DEF-FUNC-001)",
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED (ujian WebDAV domain .invalid — dijangka)",
+    "TypeError: Failed to fetch (ujian WebDAV domain .invalid — dijangka)"
+  ],
+  "notes": "Tiada kredensial atau data sebenar dalam mana-mana bukti. Semua tangkapan skrin tidak diedit."
+}

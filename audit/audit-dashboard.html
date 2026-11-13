@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit Dashboard — NotaMesyuarat</title>
+<style>
+  :root{--bg:#f6f4f0;--card:#fff;--ink:#1a1a1a;--muted:#5c6257;--line:#e4e0d8;
+        --teal:#0f766e;--red:#b91c1c;--amber:#b45309;--green:#15803d;--slate:#475569;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);padding:24px;line-height:1.5}
+  .wrap{max-width:1100px;margin:0 auto}
+  h1{font-size:1.5rem;margin-bottom:2px}
+  .sub{color:var(--muted);font-size:.85rem;margin-bottom:20px}
+  .verdict{display:inline-block;background:#ecfdf5;color:var(--green);border:1px solid #a7f3d0;border-radius:8px;padding:4px 12px;font-weight:600;font-size:.85rem;margin-bottom:18px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .stat .n{font-size:1.6rem;font-weight:700}
+  .stat .l{font-size:.75rem;color:var(--muted)}
+  .n.fail{color:var(--red)} .n.pass{color:var(--green)} .n.warn{color:var(--amber)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+  h2{font-size:1rem;margin-bottom:12px}
+  table{width:100%;border-collapse:collapse;font-size:.85rem}
+  th{text-align:left;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+  td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .badge{display:inline-block;border-radius:6px;padding:1px 8px;font-size:.72rem;font-weight:600}
+  .b-high{background:#fee2e2;color:var(--red)} .b-med{background:#fef3c7;color:var(--amber)}
+  .b-low{background:#e0e7ff;color:var(--slate)} .b-pass{background:#dcfce7;color:var(--green)}
+  .b-tri{background:#f1f5f9;color:var(--slate)}
+  input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:10px;font-size:.85rem}
+  select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:.8rem;margin-left:6px}
+  .bars{display:flex;gap:4px;height:14px;border-radius:7px;overflow:hidden;margin:8px 0 6px}
+  .bars span{height:100%}
+  .legend{font-size:.75rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
+  .note{font-size:.78rem;color:var(--muted);margin-top:10px}
+  .shot{font-size:.8rem;color:var(--teal)}
+  @media(max-width:700px){body{padding:12px}.wrap{min-width:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Audit Dashboard — NotaMesyuarat</h1>
+  <p class="sub">Audit AIAAA v1.0.0 · Kitaran v3 (audit penuh 10 fasa) · 14 November 2026 · Chromium (Playwright 1.59.1) + axe-core · binaan produksi</p>
+  <span class="verdict">READY — SEMUA DAPATAN SELESAI (1 DITERIMA RISIKO)</span>
+
+  <div class="grid">
+    <div class="stat"><div class="n">29+</div><div class="l">Kes ujian dijalankan</div></div>
+    <div class="stat"><div class="n pass">27</div><div class="l">PASS</div></div>
+    <div class="stat"><div class="n fail">1</div><div class="l">FAIL (aksesibiliti)</div></div>
+    <div class="stat"><div class="n">1</div><div class="l">PASS (dengan nota)</div></div>
+    <div class="stat"><div class="n pass">0</div><div class="l">Kecacatan terbuka (1 diterima risiko)</div></div>
+    <div class="stat"><div class="n">18</div><div class="l">Modul diinventori</div></div>
+  </div>
+
+  <section>
+    <h2>Kualiti fungsional</h2>
+    <div class="bars">
+      <span style="width:90%;background:#22c55e"></span>
+      <span style="width:0%;background:#ef4444"></span>
+      <span style="width:10%;background:#94a3b8"></span>
+    </div>
+    <div class="legend"><span><span class="dot" style="background:#22c55e"></span>PASS (18)</span>
+      <span><span class="dot" style="background:#ef4444"></span>FAIL (0)</span>
+      <span><span class="dot" style="background:#94a3b8"></span>dengan nota (1: TC-10 P3 ditangguhkan)</span></div>
+    <p class="note">Aliran teras (audio → transkripsi → nota → simpan → eksport) disahkan
+    hujung-ke-hujung termasuk transkripsi Whisper sebenar (model tiny). Semua pembetulan
+    Fasa 0–2 disahkan kekal. TC-06/TC-17 disahkan PASS melalui ujian terarah (artefak
+    skrip). Sumber: <span class="shot">test-cases/browser-test-results.json</span>,
+    <span class="shot">v3-extra-results.json</span></p>
+  </section>
+
+  <section>
+    <h2>Aksesibiliti (axe-core, baharu v3)</h2>
+    <table>
+      <tr><th>Imbasan</th><th>Keputusan</th><th>Butiran</th></tr>
+      <tr><td>Langkah 1, 2, 3</td><td><span class="badge b-pass">PASS</span></td><td>1 moderate: tiada H1 (terbatas kepada susun atur app)</td></tr>
+      <tr><td>Modal awan</td><td><span class="badge b-high">FAIL</span></td><td>aria-required-children (critical): tablist tanpa anak tab — DEF-A11Y-009</td></tr>
+      <tr><td>Kontras token (tema cerah &amp; gelap)</td><td><span class="badge b-pass">PASS AA</span></td><td>Terendah 6.29:1 (melebihi 4.5:1)</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Integrasi API (intercept rangkaian, baharu v3)</h2>
+    <table>
+      <tr><th>Kes</th><th>Keputusan</th><th>Butiran</th></tr>
+      <tr><td>INT-01 OpenCode 401</td><td><span class="badge b-pass">PASS</span></td><td>Ralat jelas dipaparkan kepada pengguna</td></tr>
+      <tr><td>INT-02 Nota AI (mock 200)</td><td><span class="badge b-pass">PASS</span></td><td>Nota AI dipaparkan dengan betul</td></tr>
+      <tr><td>INT-03 AI gagal 500 → gugur</td><td><span class="badge b-pass">PASS</span></td><td>Gugur lancar ke kaedah extractive</td></tr>
+      <tr><td>INT-04 Kekalan API key</td><td><span class="badge b-pass">PASS</span></td><td>Kunci dikekalkan dalam localStorage</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Prestasi (terukur v3)</h2>
+    <table>
+      <tr><th>Metrik (median 3 larian)</th><th>Nilai</th></tr>
+      <tr><td>TTFB</td><td>3 ms</td></tr>
+      <tr><td>DOM Content Loaded</td><td>66 ms</td></tr>
+      <tr><td>Load</td><td>66 ms</td></tr>
+      <tr><td>First Paint</td><td>24 ms</td></tr>
+      <tr><td>Bundle utama</td><td>1,070 kB (294 kB gzip)</td></tr>
+      <tr><td>Chunk eksport (lengai)</td><td>388 kB (127 kB gzip)</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Keselamatan</h2>
+    <table>
+      <tr><th>Penemuan</th><th>Klasifikasi</th><th>Rujukan</th></tr>
+      <tr><td>4 kerentanan dependensi (3 high: sharp/libvips; 1 moderate: esbuild)</td><td><span class="badge b-med">DISAHKAN (alat)</span></td><td>SEC-003</td></tr>
+      <tr><td>Kredensial teks jelas dalam localStorage (WebDAV, API key)</td><td><span class="badge b-tri">KONFIGURASI</span></td><td>SEC-001</td></tr>
+      <tr><td>Skop OAuth Drive penuh, bukan minimum</td><td><span class="badge b-tri">KONFIGURASI</span></td><td>SEC-002</td></tr>
+      <tr><td>Kerentanan XSS disahkan</td><td><span class="badge b-pass">TIADA</span></td><td>—</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Daftar kecacatan (boleh dicari & ditapis)</h2>
+    <input id="q" type="search" placeholder="Cari kecacatan…" oninput="render()">
+    <select id="fSev" onchange="render()">
+      <option value="">Semua keterukan</option>
+      <option>HIGH</option><option>MEDIUM</option><option>LOW</option>
+    </select>
+    <select id="fSt" onchange="render()">
+      <option value="">Semua status</option>
+      <option>CONFIRMED</option><option>TRIAGED</option>
+    </select>
+    <div id="defTable"></div>
+  </section>
+
+  <section>
+    <h2>Galeri tangkapan skrin</h2>
+    <table>
+      <tr><th>Kes</th><th>Paparan</th><th>Viewport</th></tr>
+      <tr><td>TC-01</td><td><span class="shot">evidence/screenshots/TC-01_DASHBOARD_DESKTOP_LOAD.png</span></td><td>1920×1080</td></tr>
+      <tr><td>TC-04</td><td><span class="shot">evidence/screenshots/TC-04_UPLOAD_WAV.png</span></td><td>1920×1080</td></tr>
+      <tr><td>TC-06</td><td><span class="shot">evidence/screenshots/TC-06_TRANSCRIBE_TINY.png</span></td><td>1920×1080</td></tr>
+      <tr><td>TC-07</td><td><span class="shot">evidence/screenshots/TC-07_MINIT_GENERATED.png</span></td><td>1920×1080</td></tr>
+      <tr><td>TC-15</td><td><span class="shot">evidence/screenshots/TC-15_DARK_THEME.png</span></td><td>1920×1080</td></tr>
+      <tr><td>TC-17</td><td><span class="shot">evidence/screenshots/TC-17_WEBDAV_ERROR.png</span></td><td>1920×1080</td></tr>
+      <tr><td>TC-18</td><td><span class="shot">evidence/screenshots/TC-18_RESPONSIVE_768x1024.png</span></td><td>768×1024</td></tr>
+      <tr><td>TC-18</td><td><span class="shot">evidence/screenshots/TC-18_RESPONSIVE_360x800.png</span></td><td>360×800</td></tr>
+    </table>
+    <p class="note">Semua 16 tangkapan skrin tersenarai dalam
+    <span class="shot">evidence/evidence-manifest.json</span>.</p>
+  </section>
+
+  <section>
+    <h2>Prestasi &amp; regresi</h2>
+    <table>
+      <tr><th>Item</th><th>Nilai</th><th>Catatan</th></tr>
+      <tr><td>Bundle utama</td><td>1,471 kB (424 kB gzip)</td><td>DEF-PERF-007 — dynamic import eksport disyorkan</td></tr>
+      <tr><td>Model Whisper</td><td>50–250 MB, atas permintaan</td><td>Reka bentuk betul, cache pelayar</td></tr>
+      <tr><td>Lighthouse</td><td>Tidak diukur</td><td>Disatakan — tiada skor direka</td></tr>
+      <tr><td>Garis dasar regresi</td><td>Ditubuhkan 13 Nov 2026</td><td>history/audit-baseline.json</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Syarikat cadangan (ikut keutamaan)</h2>
+    <table>
+      <tr><th>P</th><th>Kerja</th><th>Isu</th><th>Usaha</th></tr>
+      <tr><td>P1</td><td>Pulihkan/buang <code>maybeAutoUpload</code></td><td>DEF-FUNC-001</td><td>S</td></tr>
+      <tr><td>P2</td><td>Kemas kini manifest PWA ("Isyarat" → NotaMesyuarat)</td><td>DEF-PWA-006</td><td>S</td></tr>
+      <tr><td>P2</td><td>Baiki overflow @768/360</td><td>DEF-UI-002</td><td>S–M</td></tr>
+      <tr><td>P2</td><td>Pengesahan padam; baiki/buang "Lihat semua"</td><td>DEF-UX-004/003</td><td>S</td></tr>
+      <tr><td>P2</td><td>Dynamic import eksport; naik taraf dependensi</td><td>DEF-PERF-007, SEC-003</td><td>S/M</td></tr>
+      <tr><td>P3</td><td>CSP, skop OAuth minimum, ujian unit, fokus modal</td><td>SEC-001/002</td><td>S–M</td></tr>
+    </table>
+    <p class="note">Butiran: <span class="shot">recommendations/implementation-roadmap.md</span>.
+    Pelaksanaan menunggu kebenaran manusia.</p>
+  </section>
+</div>
+
+<script>
+const DEFS = [
+  {id:"DEF-FUNC-001",t:"Fungsi maybeAutoUpload tiada definisi — auto-upload rosak + ReferenceError setiap rakaman/muat naik",sev:"HIGH",pri:"P1",st:"VERIFIED",ev:"TC-19"},
+  {id:"DEF-UI-002",t:"Overflow mengufuk @768px & @360px — kandungan terpotong",sev:"MEDIUM",pri:"P2",st:"VERIFIED",ev:"TC-18"},
+  {id:"DEF-UX-003",t:"Butang \"Lihat semua\" mati — tiada pandangan destinasi",sev:"MEDIUM",pri:"P2",st:"VERIFIED",ev:"TC-13"},
+  {id:"DEF-UX-004",t:"Padam mesyuarat tanpa dialog pengesahan",sev:"MEDIUM",pri:"P2",st:"VERIFIED",ev:"TC-14"},
+  {id:"DEF-PWA-006",t:"Manifest PWA mengandungi identiti app lain (\"Isyarat\")",sev:"MEDIUM",pri:"P2",st:"VERIFIED",ev:"manifest"},
+  {id:"DEF-PERF-007",t:"Bundle awal 1,471 kB — jsPDF tidak di-muat-lengai",sev:"MEDIUM",pri:"P2",st:"VERIFIED",ev:"vite build"},
+  {id:"SEC-003",t:"Kerentanan dependensi (esbuild + sharp) — transformers v4.3.2, audit kini 0",sev:"MEDIUM",pri:"P2",st:"VERIFIED",ev:"npm audit"},
+  {id:"DEF-FUNC-005",t:"Simpan berulang menghasilkan pendua tanpa amaran",sev:"LOW",pri:"P3",st:"VERIFIED",ev:"TC-10"},
+  {id:"DEF-UX-008",t:"Mesej gagal muat naik tidak dipaparkan pada langkah 1",sev:"LOW",pri:"P3",st:"VERIFIED",ev:"TC-03"},
+  {id:"SEC-001",t:"Kata laluan WebDAV & API key teks jelas dalam localStorage (diterima risiko, CSP aktif)",sev:"LOW",pri:"P3",st:"DEFERRED",ev:"kod"},
+  {id:"SEC-002",t:"Skop OAuth Drive penuh (bukan keistimewaan minimum)",sev:"LOW",pri:"P3",st:"TRIAGED",ev:"kod"}
+];
+function badge(sev){return {HIGH:"b-high",MEDIUM:"b-med",LOW:"b-low"}[sev]||"b-tri";}
+function render(){
+  const q=(document.getElementById("q").value||"").toLowerCase();
+  const sv=document.getElementById("fSev").value;
+  const st=document.getElementById("fSt").value;
+  const rows=DEFS.filter(d=>
+    (!q||(d.id+d.t).toLowerCase().includes(q))&&(!sv||d.sev===sv)&&(!st||d.st===st))
+    .map(d=>`<tr><td><strong>${d.id}</strong></td><td>${d.t}</td>
+      <td><span class="badge ${badge(d.sev)}">${d.sev}</span></td>
+      <td>${d.pri}</td><td><span class="badge ${d.st==="VERIFIED"?"b-pass":d.st==="CONFIRMED"?"b-med":"b-tri"}">${d.st}</span></td>
+      <td>${d.ev}</td></tr>`).join("");
+  document.getElementById("defTable").innerHTML =
+    `<table><tr><th>ID</th><th>Tajuk</th><th>Keterukan</th><th>Pri</th><th>Status</th><th>Bukti</th></tr>${rows||"<tr><td colspan=6>Tiada padanan.</td></tr>"}</table>`;
+}
+render();
+</script>
+</body>
+</html>

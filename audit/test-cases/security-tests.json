@@ -1,0 +1,14 @@
+{
+  "suite": "security",
+  "date": "2026-11-13",
+  "method": "static-defensive-review + runtime observation",
+  "cases": [
+    { "id": "SEC-T01", "name": "Muat naik: pengehadan jenis fail", "result": "PASS", "evidence": "TC-03" },
+    { "id": "SEC-T02", "name": "Ejekan HTML dalam eksport (escapeHTML)", "result": "PASS (semakan kod)", "evidence": "reports/security-audit.md" },
+    { "id": "SEC-T03", "name": "Penyimpanan kredensial", "result": "KONFIGURASI (SEC-001)", "evidence": "cloud.js:30-32" },
+    { "id": "SEC-T04", "name": "Skop OAuth", "result": "KONFIGURASI (SEC-002)", "evidence": "gdrive.js:16" },
+    { "id": "SEC-T05", "name": "npm audit dependensi", "result": "FAIL — 4 kerentanan (SEC-003)", "evidence": "output npm audit" },
+    { "id": "SEC-T06", "name": "Service worker: laluan cache", "result": "PASS (network-first, tiada data pengguna)", "evidence": "sw.js" },
+    { "id": "SEC-T07", "name": "Pendedahan ralat kepada pengguna", "result": "PASS", "evidence": "TC-05, TC-17" }
+  ]
+}

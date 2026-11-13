@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NotaMesyuarat — Mesyuarat berlaku. Nota muncul.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: #111210;
+    --ground-raise: #17181a;
+    --ink: #f5f2ea;
+    --ink-dim: #a8a49a;
+    --accent: #14b8a6;
+    --accent-deep: #0f766e;
+    --line: #2a2b28;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --sans: "IBM Plex Sans", -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--ground);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  ::selection { background: var(--accent); color: var(--ground); }
+
+  /* ---- status bar nav ---- */
+  .statusbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.9rem 2rem;
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em;
+  }
+  .wordmark { color: var(--ink); text-decoration: none; font-weight: 500; }
+  .wordmark span { color: var(--accent); }
+  .rec-pip { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--ink-dim); }
+  .rec-pip i {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #e5484d; animation: pip 1.6s ease-in-out infinite;
+  }
+  @keyframes pip { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+  /* ---- hero ---- */
+  .hero {
+    min-height: 88vh;
+    display: grid; grid-template-columns: 1fr; align-content: center;
+    gap: 1.6rem;
+    padding: 8rem 2rem 6rem;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .hero .kicker {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .hero h1 {
+    font-weight: 600;
+    font-size: clamp(2.6rem, 7.5vw, 6.5rem);
+    line-height: 1.02; letter-spacing: -0.04em;
+    max-width: 14ch;
+    text-wrap: balance;
+  }
+  .hero h1 em { font-style: normal; color: var(--ink-dim); font-weight: 300; }
+  .hero .lede {
+    max-width: 46ch; color: var(--ink-dim);
+    font-size: clamp(1rem, 1.4vw, 1.15rem); font-weight: 300;
+  }
+  .wavebar {
+    display: flex; gap: 4px; align-items: flex-end; height: 56px;
+    margin-top: 1rem; max-width: 420px;
+  }
+  .wavebar i {
+    flex: 1; background: var(--accent-deep); border-radius: 2px;
+    height: 18%; animation: wave 1.4s ease-in-out infinite;
+  }
+  .wavebar i:nth-child(3n)   { animation-delay: 0.15s; }
+  .wavebar i:nth-child(3n+1) { animation-delay: 0.45s; height: 64%; }
+  .wavebar i:nth-child(4n)   { height: 100%; background: var(--accent); }
+  .wavebar i:nth-child(5n)   { animation-delay: 0.7s; height: 38%; }
+  @keyframes wave { 0%,100% { transform: scaleY(0.5); } 50% { transform: scaleY(1); } }
+
+  /* ---- conversation timeline ---- */
+  .timeline {
+    max-width: 1200px; margin: 0 auto; padding: 6rem 2rem;
+    border-top: 1px solid var(--line);
+  }
+  .timeline .kicker, .callout .kicker {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--ink-dim);
+  }
+  .line {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 1.5rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--line);
+    opacity: 0; transform: translateY(14px);
+    transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.33,1,0.68,1);
+  }
+  .line.seen { opacity: 1; transform: none; }
+  .line time {
+    font-family: var(--mono); font-size: 0.78rem; color: var(--ink-dim);
+    padding-top: 0.35rem; letter-spacing: 0.04em;
+  }
+  .line .who {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem;
+  }
+  .line p { font-weight: 300; font-size: clamp(1rem, 1.5vw, 1.2rem); max-width: 62ch; }
+  .line mark {
+    background: none; color: var(--accent);
+    border-bottom: 1px solid var(--accent-deep); font-weight: 400;
+  }
+
+  /* ---- feature callout anchored beside transcript ---- */
+  .callout {
+    margin: 3.5rem 0 3.5rem 110px;
+    padding: 1.5rem 1.75rem;
+    border-left: 2px solid var(--accent);
+    background: var(--ground-raise);
+    max-width: 640px;
+    opacity: 0; transform: translateY(14px);
+    transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.33,1,0.68,1);
+  }
+  .callout.seen { opacity: 1; transform: none; }
+  .callout h2 {
+    font-size: clamp(1.15rem, 2vw, 1.5rem); font-weight: 600;
+    letter-spacing: -0.02em; margin: 0.4rem 0 0.35rem;
+  }
+  .callout p { color: var(--ink-dim); font-weight: 300; font-size: 0.98rem; max-width: 52ch; }
+
+  /* ---- closing ---- */
+  .close {
+    border-top: 1px solid var(--line);
+    padding: 6rem 2rem 7rem;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .close h2 {
+    font-size: clamp(2rem, 5vw, 4rem); font-weight: 600;
+    letter-spacing: -0.03em; line-height: 1.05; max-width: 16ch;
+    text-wrap: balance;
+  }
+  .close .cta-row {
+    margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+  }
+  .btn {
+    display: inline-block; text-decoration: none;
+    font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.06em;
+    padding: 0.95rem 1.6rem; min-height: 44px;
+    border-radius: 4px; transition: background 0.2s ease, color 0.2s ease;
+  }
+  .btn-primary { background: var(--accent); color: var(--ground); font-weight: 500; }
+  .btn-primary:hover { background: #2dd4bf; }
+  .btn-ghost { color: var(--ink-dim); border: 1px solid var(--line); }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--ink-dim); }
+  .colophon {
+    padding: 1.2rem 2rem; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
+    color: var(--ink-dim);
+  }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+  }
+  @media (max-width: 720px) {
+    .line { grid-template-columns: 1fr; gap: 0.3rem; }
+    .callout { margin-left: 0; }
+    .statusbar { padding: 0.9rem 1.2rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .wavebar i, .rec-pip i { animation: none; }
+    .line, .callout { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="statusbar" aria-label="Navigasi utama">
+  <a class="wordmark" href="#">NOTA<span>▮</span>MESYUARAT</a>
+  <span class="rec-pip"><i aria-hidden="true"></i>ON-DEVICE · PRIVASI PENUH</span>
+</nav>
+
+<header class="hero">
+  <p class="kicker">Perekam mesyuarat dalam pelayar</p>
+  <h1>Mesyuarat berlaku. <em>Nota muncul.</em></h1>
+  <p class="lede">Rakam, transkrip, dan jana minit mesyuarat — semuanya diproses
+  dalam pelayar anda. Audio tidak pernah meninggalkan peranti.</p>
+  <div class="wavebar" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+</header>
+
+<main class="timeline" aria-label="Simulasi transkrip">
+  <p class="kicker" style="margin-bottom:2rem">// Mainkan semula satu mesyuarat</p>
+
+  <div class="line"><time>09:00:12</time>
+    <div><span class="who">Pembicara 1</span>
+    <p>Mulakan, sesi semakan suku ketiga. <mark>Tajuk satu — prestasi jualan wilayah utara.</mark></p></div></div>
+
+  <div class="line"><time>09:02:47</time>
+    <div><span class="who">Pembicara 2</span>
+    <p>Angka Oktober naik lapan belas peratus. Saya cadangkan kita kekalkan strategi yang sama sampai Mac.</p></div></div>
+
+  <div class="callout">
+    <p class="kicker">Momen 03:47 · Transkripsi</p>
+    <h2>Transkrip terjana semasa anda masih bercakap</h2>
+    <p>Whisper berjalan on-device dalam pelayar. Sokongan Bahasa Melayu, label pembicara,
+    dan mod ketepatan tinggi melalui OpenCode — tanpa audio dihantar ke pelayan.</p>
+  </div>
+
+  <div class="line"><time>09:14:03</time>
+    <div><span class="who">Pembicara 1</span>
+    <p>Keputusan: kita <mark>tunda projek B</mark> ke suku kedua. Farid tuan punya tindakan, sasaran hujan bulan dua.</p></div></div>
+
+  <div class="line"><time>09:27:55</time>
+    <div><span class="who">Pembicara 3</span>
+    <p>Saya catat semua ini? Boleh hantar minit sebelum pukul lima?</p></div></div>
+
+  <div class="callout">
+    <p class="kicker">Momen 27:55 · Minit automatik</p>
+    <h2>Rumusan, keputusan, tindakan — terjana sendiri</h2>
+    <p>Struktur piawai: butiran, rumusan, keputusan, tindakan. Boleh diedit sebelum
+    dieksport ke PDF, Word, atau Markdown. Termasuk draf skop keperluan.</p>
+  </div>
+
+  <div class="line"><time>09:28:41</time>
+    <div><span class="who">Pembicara 1</span>
+    <p>Tak payah. <mark>Mesyuarat dah habis — minit pun dah siap.</mark> Hantar terus.</p></div></div>
+</main>
+
+<section class="close">
+  <h2>Mesyuarat seterusnya, biarkan mesin yang mencatat.</h2>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="#">Cuba sekarang — percuma</a>
+    <a class="btn btn-ghost" href="#">Lihat cara ia berfungsi</a>
+  </div>
+</section>
+
+<footer class="colophon">
+  <span>NOTAMESYUARAT — ON-DEVICE MINUTES</span>
+  <span>TIADA AUDIO KE PELAYAN · SESAMA DEV</span>
+</footer>
+
+<script>
+  // Dedup risiko double-fire + reduced-motion disokong
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const targets = document.querySelectorAll('.line, .callout');
+  if (reduce) {
+    targets.forEach(t => t.classList.add('seen'));
+  } else {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('seen'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.25 });
+    targets.forEach(t => io.observe(t));
+  }
+</script>
+</body>
+</html>

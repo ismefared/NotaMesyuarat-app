@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-11-13T16:58:55.397Z",
+  "results": [
+    {
+      "id": "AXE-LANGKAH1",
+      "name": "Imbasan axe (LANGKAH1)",
+      "status": "PASS",
+      "note": "1 pelanggaran (0 serious/critical): page-has-heading-one[moderate]x1",
+      "evidence": "AXE_LANGKAH1.png"
+    },
+    {
+      "id": "AXE-LANGKAH2",
+      "name": "Imbasan axe (LANGKAH2)",
+      "status": "PASS",
+      "note": "1 pelanggaran (0 serious/critical): page-has-heading-one[moderate]x1",
+      "evidence": "AXE_LANGKAH2.png"
+    },
+    {
+      "id": "AXE-LANGKAH3",
+      "name": "Imbasan axe (LANGKAH3)",
+      "status": "PASS",
+      "note": "1 pelanggaran (0 serious/critical): page-has-heading-one[moderate]x1",
+      "evidence": "AXE_LANGKAH3.png"
+    },
+    {
+      "id": "AXE-MODAL_AWAN",
+      "name": "Imbasan axe (MODAL_AWAN)",
+      "status": "FAIL",
+      "note": "1 pelanggaran (1 serious/critical): aria-required-children[critical]x1",
+      "evidence": "AXE_MODAL_AWAN.png"
+    },
+    {
+      "id": "PERF-01",
+      "name": "Prestasi muat halaman (median 3 larian)",
+      "status": "PASS",
+      "note": "TTFB=3ms, DCL=66ms, Load=66ms, FirstPaint=24ms, Transfer=1kB",
+      "evidence": ""
+    },
+    {
+      "id": "INT-01",
+      "name": "OpenCode 401 → ralat dikendalikan",
+      "status": "PASS",
+      "note": "status=\"Transkripsi OpenCode gagal: OpenCode API: Kunci tidak sah (401)\"",
+      "evidence": "INT-01_OPENCODE_401.png"
+    },
+    {
+      "id": "INT-02",
+      "name": "Jana nota AI (mock 200) → dipaparkan",
+      "status": "PASS",
+      "note": "nota=\"# Nota AI Tiruan\n\n## Keputusan\n- Ujian intercept berjaya....\"",
+      "evidence": "INT-02_AI_NOTE_OK.png"
+    },
+    {
+      "id": "INT-03",
+      "name": "AI 500 → gugur ke extractive",
+      "status": "PASS",
+      "note": "gugur berfungsi, panjang=410",
+      "evidence": "INT-03_AI_FALLBACK.png"
+    },
+    {
+      "id": "INT-04",
+      "name": "API key dikekalkan dalam localStorage",
+      "status": "PASS",
+      "note": "stored=KUNCI-…",
+      "evidence": ""
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "runs": [
+    {
+      "date": "2026-11-13",
+      "type": "baseline",
+      "description": "Audit AIAAA pertama — keadaan kod semasa (termasuk pembetulan UX 1 Nov 2026)",
+      "results": "20 kes: 15 pass, 2 pass-dengan-nota, 3 fail, 0 blocked",
+      "fails": [
+        "TC-13 butang 'Lihat semua' mati",
+        "TC-18 overflow @768",
+        "TC-18 overflow @360"
+      ],
+      "context": "TC-06 dan TC-17 gagal pada larian pertama kerana ralat skrip ujian; disahkan semula PASS melalui ujian terarah"
+    },
+    {
+      "date": "2026-11-14",
+      "type": "re-baseline (kitaran v2)",
+      "description": "Audit semula selepas pelaksanaan Fasa 0-2",
+      "results": "20 kes: 17 pass, 1 pass-dengan-nota (TC-10, P3 ditangguhkan), 0 fail; TC-06/TC-17 disahkan PASS melalui ujian terarah",
+      "fails": []
+    }
+  ]
+}

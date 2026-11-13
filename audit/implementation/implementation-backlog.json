@@ -1,0 +1,103 @@
+{
+  "generatedAt": "2026-11-14",
+  "sourceAudit": "AIAAA kitaran v3 (audit penuh)",
+  "tasks": [
+    {
+      "taskId": "TASK-001",
+      "defectId": "SEC-002",
+      "title": "Skop OAuth minimum (drive.file) lalai; skop penuh hanya bila searchAll",
+      "rootCause": "SCOPE tetap 'auth/drive' penuh untuk semua operasi",
+      "solution": "gdrive.js: eksport scopeFor(searchAll); getAccessToken(clientId, scope) dengan cache sedar-skop; cloud.js: hantar skop ikut operasi",
+      "files": [
+        "src/lib/gdrive.js",
+        "src/lib/cloud.js"
+      ],
+      "priority": "P3",
+      "risk": "Sederhana — token cache mesti dibezakan ikut skop; fail di luar folder app perlu skop penuh",
+      "effort": "30 min",
+      "acceptance": "Kod semakan + semua operasi awan tidak regression (tiada e2e Drive tersedia — semakan statik + unit)",
+      "testCases": [
+        "TC-16",
+        "TC-17",
+        "semakan statik scopeFor"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "taskId": "TASK-002",
+      "defectId": "DEF-A11Y-009",
+      "title": "role=\"tab\" + aria-selected pada butang segmented modal",
+      "rootCause": "role=tablist ditambah tanpa role anak",
+      "solution": "Tambah role=\"tab\" aria-selected={...} pada 2 butang segmented",
+      "files": [
+        "src/App.jsx"
+      ],
+      "priority": "P2",
+      "risk": "Rendah",
+      "effort": "10 min",
+      "acceptance": "axe-core modal: 0 pelanggaran critical",
+      "testCases": [
+        "AXE-MODAL_AWAN"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "taskId": "TASK-003",
+      "defectId": "DEF-FUNC-005",
+      "title": "Elak pendua Simpan",
+      "rootCause": "saveMeeting sentiasa cipta rekod baharu",
+      "solution": "Simpan signature kandungan tersimpan; lumpuhkan butang Simpan bila signature sama; reset semasa openMeeting",
+      "files": [
+        "src/App.jsx"
+      ],
+      "priority": "P3",
+      "risk": "Rendah",
+      "effort": "20 min",
+      "acceptance": "Simpan berturut-turut tidak mencipta pendua; butang aktif semula selepas kandungan berubah",
+      "testCases": [
+        "TC-10 (dikemas kini)",
+        "TC-12"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "taskId": "TASK-004",
+      "defectId": "SEC-003",
+      "title": "Naik taraf @huggingface/transformers v3 → v4 (2 high sharp)",
+      "rootCause": "Keterlambatan pengekalan dependensi",
+      "solution": "npm install v4 → bina → uji transkripsi e2e → kekalkan jika lulus, revert jika gagal",
+      "files": [
+        "package.json",
+        "package-lock.json",
+        "src/lib/whisper.js (jika perlu)"
+      ],
+      "priority": "P2",
+      "risk": "Tinggi — API breaking; mitigasi: ujian e2e tiny sebagai gerbang, revert bersih",
+      "effort": "45 min",
+      "acceptance": "Build + transkripsi e2e (TC-06) lulus; jika gagal → kekal v3 + ditangguhkan dengan alasan",
+      "testCases": [
+        "TC-06",
+        "TC-19"
+      ],
+      "status": "VERIFIED"
+    },
+    {
+      "taskId": "TASK-005",
+      "defectId": null,
+      "title": "Regresi penuh + kemas kini laporan/dashboard",
+      "solution": "Suite penuh + axe + laporan v4 + dashboard",
+      "files": [
+        "audit/*"
+      ],
+      "priority": "P1 (proses)",
+      "risk": "Rendah",
+      "effort": "30 min",
+      "acceptance": "0 FAIL fungsional; semua status task dikemas kini",
+      "testCases": [
+        "semua"
+      ],
+      "status": "VERIFIED"
+    }
+  ],
+  "verifiedAt": "2026-11-14"
+}
