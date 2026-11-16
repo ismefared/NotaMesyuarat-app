@@ -1,4 +1,4 @@
-# Changelog Teknikal — NotaMesyuarat v0.2.0
+# Changelog Teknikal — NotaMesyuarat v0.2.1
 
 Tarikh: 16 November 2026 · Baseline: v0.1.0 (commit `ff2bd3c`)
 
@@ -41,3 +41,13 @@ Tarikh: 16 November 2026 · Baseline: v0.1.0 (commit `ff2bd3c`)
 
 - Aplikasi: 0.1.0 → **0.2.0** (ciri baharu + pembetulan).
 - Manual: NM-PG-001 v1.0 → **v1.1**.
+
+## Tambahan 16 Nov 2026 — v0.2.1 (e2e kredensial sebenar)
+
+| Fail | Perubahan | Sebab |
+|---|---|---|
+| `src/lib/cloud.js` | Tambah `scopeFor` pada import `uploadToCloud` dan `getCloudFolderWebUrl` | DEF-INT-014: ReferenceError menyebabkan auto-upload Drive gagal (ditemui e2e) |
+| `package.json` | Versi 0.2.0 → 0.2.1 | Patch release |
+
+Bukti: `audit/test-cases/e2e-credentials-results.json` — Drive 5/5 PASS;
+OpenCode disekat 429/CORS (DEF-INT-015, tiada ubahan kod).

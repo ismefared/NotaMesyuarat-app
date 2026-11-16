@@ -15,8 +15,10 @@ Klasifikasi: **READY WITH DOCUMENTED EXCEPTIONS**
 | PWA | manifest + service worker network-first | `public/` |
 | `npm audit` | 0 kerentanan | npm 11.19 |
 | Ujian unit | 9/9 | Vitest |
-| Regresi pelayar | 18 PASS / 0 FAIL aplikasi | Playwright |
+| Regresi pelayar | 20/20 PASS, 0 FAIL aplikasi | Playwright |
 | Silang pelayar | Chromium, WebKit, Firefox (smoke) 12/12 | Playwright |
+| e2e Google Drive (token sebenar) | **5/5 PASS** | E2E-GD-01..05 |
+| e2e OpenCode (kunci sebenar) | Disekat luaran (429 + CORS) | E2E-OC-01; DEF-INT-015 |
 
 ## 2. Keperluan persekitaran
 
@@ -51,8 +53,8 @@ Klasifikasi: **READY WITH DOCUMENTED EXCEPTIONS**
 
 ## 5. Pengecualian didokumenkan
 
-1. **KL-006 OpenCode e2e** — memerlukan API key pengguna sebenar. Laluan ralat/mock diuji.
-2. **KL-007 Google Drive e2e** — memerlukan OAuth Client ID. Logik disemak; e2e belum.
+1. **KL-006 OpenCode e2e** — kunci sebenar diuji tetapi disekat oleh kuota percuma (429) dan CORS yang tidak disahkan (DEF-INT-015). Laluan ralat/mock diuji.
+2. ~~KL-007 Google Drive e2e~~ — **diselesaikan**: 5/5 PASS dengan token sebenar (termasuk pembetulan DEF-INT-014).
 3. **KL-008 Rakaman mic automatik** — sandbox tidak membenarkan `getUserMedia`; disyorkan ujian manual pada peranti.
 4. **KL-009 Lighthouse** — diganti dengan navigation timing setempat; CWV medan belum diukur.
 5. **WebKit/Firefox** — smoke 4 kriteria sahaja, bukan suite penuh.
@@ -66,7 +68,8 @@ Klasifikasi: **READY WITH DOCUMENTED EXCEPTIONS**
 - [x] CSP aktif
 - [x] Manifest/PWA betul
 - [x] Manual pengguna dikemas kini
-- [ ] Ujian e2e OpenCode & Drive (perlu kredensial)
+- [x] Ujian e2e Google Drive (token sebenar)
+- [ ] Ujian e2e OpenCode (disekat kuota/CORS perkhidmatan)
 - [ ] Ujian rakaman pada peranti sebenar
 - [ ] Header CSP `frame-ancestors` di hosting (disyorkan)
 - [ ] Lighthouse CI (disyorkan)

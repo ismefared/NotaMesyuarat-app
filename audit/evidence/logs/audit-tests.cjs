@@ -80,15 +80,22 @@ function rec(id, name, status, note = '', evidence = '') {
     await page.locator('#model-select').selectOption('tiny');
     await page.locator('button:has-text("Jana transkrip")').click();
     await page.waitForFunction(
-      () => document.querySelector('.content textarea.transcript')?.value?.length > 0 ||
-        /gagal|tiada suara/i.test(document.querySelector('.content .hint.status-animated')?.textContent || ''),
+      () => {
+        const ta = document.querySelector('.content textarea.transcript');
+        if (!ta) return true; // app mara ke langkah 3 selepas transkripsi berjaya
+        if (ta.value.length > 0) return true;
+        const st = document.querySelector('.content .hint.status-animated')?.textContent || '';
+        return /gagal|tiada suara/i.test(st);
+      },
       undefined,
       { timeout: 240000 }
     );
-    const tr = await page.locator('.content textarea.transcript').inputValue();
-    const st = await page.locator('.content .hint.status-animated').textContent();
-    tc06 = tr.length > 0 || /tiada suara/i.test(st || '') ? 'PASS' : 'FAIL';
-    tc06note = `panjang transkrip=${tr.length}, status="${(st || '').trim().slice(0, 80)}"`;
+    const hasTa = await page.locator('.content textarea.transcript').count();
+    const tr = hasTa ? await page.locator('.content textarea.transcript').inputValue() : '';
+    const st = await page.locator('.content .hint.status-animated').textContent().catch(() => '');
+    const atNotes = await page.locator('.content textarea.minutes').count();
+    tc06 = tr.length > 0 || /tiada suara/i.test(st || '') || atNotes === 1 ? 'PASS' : 'FAIL';
+    tc06note = `panjang transkrip=${tr.length}, langkah nota=${atNotes === 1}, status="${(st || '').trim().slice(0, 60)}"`;
   } catch (e) {
     tc06note = `gagal: ${String(e).slice(0, 140)}`;
   }
@@ -140,18 +147,19 @@ function rec(id, name, status, note = '', evidence = '') {
     `toast="${toast}", item sidebar=${items}`, 'TC-09_SAVED.png');
   await page.screenshot({ path: path.join(SHOTS, 'TC-09_SAVED.png'), fullPage: true });
 
-  // TC-10 — simpan lagi sekali → duplikasi?
-  await page.locator('button:has-text("Simpan")').click();
+  // TC-10 — simpan lagi sekali → dedup (pembetulan DEF-FUNC-005)
+  await page.locator('button:has-text("Simpan")').click().catch(() => {});
   await page.waitForTimeout(600);
   const items2 = await page.locator('.meeting-item:not(.skeleton-meeting)').count();
-  rec('TC-10', 'Simpan berulang → duplikasi', items2 === items + 1 ? 'PASS (tetapi tiada pengesahan / pendua dibenarkan)' : 'FAIL',
-    `item sebelum=${items}, selepas=${items2} — pengguna boleh menghasilkan pendua tanpa amaran`);
+  const saveDisabled = await page.locator('button:has-text("Simpan")').isDisabled().catch(() => 'tiada-butang');
+  rec('TC-10', 'Simpan berulang → tiada pendua (dedup)', items2 === items ? 'PASS' : 'FAIL',
+    `item sebelum=${items}, selepas=${items2}, butang dilumpuhkan=${saveDisabled}`);
 
   // TC-11 — kekal selepas muat semula (IndexedDB)
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForTimeout(800);
   const persisted = await page.locator('.meeting-item:not(.skeleton-meeting)').count();
-  rec('TC-11', 'Data kekal selepas muat semula', persisted >= 2 ? 'PASS' : 'FAIL', `item=${persisted}`);
+  rec('TC-11', 'Data kekal selepas muat semula', persisted >= 1 ? 'PASS' : 'FAIL', `item=${persisted}`);
 
   // TC-12 — buka mesyuarat tersimpan
   await page.locator('.meeting-item .kebab-wrap button').first().click();
@@ -160,22 +168,26 @@ function rec(id, name, status, note = '', evidence = '') {
   const minutesReopened = (await page.locator('.content textarea.minutes').inputValue()).length;
   rec('TC-12', 'Buka mesyuarat tersimpan', minutesReopened > 0 ? 'PASS' : 'FAIL', `panjang nota=${minutesReopened}`);
 
-  // TC-13 — "Lihat semua" — butang mati?
-  const beforeUrl = page.url();
-  await page.locator('button:has-text("Lihat semua")').click();
-  await page.waitForTimeout(500);
-  const afterUrl = page.url();
-  rec('TC-13', '"Lihat semua" berfungsi', beforeUrl === afterUrl ? 'FAIL (tiada perubahan — butang mati)' : 'PASS',
-    `URL sebelum=${beforeUrl} selepas=${afterUrl}; tiada pandangan "semua" wujud`, 'TC-13_LIHAT_SEMUA.png');
+  // TC-13 — butang "Lihat semua" telah dibuang (pembetulan DEF-UX-003)
+  const lihatBtn = await page.locator('button:has-text("Lihat semua")').count();
+  rec('TC-13', '"Lihat semua" dibuang (pembetulan)', lihatBtn === 0 ? 'PASS' : 'FAIL',
+    `bilangan butang=${lihatBtn} — butang mati tidak lagi wujud`);
 
-  // TC-14 — padam tanpa pengesahan
+  // TC-14 — padam dengan pengesahan (pembetulan DEF-UX-004)
   const beforeDel = await page.locator('.meeting-item:not(.skeleton-meeting)').count();
+  page.once('dialog', (d) => d.dismiss()); // Batal — tiada pemadaman
+  await page.locator('.meeting-item .kebab-wrap button').first().click();
+  await page.locator('.kebab-menu button:has-text("Padam")').click();
+  await page.waitForTimeout(500);
+  const afterCancel = await page.locator('.meeting-item:not(.skeleton-meeting)').count();
+  page.once('dialog', (d) => d.accept()); // Sahkan pemadaman
   await page.locator('.meeting-item .kebab-wrap button').first().click();
   await page.locator('.kebab-menu button:has-text("Padam")').click();
   await page.waitForTimeout(500);
   const afterDel = await page.locator('.meeting-item:not(.skeleton-meeting)').count();
-  rec('TC-14', 'Padam tanpa dialog pengesahan', afterDel === beforeDel - 1 ? 'PASS (tetapi tiada pengesahan)' : 'FAIL',
-    `sebelum=${beforeDel}, selepas=${afterDel} — klik satu kali memadam kekal`);
+  rec('TC-14', 'Padam dengan pengesahan (batal + sahkan)',
+    afterCancel === beforeDel && afterDel === beforeDel - 1 ? 'PASS' : 'FAIL',
+    `sebelum=${beforeDel}, selepas batal=${afterCancel}, selepas sahkan=${afterDel}`);
 
   // TC-15 — tema gelap
   await page.locator('.theme-option:has-text("Gelap")').click();
@@ -203,7 +215,8 @@ function rec(id, name, status, note = '', evidence = '') {
   await page.locator('#c-pass').fill('lalalala');
   await page.locator('button:has-text("Uji sambungan")').click();
   await page.waitForFunction(() => /gagal/i.test(document.querySelector('.modal .hint')?.textContent || ''), { timeout: 20000 });
-  const cloudErr = await page.locator('.modal .hint').last().textContent();
+  const hints = await page.locator('.modal .hint').allTextContents();
+  const cloudErr = hints.find((h) => /gagal/i.test(h)) || hints[hints.length - 1] || '';
   rec('TC-17', 'Ralat WebDAV dikendalikan dengan mesej jelas', /gagal/i.test(cloudErr || '') ? 'PASS' : 'FAIL',
     `mesej="${(cloudErr || '').trim().slice(0, 100)}"`);
   await page.keyboard.press('Escape');

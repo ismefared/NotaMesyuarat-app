@@ -348,6 +348,55 @@
       "status": "VERIFIED",
       "assignedAgent": "Compatibility/QA",
       "verificationStatus": "WebKit save=PASS selepas pembetulan"
+    },
+    {
+      "id": "DEF-INT-014",
+      "title": "scopeFor tidak diimport dalam uploadToCloud & getCloudFolderWebUrl — auto-upload Drive gagal",
+      "module": "src/lib/cloud.js",
+      "category": "integration",
+      "description": "Dua call site menggunakan scopeFor tanpa mengimportnya; auto-upload Drive melempar ReferenceError. Ditemui oleh ujian e2e Drive dengan token sebenar; tidak dikesan oleh semakan statik/regresi terdahulu.",
+      "preconditions": "Tetapan Drive + auto-upload",
+      "repro": "Aktifkan auto-upload Drive, muat naik audio.",
+      "expected": "Fail dimuat naik",
+      "actual": "ReferenceError: scopeFor is not defined; tiada toast",
+      "severity": "HIGH",
+      "priority": "P1",
+      "environment": "Chromium, binaan produksi, token Drive sebenar",
+      "evidence": "audit/test-cases/e2e-credentials-results.json; diag-drive (console)",
+      "rootCause": "Import tertinggal semasa TASK-001",
+      "recommendedFix": "Tambah scopeFor pada kedua-dua import",
+      "relatedTestIds": [
+        "E2E-GD-01",
+        "E2E-GD-02",
+        "E2E-GD-03",
+        "E2E-GD-04"
+      ],
+      "status": "VERIFIED",
+      "assignedAgent": "Integration QA",
+      "verificationStatus": "Drive e2e 5/5 PASS selepas pembetulan"
+    },
+    {
+      "id": "DEF-INT-015",
+      "title": "OpenCode API tidak boleh dicapai dari pelayar: kuota percuma habis (429) + tiada header CORS",
+      "module": "src/lib/opencode.js (sempadan integrasi)",
+      "category": "integration",
+      "description": "Ujian dengan kunci sebenar: endpoint pulangkan 429 FreeUsageLimitError; respons tanpa Access-Control-Allow-Origin dan OPTIONS 404, menyebabkan pelayar melaporkan 'Failed to fetch'. Dokumentasi OpenCode tidak menyatakan sokongan CORS pelayar.",
+      "preconditions": "Kunci OpenCode sah",
+      "repro": "Transkripsi OpenCode dengan kunci sebenar.",
+      "expected": "Transkripsi berjaya",
+      "actual": "Failed to fetch (kuota + CORS)",
+      "severity": "MEDIUM",
+      "priority": "P2",
+      "environment": "Chromium, 16 Nov 2026",
+      "evidence": "audit/test-cases/e2e-credentials-results.json; curl 429; header response",
+      "rootCause": "Bukan kod aplikasi — had perkhidmatan luar/kuota; sokongan CORS tidak disahkan",
+      "recommendedFix": "Sahkan dengan kunci berbayar/kuota baharu; jika CORS kekal tiada, gunakan proksi pelayan kecil atau tukar mod transkripsi ke on-device sebagai lalai (sedia ada)",
+      "relatedTestIds": [
+        "E2E-OC-01"
+      ],
+      "status": "BLOCKED",
+      "assignedAgent": "Integration QA",
+      "verificationStatus": "Disekat oleh perkhidmatan luar (kuota/CORS)"
     }
   ]
 }

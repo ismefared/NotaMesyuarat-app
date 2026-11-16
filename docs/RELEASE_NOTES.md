@@ -1,6 +1,6 @@
-# Nota Keluaran — NotaMesyuarat v0.2.0
+# Nota Keluaran — NotaMesyuarat v0.2.1
 
-Tarikh: 16 November 2026 · Sebelum ini: v0.1.0
+Tarikh: 16 November 2026 · Sebelum ini: v0.2.0
 
 ## Ciri baharu
 
@@ -20,6 +20,9 @@ Tarikh: 16 November 2026 · Sebelum ini: v0.1.0
 
 ## Pembetulan
 
+- **DEF-INT-014** (v0.2.1): `scopeFor is not defined` dalam `uploadToCloud`
+  dan `getCloudFolderWebUrl` — auto-upload Google Drive gagal. Ditemui melalui
+  ujian e2e dengan token Drive sebenar; kini dibaiki dan disahkan (5/5 PASS).
 - DEF-DATA-012: pendua apabila menyunting mesyuarat tersimpan.
 - DEF-COMPAT-013: simpan gagal dalam WebKit; ralat `null` tidak dikendalikan.
 - KL-002: `durationSec` sentiasa 0 untuk fail muat naik.
@@ -37,7 +40,8 @@ Tarikh: 16 November 2026 · Sebelum ini: v0.1.0
 
 ## Batasan yang tinggal
 
-- Integrasi OpenCode/Google Drive e2e memerlukan kredensial pengguna.
+- Integrasi OpenCode: kunci sebenar diuji tetapi disekat kuota percuma (429)
+  dan CORS yang tidak disahkan (DEF-INT-015). Google Drive e2e **lulus 5/5**.
 - Rakaman mikrofon tidak diuji automatik dalam sandbox.
 - Lighthouse/Core Web Vitals medan belum diukur.
 - Audio besar menggunakan kuota IndexedDB; padam rekod lama jika perlu.

@@ -106,3 +106,19 @@
 - Manual pengguna v1.1 (MD + PDF 19 halaman) dikemas kini; aplikasi v0.2.0.
 - 10 dokumen serahan dijana dalam docs/.
 - Keputusan: READY WITH DOCUMENTED EXCEPTIONS.
+
+## 16 November 2026 — Kitaran v6: ujian e2e kredensial sebenar
+
+- Google Drive (token sebenar): 5/5 PASS — sambung, auto-upload, senarai,
+  muat turun, pembersihan. Menemui & membetulkan DEF-INT-014 (`scopeFor`
+  tidak diimport dalam uploadToCloud/getCloudFolderWebUrl).
+- OpenCode (kunci sebenar): disekat luaran — 429 FreeUsageLimitError + respons
+  tanpa CORS (OPTIONS 404) → "Failed to fetch". Didaftarkan DEF-INT-015
+  (BLOCKED external), bukan ralat kod aplikasi.
+- Versi aplikasi 0.2.1 (patch). Jumlah semakan: 62; 60 PASS; 0 gagal aplikasi;
+  2 disekat (KL-008 mic, E2E-OC-01).
+
+### Semakan semula akhir
+- Pemilih skrip ujian TC-06/TC-17 dibetulkan — suite utama kini 20/20 PASS
+  (sebelum ini dilaporkan sebagai artifak skrip).
+- Jumlah muktamad: 62 semakan — 60 PASS, 0 gagal aplikasi, 2 disekat luaran.

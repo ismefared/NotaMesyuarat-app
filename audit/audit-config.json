@@ -2,9 +2,9 @@
   "tool": "AIAAA",
   "version": "1.0.0",
   "application": "NotaMesyuarat",
-  "appVersion": "0.2.0",
+  "appVersion": "0.2.1",
   "auditDate": "2026-11-16",
-  "gitCommit": "364fd35",
+  "gitCommit": "akan dikemas kini",
   "uncommittedChanges": false,
   "environment": {
     "platform": "darwin (macOS 25.6.0)",
@@ -35,11 +35,10 @@
   ],
   "readOnly": false,
   "knownLimitations": [
-    "KL-006: OpenCode e2e memerlukan API key sebenar (BLOCKED luaran)",
-    "KL-007: Google Drive e2e memerlukan OAuth Client ID (BLOCKED luaran)",
+    "KL-006: OpenCode e2e disekat kuota 429 + CORS tidak disahkan (DEF-INT-015)",
     "KL-008: Rakaman mikrofon automatik disekat sandbox getUserMedia",
     "KL-009: Lighthouse tidak dijalankan; diganti navigation timing"
   ],
-  "cycle": 5,
-  "cycleNote": "Kitaran v5: penyelesaian batasan manual + CAQA v2.0. Pelaksanaan: audio disimpan, edit-in-place, tempoh audio, keserasian WebKit. Ujian silang pelayar Chromium/WebKit/Firefox. Keputusan: READY WITH DOCUMENTED EXCEPTIONS."
+  "cycle": 6,
+  "cycleNote": "Kitaran v6: ujian e2e dengan kredensial sebenar. Drive 5/5 PASS (termasuk pembetulan DEF-INT-014). OpenCode disekat kuota/CORS (DEF-INT-015)."
 }

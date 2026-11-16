@@ -81,7 +81,7 @@ export async function testCloud(cfg) {
 /** Muat naik blob ke folder awan, ikut jenis awan. Kembalikan penanda fail. */
 export async function uploadToCloud(blob, filename, cfg) {
   if (cfg.cloudType === 'gdrive') {
-    const { getAccessToken, ensureGDriveFolder, gDriveUpload } = await import('./gdrive');
+    const { getAccessToken, ensureGDriveFolder, gDriveUpload, scopeFor } = await import('./gdrive');
     const token = await getAccessToken(cfg.gdriveClientId, scopeFor(!!cfg.searchAll));
     const folderId = await ensureGDriveFolder(token);
     const id = await gDriveUpload(token, folderId, blob, filename);
@@ -107,7 +107,7 @@ const AUDIO_EXT = /\.(mp3|m4a|wav|webm|ogg|oga|mp4|mov|aac|flac)$/i;
  *  WebDAV: URL folder terus. GDrive: URL antara muka web Drive. */
 export async function getCloudFolderWebUrl(cfg) {
   if (cfg.cloudType === 'gdrive') {
-    const { getAccessToken, ensureGDriveFolder } = await import('./gdrive');
+    const { getAccessToken, ensureGDriveFolder, scopeFor } = await import('./gdrive');
     if (!cfg.gdriveClientId) throw new Error('Masukkan Google OAuth Client ID dahulu.');
     const token = await getAccessToken(cfg.gdriveClientId, scopeFor(!!cfg.searchAll));
     const folderId = await ensureGDriveFolder(token);

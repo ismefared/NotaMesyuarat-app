@@ -142,6 +142,30 @@
       "testId": "XB",
       "viewport": "1366x768",
       "description": "Silang pelayar Firefox"
+    },
+    {
+      "file": "E2E-GD-01_CONNECT.png",
+      "testId": "E2E-GD-01",
+      "viewport": "1440x900",
+      "description": "Sambungan Drive berjaya"
+    },
+    {
+      "file": "E2E-GD-02_UPLOAD.png",
+      "testId": "E2E-GD-02",
+      "viewport": "1440x900",
+      "description": "Auto-upload ke Drive"
+    },
+    {
+      "file": "E2E-GD-04_DOWNLOAD.png",
+      "testId": "E2E-GD-04",
+      "viewport": "1440x900",
+      "description": "Muat turun dari Drive"
+    },
+    {
+      "file": "E2E-OC-01_TRANSCRIBE.png",
+      "testId": "E2E-OC-01",
+      "viewport": "1440x900",
+      "description": "Percubaan transkripsi OpenCode (disekat 429/CORS)"
     }
   ],
   "testFiles": [
@@ -172,6 +196,10 @@
     {
       "file": "logs/run-v5-final.log",
       "description": "Log regresi penuh v5"
+    },
+    {
+      "file": "../test-cases/e2e-credentials-results.json",
+      "description": "e2e OpenCode & Google Drive dengan kredensial sebenar"
     }
   ],
   "consoleErrors": [
