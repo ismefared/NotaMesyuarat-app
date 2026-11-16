@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-13T17:14:08.247Z",
+  "timestamp": "2026-11-16T05:25:26.312Z",
   "browser": "chromium (playwright 1.59.1)",
   "baseUrl": "http://localhost:4173",
   "results": [
@@ -49,14 +49,14 @@
       "id": "TC-07",
       "name": "Jana nota extractive (minit)",
       "status": "PASS",
-      "note": "panjang nota=944, ada seksyen Keputusan/Tindakan",
+      "note": "panjang nota=945, ada seksyen Keputusan/Tindakan",
       "evidence": "TC-07_MINIT_GENERATED.png"
     },
     {
       "id": "TC-08",
       "name": "Eksport PDF/Word/Markdown",
       "status": "PASS",
-      "note": "fail dimuat turun: minit-mesyuarat-1794590008886.pdf, minit-mesyuarat-1794590008916.doc, minit-mesyuarat-1794590008935.md",
+      "note": "fail dimuat turun: minit-mesyuarat-1794806686924.pdf, minit-mesyuarat-1794806686957.doc, minit-mesyuarat-1794806686981.md",
       "evidence": ""
     },
     {
@@ -76,7 +76,7 @@
     {
       "id": "TC-11",
       "name": "Data kekal selepas muat semula",
-      "status": "FAIL",
+      "status": "PASS",
       "note": "item=1",
       "evidence": ""
     },
@@ -84,7 +84,7 @@
       "id": "TC-12",
       "name": "Buka mesyuarat tersimpan",
       "status": "PASS",
-      "note": "panjang nota=944",
+      "note": "panjang nota=945",
       "evidence": ""
     },
     {
@@ -161,7 +161,7 @@
       "id": "TC-19",
       "name": "Ralat konsol pelayar",
       "status": "WARN",
-      "note": "2 ralat: Failed to load resource: net::ERR_NAME_NOT_RESOLVED | TypeError: Failed to fetch\n    at U$ (http://localhost:4173/assets/index-RSrvbZFD.js:130:1388)\n    at sc (http://localhost:4173/assets/index-RSrvbZFD.js:130:23605)\n    at Object.wi (http://localhost:4173/assets/index-RSrvbZFD.js:5:9843)\n    at yi",
+      "note": "2 ralat: Failed to load resource: net::ERR_NAME_NOT_RESOLVED | TypeError: Failed to fetch\n    at W$ (http://localhost:4173/assets/index-C90mmbzY.js:130:1388)\n    at Aa (http://localhost:4173/assets/index-C90mmbzY.js:130:24645)\n    at Object.yi (http://localhost:4173/assets/index-C90mmbzY.js:5:9843)\n    at Mi",
       "evidence": ""
     }
   ]

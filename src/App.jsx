@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { get, set, del } from 'idb-keyval';
-import { Recorder, formatClock } from './lib/recorder';
+import { Recorder, formatClock, getAudioDuration } from './lib/recorder';
 import { transcribe, loadASR, MODELS, LANGUAGES } from './lib/whisper';
 import {
   transcribeWithOpenCode,
@@ -52,6 +52,7 @@ import {
 } from './components/icons';
 
 const MEETINGS_KEY = 'notamesyuarat:meetings';
+const AUDIO_KEY = 'notamesyuarat:audio'; // KL-001: audio disimpan bersama rekod
 const THEME_KEY = 'notamesyuarat:theme';
 
 // Tetapkan tema pada <html> dan pulangkan nilai seterusnya.
@@ -187,6 +188,8 @@ export default function App() {
   const [meetings, setMeetings] = useState([]);
   const [meetingsLoading, setMeetingsLoading] = useState(true); // UX-AUDIT #3
   const [savedSig, setSavedSig] = useState(null); // DEF-FUNC-005
+  const [audioDuration, setAudioDuration] = useState(0); // KL-002
+  const [currentId, setCurrentId] = useState(null); // KL-010: id rekod yang sedang disunting
   const [toast, setToast] = useState('');
   const [theme, setTheme] = useState(getStoredTheme());
   const [kebabOpen, setKebabOpen] = useState(null);
@@ -200,7 +203,7 @@ export default function App() {
     const ids = (await get(MEETINGS_KEY)) || [];
     const items = await Promise.all(ids.map((id) => get(`${MEETINGS_KEY}:${id}`)));
     const list = items.filter(Boolean);
-    list.sort((a, b) => b.createdAt - a.createdAt);
+    list.sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
     setMeetings(list);
     setMeetingsLoading(false);
   }, []);
@@ -289,6 +292,9 @@ export default function App() {
       setIsRecording(true);
       setElapsed(0);
       setAudioBlob(null);
+      setAudioDuration(0);
+      setCurrentId(null);
+      setSavedSig(null);
       setTranscript('');
       setMinutes('');
       setStatus('');
@@ -309,12 +315,15 @@ export default function App() {
     const name = `rakaman-notamesyuarat-${new Date().toISOString().replace(/[:.]/g, '-')}.webm`;
     setAudioName(`${name} (${formatBytes(blob.size)})`);
     setAudioUrl(URL.createObjectURL(blob));
+    setAudioDuration(elapsed);
+    setCurrentId(null);
+    setSavedSig(null);
     setStatus('Rakaman selesai.');
     setStep(2);
     maybeAutoUpload(blob, name);
   };
 
-  const acceptFile = (file) => {
+  const acceptFile = async (file) => {
     if (!file) return;
     if (!file.type.startsWith('audio/') && !file.type.startsWith('video/')) {
       setStatus('Format fail tidak disokong. Sila guna fail audio (mp3, m4a, wav, webm, ogg).');
@@ -324,10 +333,15 @@ export default function App() {
     setAudioBlob(file);
     setAudioName(`${file.name} (${formatBytes(file.size)})`);
     setAudioUrl(URL.createObjectURL(file));
+    setAudioDuration(0);
+    setCurrentId(null);
+    setSavedSig(null);
     setTranscript('');
     setMinutes('');
     setStatus(`Fail "${file.name}" sedia untuk ditranskripsi.`);
     setStep(2);
+    // KL-002: baca tempoh sebenar fail (sebelum ini durationSec sentiasa 0)
+    getAudioDuration(file).then(setAudioDuration).catch(() => {});
     maybeAutoUpload(file, file.name);
   };
 
@@ -412,36 +426,73 @@ export default function App() {
   };
 
   const saveMeeting = async () => {
+    const isUpdate = !!currentId;
+    const id = currentId || crypto.randomUUID();
     const title =
       details.tajuk ||
       minutes.match(/^# (.+)$/m)?.[1] ||
       `Mesyuarat ${new Date().toLocaleDateString('ms-MY')}`;
-    const item = {
-      id: crypto.randomUUID(),
-      title,
-      createdAt: Date.now(),
-      transcript,
-      minutes,
-      mode,
-      details,
-      status: 'Selesai',
-      durationSec: elapsed,
-      language,
-    };
-    await set(`${MEETINGS_KEY}:${item.id}`, item);
-    await set(MEETINGS_KEY, [...((await get(MEETINGS_KEY)) || []), item.id]);
-    await loadMeetings();
-    // DEF-FUNC-005: ingat apa yang telah disimpan — elak pendua tanpa pengesahan
-    setSavedSig(`${transcript}|${minutes}|${mode}`);
-    showToast('Mesyuarat disimpan');
+    const now = Date.now();
+    try {
+      const item = {
+        id,
+        title,
+        createdAt: now,
+        updatedAt: now,
+        transcript,
+        minutes,
+        mode,
+        details,
+        status: 'Selesai',
+        durationSec: audioDuration || elapsed,
+        language,
+        hasAudio: !!audioBlob,
+        audioName: audioName || '',
+      };
+      // KL-010: kemas kini rekod sedia ada, bukan cipta pendua
+      if (isUpdate) {
+        const existing = await get(`${MEETINGS_KEY}:${id}`);
+        item.createdAt = existing?.createdAt || now;
+      }
+      // KL-001: simpan audio bersama rekod. Guna ArrayBuffer — WebKit tidak
+      // menyokong penyimpanan Blob dalam IndexedDB. Kegagalan audio tidak
+      // menggagalkan simpanan nota.
+      if (audioBlob) {
+        try {
+          const buffer = await audioBlob.arrayBuffer();
+          await set(`${AUDIO_KEY}:${id}`, {
+            buffer,
+            name: audioName,
+            type: audioBlob.type || 'audio/webm',
+          });
+        } catch (err) {
+          console.error(err);
+          showToast('Nota disimpan, tetapi audio gagal disimpan (storan penuh?).');
+        }
+      }
+      await set(`${MEETINGS_KEY}:${id}`, item);
+      if (!isUpdate) {
+        await set(MEETINGS_KEY, [...((await get(MEETINGS_KEY)) || []), id]);
+      }
+      await loadMeetings();
+      setCurrentId(id);
+      // DEF-FUNC-005: ingat apa yang telah disimpan — elak pendua tanpa pengesahan
+      setSavedSig(`${transcript}|${minutes}|${mode}`);
+      showToast(isUpdate ? 'Mesyuarat dikemas kini' : 'Mesyuarat disimpan');
+    } catch (err) {
+      console.error(err);
+      showToast(`Gagal menyimpan: ${err?.message || 'ruang storan tidak mencukupi'}`);
+    }
   };
 
   const removeMeeting = async (id) => {
     // DEF-UX-004: pengesahan sebelum pemadaman kekal
     if (!window.confirm('Padam mesyuarat ini secara kekal?')) return;
     await del(`${MEETINGS_KEY}:${id}`);
+    await del(`${AUDIO_KEY}:${id}`).catch(() => {});
     const ids = ((await get(MEETINGS_KEY)) || []).filter((x) => x !== id);
     await set(MEETINGS_KEY, ids);
+    if (currentId === id) setCurrentId(null);
     await loadMeetings();
     showToast('Mesyuarat dipadam');
   };
@@ -454,9 +505,27 @@ export default function App() {
     setMode(item.mode || 'minit');
     setDetails(item.details || EMPTY_DETAILS);
     setLanguage(item.language || 'ms');
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
     setAudioBlob(null);
     setAudioUrl(null);
     setAudioName('');
+    setAudioDuration(0);
+    // KL-001: pulihkan audio yang disimpan bersama rekod
+    try {
+      const saved = await get(`${AUDIO_KEY}:${id}`);
+      const blob = saved?.buffer
+        ? new Blob([saved.buffer], { type: saved.type || 'audio/webm' })
+        : saved?.blob || null;
+      if (blob) {
+        setAudioBlob(blob);
+        setAudioName(saved.name || item.audioName || 'Audio mesyuarat');
+        setAudioUrl(URL.createObjectURL(blob));
+        setAudioDuration(item.durationSec || 0);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    setCurrentId(id); // KL-010: simpanan seterusnya mengemas kini rekod ini
     setSavedSig(null); // DEF-FUNC-005: mesyuarat lain — butang Simpan aktif semula
     setStatus('Dibuka daripada simpanan.');
     setStep(3);
@@ -1119,6 +1188,9 @@ export default function App() {
                   </>
                 )}
               </div>
+              {currentId && audioBlob && (
+                <p className="hint">Audio disimpan bersama mesyuarat ini — buka langkah Transkrip untuk main semula.</p>
+              )}
 
               {busy === 'minutes' && status && <p className="hint status-animated">{status}</p>}
               <textarea
@@ -1167,7 +1239,7 @@ export default function App() {
                     <h3>{m.title || 'Tanpa tajuk'}</h3>
                     <span className="meeting-meta">
                       {d.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' })}
-                      {m.durationSec ? ` • ${Math.round(m.durationSec / 60)} min` : ''}
+                      {m.durationSec ? ` • ${m.durationSec >= 60 ? `${Math.round(m.durationSec / 60)} min` : `${m.durationSec} s`}` : ''}
                       {m.language ? ` • ${LANGUAGES.find((l) => l.id === m.language)?.label || m.language}` : ''}
                     </span>
                   </div>

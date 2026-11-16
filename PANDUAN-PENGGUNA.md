@@ -182,8 +182,12 @@ Hasil nota muncul dalam kotak teks dan boleh diedit.
 
 Klik **Simpan**. Mesyuarat akan muncul dalam senarai **Mesyuarat terkini**.
 
-Butang Simpan akan **dilumpuhkan** selepas disimpan. Ia aktif semula apabila
-anda mengubah transkrip atau nota — ini mengelakkan rekod pendua.
+- **Audio disimpan bersama rekod** dalam storan pelayar, jadi anda boleh
+  memainkan semula rakaman kemudian melalui langkah Transkrip.
+- Menyunting mesyuarat yang dibuka dan menekan Simpan akan
+  **mengemas kini rekod sedia ada** — bukan mencipta pendua.
+- Butang Simpan akan **dilumpuhkan** selepas disimpan. Ia aktif semula
+  apabila anda mengubah transkrip atau nota.
 
 ### 5.4 Eksport
 
@@ -204,9 +208,10 @@ Dalam panel **Mesyuarat terkini**:
 - **Padam** — klik ikon ⋮ → **Padam**. Dialog pengesahan akan muncul; pilih
   **Batal** jika tersilap.
 
-> ⚠️ **Penting:** rakaman audio asal **tidak disimpan** bersama mesyuarat
-> (hanya transkrip dan nota disimpan). Simpan fail audio anda sendiri jika
-> diperlukan kemudian.
+> ℹ️ **Storan:** audio disimpan bersama rekod dalam IndexedDB pelayar pada
+> peranti ini. Saiz storan pelayar adalah terhad — padam mesyuarat lama jika
+> ruang penuh. Fail audio tidak disegerakkan antara peranti; gunakan eksport
+> atau awan untuk salinan tambahan.
 
 Data mesyuarat disimpan dalam **IndexedDB pelayar** pada peranti ini sahaja.
 Ia tidak disegerakkan antara peranti.
@@ -274,6 +279,7 @@ Pilihan tema disimpan untuk sesi seterusnya. Aplikasi juga menyokong
 |---|---|---|
 | Audio (mod on-device) | Memori pelayar sahaja | ❌ Tidak |
 | Transkrip & nota | IndexedDB pelayar | ❌ Tidak |
+| Audio mesyuarat (disimpan bersama rekod) | IndexedDB pelayar | ❌ Tidak |
 | API key OpenCode | localStorage pelayar | Hanya kepada OpenCode apabila digunakan |
 | Kredensial WebDAV | localStorage pelayar | Hanya kepada pelayan WebDAV anda |
 | OAuth token Drive | Memori pelayar (luput ~1 jam) | Hanya kepada Google API |
@@ -339,9 +345,10 @@ Melayu, English, Indonesia, Mandarin, Tamil, dan mod auto-kenal.
 
 ## 12. Batasan yang diketahui
 
-- Rakaman audio **tidak disimpan** dalam rekod mesyuarat.
 - Audio yang sangat panjang mungkin memerlukan masa pemprosesan lama dan
   memori besar — pecahkan kepada bahagian jika perlu.
+- Storan audio tertakluk pada kuota IndexedDB pelayar; padam rekod lama jika
+  ruang tidak mencukupi.
 - Kualiti transkripsi bergantung pada kualiti audio; bising latar belakang
   menjejaskan ketepatan.
 - Nota auto ialah draf — sentiasa semak sebelum diedarkan.
@@ -364,5 +371,5 @@ Dokumentasi audit dan keputusan kejuruteraan: folder [`audit/`](audit/).
 
 ---
 
-*Panduan ini dikemas kini pada 16 November 2026. Jika antara muka berubah,
+*Panduan ini dikemas kini pada 16 November 2026 (v1.1). Jika antara muka berubah,
 sila kemas kini panduan ini bersama perubahan tersebut.*

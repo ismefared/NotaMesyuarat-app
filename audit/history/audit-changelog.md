@@ -90,3 +90,19 @@
 - TASK-005: regresi penuh — 0 FAIL fungsional; Vitest 9/9.
 - Keputusan: READY. 11 dapatan diverifikasi kumulatif, 0 terbuka
   (1 diterima risiko: SEC-001). Bundle utama ‑49% (1,471 → 754 kB).
+
+## 16 November 2026 — Kitaran v5: AAERA/CAQA v2.0 (penyelesaian batasan manual)
+
+- KL-001: Audio kini disimpan bersama rekod (IndexedDB, ArrayBuffer), dipulihkan
+  dan dipadam bersama — VERIFIED (KL-001, KL-001b).
+- KL-002: Tempoh audio fail muat naik dibaca dan dipaparkan — VERIFIED.
+- KL-010 / DEF-DATA-012: Edit mesyuarat mengemas kini rekod sedia ada — VERIFIED.
+- DEF-COMPAT-013 (baharu): WebKit menolak Blob dalam IndexedDB — dibetulkan
+  dengan ArrayBuffer + ralat selamat-null; WebKit save=PASS.
+- KL-005: WebKit & Firefox dipasang dan diuji — 12/12 semakan silang pelayar PASS.
+- KL-008: Ujian rakaman mic automatik BLOCKED (getUserMedia menggantung dalam sandbox).
+- KL-009: Lighthouse diganti navigation timing (TTFB 3ms, Load 47ms, FP 20ms median).
+- Regresi: 18 PASS, 0 FAIL aplikasi; Vitest 9/9; npm audit 0.
+- Manual pengguna v1.1 (MD + PDF 19 halaman) dikemas kini; aplikasi v0.2.0.
+- 10 dokumen serahan dijana dalam docs/.
+- Keputusan: READY WITH DOCUMENTED EXCEPTIONS.

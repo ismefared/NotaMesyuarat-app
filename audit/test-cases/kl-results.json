@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-11-16T05:20:32.259Z",
+  "results": [
+    {
+      "id": "KL-008",
+      "name": "Rakaman mikrofon maya",
+      "status": "BLOCKED",
+      "note": "getUserMedia menggantung dalam Chromium headless/headed persekitaran ini (kebenaran peranti) — bukan ralat aplikasi"
+    },
+    {
+      "id": "KL-002",
+      "name": "Tempoh fail muat naik dipaparkan",
+      "status": "PASS",
+      "note": "meta=\"01:20 PTG • 3 s • Bahasa Melayu\""
+    },
+    {
+      "id": "KL-001",
+      "name": "Audio dipulihkan selepas muat semula & buka",
+      "status": "PASS",
+      "note": "audio=1, src=blob:http://…"
+    },
+    {
+      "id": "KL-010",
+      "name": "Edit mesyuarat → kemas kini in-place",
+      "status": "PASS",
+      "note": "rekod sebelum=1, selepas=1, toast=\"Mesyuarat dikemas kini\", kandungan dikemas kini=true"
+    },
+    {
+      "id": "KL-001b",
+      "name": "Padam mesyuarat (audio bersama)",
+      "status": "PASS",
+      "note": "rekod tinggal=0"
+    },
+    {
+      "id": "ERR",
+      "name": "Ralat JS semasa sesi",
+      "status": "PASS",
+      "note": ""
+    }
+  ]
+}

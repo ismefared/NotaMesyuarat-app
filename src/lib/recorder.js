@@ -71,6 +71,34 @@ export class Recorder {
   }
 }
 
+/**
+ * Baca tempoh audio (dalam saat) daripada blob/fail melalui metadata.
+ * KL-002: digunakan untuk memaparkan tempoh dan menyimpan durationSec
+ * yang betul bagi fail muat naik (sebelum ini sentiasa 0).
+ * Kembalikan 0 jika metadata tidak dapat dibaca.
+ */
+export function getAudioDuration(blob) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(blob);
+    const el = new Audio();
+    let settled = false;
+    const done = (value) => {
+      if (settled) return;
+      settled = true;
+      URL.revokeObjectURL(url);
+      el.src = '';
+      resolve(value);
+    };
+    el.preload = 'metadata';
+    el.onloadedmetadata = () => {
+      const d = Number.isFinite(el.duration) ? Math.round(el.duration) : 0;
+      done(d);
+    };
+    el.onerror = () => done(0);
+    el.src = url;
+  });
+}
+
 export function formatDuration(totalSeconds) {
   const h = Math.floor(totalSeconds / 3600);
   const m = Math.floor((totalSeconds % 3600) / 60);

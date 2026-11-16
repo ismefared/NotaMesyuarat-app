@@ -277,6 +277,77 @@
       "assignedAgent": "Accessibility Assessment (v3)",
       "verificationStatus": "Diverifikasi melalui regresi penuh AAERA (14 Nov)",
       "resolution": "Dibaiki AAERA TASK-002: role=tab + aria-selected ditambah; axe semula = 0 serious/critical"
+    },
+    {
+      "id": "DEF-DATA-011",
+      "title": "Audio tidak disimpan bersama rekod mesyuarat (KL-001)",
+      "module": "src/App.jsx",
+      "category": "functional-gap",
+      "description": "saveMeeting tidak menyimpan audio; pengguna kehilangan rakaman asal.",
+      "preconditions": "Simpan mesyuarat",
+      "repro": "Simpan → muat semula → buka: tiada audio.",
+      "expected": "Audio boleh dimainkan semula",
+      "actual": "Tiada audio disimpan",
+      "severity": "MEDIUM",
+      "priority": "P1",
+      "environment": "Chromium/WebKit/Firefox, 16 Nov 2026",
+      "evidence": "audit/test-cases/kl-results.json KL-001/KL-001b",
+      "rootCause": "Tiada penulisan audio ke IndexedDB",
+      "recommendedFix": "Simpan ArrayBuffer + pulihkan/padam bersama rekod",
+      "relatedTestIds": [
+        "KL-001",
+        "KL-001b"
+      ],
+      "status": "VERIFIED",
+      "assignedAgent": "Bug Remediation",
+      "verificationStatus": "Diverifikasi e2e"
+    },
+    {
+      "id": "DEF-DATA-012",
+      "title": "Edit mesyuarat tersimpan mencipta pendua (KL-010)",
+      "module": "src/App.jsx saveMeeting()",
+      "category": "data-integrity",
+      "description": "Setiap simpan mencipta randomUUID walaupun mesyuarat dibuka; edit menghasilkan pendua.",
+      "preconditions": "Buka mesyuarat, edit, simpan",
+      "repro": "Buka → edit nota → Simpan → 2 rekod.",
+      "expected": "Rekod dikemas kini",
+      "actual": "Rekod baharu dicipta",
+      "severity": "MEDIUM",
+      "priority": "P1",
+      "environment": "Chromium",
+      "evidence": "kl-results.json KL-010",
+      "rootCause": "Tiada penjejakan id semasa",
+      "recommendedFix": "currentId + update-in-place + updatedAt",
+      "relatedTestIds": [
+        "KL-010",
+        "TC-10"
+      ],
+      "status": "VERIFIED",
+      "assignedAgent": "Bug Remediation",
+      "verificationStatus": "Diverifikasi e2e"
+    },
+    {
+      "id": "DEF-COMPAT-013",
+      "title": "WebKit: simpan gagal — IndexedDB menolak Blob; ralat null tidak dikendalikan",
+      "module": "src/App.jsx, IndexedDB",
+      "category": "compatibility",
+      "description": "WebKit menolak penyimpanan Blob dalam IndexedDB (blob-put-error: null); catch mengakses err.message lalu melempar TypeError.",
+      "preconditions": "WebKit + simpan mesyuarat dengan audio",
+      "repro": "Simpan dalam WebKit",
+      "expected": "Mesyuarat disimpan",
+      "actual": "Simpan gagal, unhandled rejection",
+      "severity": "MEDIUM",
+      "priority": "P2",
+      "environment": "Playwright WebKit 1.59.1",
+      "evidence": "audit/test-cases/cross-browser-results.json; probe IndexedDB",
+      "rootCause": "Blob tidak structured-clone dalam WebKit IDB",
+      "recommendedFix": "ArrayBuffer + err?.message",
+      "relatedTestIds": [
+        "XB-webkit"
+      ],
+      "status": "VERIFIED",
+      "assignedAgent": "Compatibility/QA",
+      "verificationStatus": "WebKit save=PASS selepas pembetulan"
     }
   ]
 }

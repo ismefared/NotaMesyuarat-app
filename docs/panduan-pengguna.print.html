@@ -2,7 +2,7 @@
 <html lang="ms">
 <head>
 <meta charset="utf-8">
-<title>Panduan Pengguna NotaMesyuarat v1.0</title>
+<title>Panduan Pengguna NotaMesyuarat v1.1</title>
 <meta name="author" content="Pasukan Projek NotaMesyuarat">
 <meta name="description" content="Panduan pengguna rasmi aplikasi NotaMesyuarat — rakaman, transkripsi dan penjanaan minit mesyuarat.">
 <meta name="keywords" content="NotaMesyuarat, panduan pengguna, minit mesyuarat, transkripsi, dokumen serahan">
@@ -17,7 +17,7 @@
       font-size: 7.5pt; color: #6b7280;
     }
     @top-right {
-      content: "NM-PG-001 · Versi 1.0";
+      content: "NM-PG-001 · Versi 1.1";
       font-family: "Helvetica Neue", Arial, sans-serif;
       font-size: 7.5pt; color: #6b7280;
     }
@@ -126,7 +126,7 @@
     <h2>Manual Pengguna Aplikasi<br>NotaMesyuarat</h2>
     <table class="cover-meta">
       <tr><td>ID Dokumen</td><td>NM-PG-001</td></tr>
-      <tr><td>Versi</td><td>1.0</td></tr>
+      <tr><td>Versi</td><td>1.1</td></tr>
       <tr><td>Tarikh Keluaran</td><td>16 November 2026</td></tr>
       <tr><td>Status</td><td>Muktamad (Final)</td></tr>
       <tr><td>Klasifikasi</td><td>Dalaman</td></tr>
@@ -136,7 +136,7 @@
     </table>
   </div>
   <div class="cover-foot">
-    <span>NotaMesyuarat · Panduan Pengguna v1.0</span>
+    <span>NotaMesyuarat · Panduan Pengguna v1.1</span>
     <span>Hak cipta terpelihara © 2026</span>
   </div>
 </div>
@@ -149,7 +149,7 @@
   <table class="doc-control">
     <tr><td>Nama Dokumen</td><td>Manual Pengguna Aplikasi NotaMesyuarat</td></tr>
     <tr><td>ID Dokumen</td><td>NM-PG-001</td></tr>
-    <tr><td>Versi</td><td>1.0</td></tr>
+    <tr><td>Versi</td><td>1.1</td></tr>
     <tr><td>Status</td><td>Muktamad (Final) — untuk kelulusan pemilik produk</td></tr>
     <tr><td>Tarikh</td><td>16 November 2026</td></tr>
     <tr><td>Penulis</td><td>Pasukan Projek NotaMesyuarat</td></tr>
@@ -166,6 +166,7 @@
     </thead>
     <tbody>
       <tr><td>1.0</td><td>16 Nov 2026</td><td>Keluaran pertama — selaras dengan aplikasi selepas pelaksanaan pembetulan audit (AAERA).</td><td>Pasukan Projek</td></tr>
+      <tr><td>1.1</td><td>16 Nov 2026</td><td>Audio kini disimpan bersama rekod mesyuarat; penyuntingan mesyuarat tersimpan mengemas kini rekod sedia ada; tempoh audio dipaparkan; dokumentasi privasi dan storan dikemas kini.</td><td>Pasukan Projek</td></tr>
     </tbody>
   </table>
 
@@ -414,9 +415,12 @@
   keputusan dan item tindakan sebelum diedarkan.</div>
 
   <h3>6.3 Simpan</h3>
-  <p>Klik <strong>Simpan</strong> untuk menyimpan rekod ke dalam pelayar.
-  Butang Simpan dilumpuhkan selepas penyimpanan dan aktif semula apabila
-  kandungan berubah — ini mengelakkan rekod pendua.</p>
+  <p>Klik <strong>Simpan</strong> untuk menyimpan rekod ke dalam pelayar.</p>
+  <ul>
+    <li><strong>Audio disimpan bersama rekod</strong> dalam storan pelayar dan boleh dimainkan semula melalui langkah Transkrip.</li>
+    <li>Menyunting mesyuarat yang dibuka dan menekan Simpan akan <strong>mengemas kini rekod sedia ada</strong>, bukan mencipta pendua.</li>
+    <li>Butang Simpan dilumpuhkan selepas penyimpanan dan aktif semula apabila kandungan berubah.</li>
+  </ul>
 
   <h3>6.4 Eksport</h3>
   <table>
@@ -440,9 +444,10 @@
     <li><strong>Buka</strong> — klik ikon ⋮ → <strong>Buka</strong> untuk memuatkan semula transkrip dan nota.</li>
     <li><strong>Padam</strong> — klik ikon ⋮ → <strong>Padam</strong>. Dialog pengesahan akan dipaparkan; pilih Batal jika tersilap.</li>
   </ul>
-  <div class="warn"><strong>Penting:</strong> fail audio asal tidak disimpan
-  bersama rekod mesyuarat — hanya transkrip dan nota disimpan. Simpan fail
-  audio anda sendiri jika diperlukan kemudian.</div>
+  <div class="note"><strong>Storan:</strong> audio disimpan bersama rekod dalam
+  IndexedDB pelayar pada peranti ini. Saiz storan pelayar adalah terhad —
+  padam mesyuarat lama jika ruang penuh. Fail audio tidak disegerakkan antara
+  peranti; gunakan eksport atau awan untuk salinan tambahan.</div>
   <p>Data disimpan dalam IndexedDB pelayar pada peranti ini sahaja dan
   tidak disegerakkan antara peranti.</p>
 </section>
@@ -514,6 +519,7 @@
     <tbody>
       <tr><td>Audio (mod on-device)</td><td>Memori pelayar sahaja</td><td>Tidak</td></tr>
       <tr><td>Transkrip dan nota</td><td>IndexedDB pelayar</td><td>Tidak</td></tr>
+      <tr><td>Audio mesyuarat (disimpan bersama rekod)</td><td>IndexedDB pelayar</td><td>Tidak</td></tr>
       <tr><td>API key OpenCode</td><td>localStorage pelayar</td><td>Hanya kepada OpenCode apabila digunakan</td></tr>
       <tr><td>Kredensial WebDAV</td><td>localStorage pelayar</td><td>Hanya kepada pelayan WebDAV pengguna</td></tr>
       <tr><td>Token OAuth Drive</td><td>Memori pelayar (luput ~1 jam)</td><td>Hanya kepada Google API</td></tr>
@@ -583,8 +589,8 @@
   <div class="doc-id">NM-PG-001 · Bahagian 13</div>
   <h2>13. Batasan yang Diketahui</h2>
   <ul>
-    <li>Rakaman audio tidak disimpan dalam rekod mesyuarat.</li>
     <li>Audio sangat panjang memerlukan masa dan memori yang lebih tinggi — pecahkan kepada bahagian jika perlu.</li>
+    <li>Storan audio tertakluk pada kuota IndexedDB pelayar; padam rekod lama jika ruang tidak mencukupi.</li>
     <li>Kualiti transkripsi bergantung pada kualiti audio; bising latar belakang menjejaskan ketepatan.</li>
     <li>Nota automatik ialah draf dan mesti disemak sebelum diedarkan.</li>
     <li>WebKit (Safari) dan Firefox belum diuji sepenuhnya; Chrome/Edge/Chromium disyorkan.</li>
