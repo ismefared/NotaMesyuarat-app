@@ -50,9 +50,27 @@ Jalankan sumber kebenaran: `test-cases/browser-test-results.json` (Playwright).
 | cloud.js / gdrive.js | ✅ | sebahagian | WebDAV ralat sahaja; Drive tidak diuji |
 | sw.js / manifest | ✅ | ❌ | semakan statik |
 
-## Kelemahan liputan
+## Kelemahan liputan (status pada kitaran v5)
 
-1. Rakaman mikrofon (laluan `Recorder`) — tidak diuji secara automatik.
-2. Model base/small, audio panjang sebenar, fail video.
-3. Ujian pelayar silang (WebKit/Firefox).
-4. Auto-upload awan (kod rosak — lihat DEF-FUNC-001; tiada ujian mungkin).
+1. Rakaman mikrofon (laluan `Recorder`) — masih BLOCKED: `getUserMedia` menggantung dalam sandbox ujian (bukan ralat aplikasi).
+2. Model base/small, audio panjang sebenar, fail video — belum diuji e2e.
+3. Ujian pelayar silang — **diselesaikan sebahagian**: WebKit/Firefox smoke 12/12 PASS (bukan suite penuh).
+4. Auto-upload awan — kod dipulihkan (DEF-FUNC-001) dan disemak statik; e2e memerlukan pelayan WebDAV/Drive sebenar.
+
+
+---
+
+## Kemas kini Kitaran v5 (16 Nov 2026)
+
+| Kategori | Dijalankan | Lulus | Gagal | Disekat |
+|---|---|---|---|---|
+| Regresi fungsional | 20 | 20 (2 disahkan terarah) | 0 | 0 |
+| Batasan KL | 6 | 5 | 0 | 1 (KL-008 mic) |
+| Silang pelayar | 12 | 12 | 0 | 0 |
+| Unit Vitest | 9 | 9 | 0 | 0 |
+| Integrasi API | 4 | 4 | 0 | 0 |
+| Aksesibiliti axe | 4 | 4 | 0 | 0 |
+| **Jumlah** | **55** | **54** | **0** | **1** |
+
+Bukti: `test-cases/kl-results.json`, `cross-browser-results.json`,
+`v3-extra-results.json`, `browser-test-results.json`, `logs/run-v5-final.log`.

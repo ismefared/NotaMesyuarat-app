@@ -2,22 +2,21 @@
   "tool": "AIAAA",
   "version": "1.0.0",
   "application": "NotaMesyuarat",
-  "appVersion": "0.1.0",
-  "auditDate": "2026-11-14",
-  "gitCommit": "f1e6d32 (+ perubahan tidak dikomit Fasa 0-2)",
-  "uncommittedChanges": true,
+  "appVersion": "0.2.0",
+  "auditDate": "2026-11-16",
+  "gitCommit": "364fd35",
+  "uncommittedChanges": false,
   "environment": {
     "platform": "darwin (macOS 25.6.0)",
     "node": "v24.21.0",
     "npm": "11.19.0",
-    "browser": "Chromium (Playwright 1.59.1)",
+    "browser": "Playwright 1.59.1",
     "browsersTested": [
-      "chromium"
+      "chromium",
+      "webkit",
+      "firefox"
     ],
-    "browsersNotTested": [
-      "firefox",
-      "webkit"
-    ]
+    "browsersNotTested": []
   },
   "testTarget": {
     "server": "http://localhost:4173",
@@ -34,13 +33,13 @@
     "integration",
     "regression"
   ],
-  "readOnly": true,
+  "readOnly": false,
   "knownLimitations": [
-    "OpenCode transkripsi/jana nota tidak diuji e2e (perlu API key sebenar)",
-    "Google Drive tidak diuji langsung (perlu OAuth Client ID)",
-    "Rakaman mikrofon tidak diuji automatik (semakan statik sahaja)",
-    "Lighthouse tidak dijalankan"
+    "KL-006: OpenCode e2e memerlukan API key sebenar (BLOCKED luaran)",
+    "KL-007: Google Drive e2e memerlukan OAuth Client ID (BLOCKED luaran)",
+    "KL-008: Rakaman mikrofon automatik disekat sandbox getUserMedia",
+    "KL-009: Lighthouse tidak dijalankan; diganti navigation timing"
   ],
-  "cycle": 3,
-  "cycleNote": "Kitaran v3: AUDIT PENUH diluluskan (10 fasa). Baca-sahaja: tiada ubahan kod. Merangkumi aksesibiliti axe-core, prestasi navigation-timing, dan ujian integrasi API melalui intercept rangkaian — baharu berbanding v2."
+  "cycle": 5,
+  "cycleNote": "Kitaran v5: penyelesaian batasan manual + CAQA v2.0. Pelaksanaan: audio disimpan, edit-in-place, tempoh audio, keserasian WebKit. Ujian silang pelayar Chromium/WebKit/Firefox. Keputusan: READY WITH DOCUMENTED EXCEPTIONS."
 }

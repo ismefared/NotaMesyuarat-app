@@ -18,6 +18,14 @@
       "description": "Audit semula selepas pelaksanaan Fasa 0-2",
       "results": "20 kes: 17 pass, 1 pass-dengan-nota (TC-10, P3 ditangguhkan), 0 fail; TC-06/TC-17 disahkan PASS melalui ujian terarah",
       "fails": []
+    },
+    {
+      "date": "2026-11-16",
+      "cycle": 5,
+      "type": "pelaksanaan + CAQA v2.0",
+      "description": "Selepas penyelesaian KL-001/002/005/010 dan pembetulan DEF-COMPAT-013",
+      "results": "55 semakan: 54 PASS, 0 FAIL aplikasi, 1 BLOCKED (KL-008 mic sandbox); silang pelayar 12/12; unit 9/9",
+      "fails": []
     }
   ]
 }

@@ -1,26 +1,24 @@
 {
-  "auditDate": "2026-11-14",
-  "cycle": 2,
-  "gitCommit": "f1e6d32 (+ Fasa 0-2 tidak dikomit)",
-  "tool": "playwright-1.59.1-chromium",
-  "results": "lihat ../test-cases/browser-test-results.json",
+  "auditDate": "2026-11-16",
+  "cycle": 5,
+  "gitCommit": "364fd35",
+  "tool": "playwright-1.59.1 (chromium/webkit/firefox) + vitest 5.1 + axe-core 4.10.2",
+  "results": "browser-test-results.json, kl-results.json, cross-browser-results.json, v3-extra-results.json",
   "summary": {
-    "total": 20,
-    "pass": 17,
-    "passWithNotes": 1,
-    "scriptArtifactsResolved": 2,
+    "total": 55,
+    "pass": 54,
     "fail": 0,
-    "blocked": 0
+    "blocked": 1,
+    "blockedReason": "KL-008 getUserMedia sandbox"
   },
   "notes": [
-    "TC-06 dan TC-17 kegagalan skrip (pemilih diketahui) — disahkan PASS melalui ujian terarah",
-    "TC-10 (pendua Simpan, P3) kekal ditangguhkan",
-    "TC-19: hanya 2 ralat dijangka daripada ujian WebDAV domain .invalid; ReferenceError DEF-FUNC-001 telah hilang"
+    "TC-06/TC-17 kegagalan skrip diketahui — disahkan PASS melalui ujian terarah",
+    "Silang pelayar 12/12 PASS selepas pembetulan DEF-COMPAT-013",
+    "Vitest 9/9; npm audit 0"
   ],
-  "openDefects": [
-    "SEC-003 (2 high sharp, tertangguh)",
-    "SEC-001 (teks jelas localStorage, mitigasi CSP)",
-    "SEC-002 (skop OAuth luas)",
-    "DEF-FUNC-005 (P3, ditangguhkan)"
+  "openDefects": [],
+  "acceptedRisks": [
+    "SEC-001 kredensial localStorage (CSP mitigasi)",
+    "CSP unsafe-eval untuk ONNX Runtime"
   ]
 }
