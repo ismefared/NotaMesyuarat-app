@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Panduan Pengguna NotaMesyuarat v1.0</title>
+<meta name="author" content="Pasukan Projek NotaMesyuarat">
+<meta name="description" content="Panduan pengguna rasmi aplikasi NotaMesyuarat — rakaman, transkripsi dan penjanaan minit mesyuarat.">
+<meta name="keywords" content="NotaMesyuarat, panduan pengguna, minit mesyuarat, transkripsi, dokumen serahan">
+<style>
+  /* ===== Dokumen rasmi A4 ===== */
+  @page {
+    size: A4;
+    margin: 24mm 20mm 22mm 20mm;
+    @top-left {
+      content: "NotaMesyuarat — Panduan Pengguna";
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: 7.5pt; color: #6b7280;
+    }
+    @top-right {
+      content: "NM-PG-001 · Versi 1.0";
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: 7.5pt; color: #6b7280;
+    }
+    @bottom-left {
+      content: "Klasifikasi: Dalaman";
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: 7.5pt; color: #6b7280;
+    }
+    @bottom-right {
+      content: "Halaman " counter(page) " daripada " counter(pages);
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: 7.5pt; color: #6b7280;
+    }
+  }
+  @page cover { margin: 0; @top-left { content: none } @top-right { content: none } @bottom-left { content: none } @bottom-right { content: none } }
+  @page frontmatter { @bottom-right { content: "Halaman " counter(page) " daripada " counter(pages); } }
+
+  html { font-size: 10.5pt; }
+  body {
+    font-family: "Helvetica Neue", Arial, "Segoe UI", sans-serif;
+    color: #1f2933; line-height: 1.55; margin: 0;
+    -webkit-print-color-adjust: exact;
+  }
+  h1, h2, h3 { color: #0f3d3a; line-height: 1.25; page-break-after: avoid; }
+  h2 {
+    font-size: 15pt; margin: 22px 0 10px; padding-bottom: 6px;
+    border-bottom: 2px solid #0f766e;
+    string-set: sectiontitle content();
+  }
+  h3 { font-size: 11.5pt; margin: 16px 0 6px; }
+  p { margin: 0 0 9px; text-align: justify; }
+  ul, ol { margin: 4px 0 10px 20px; }
+  li { margin-bottom: 4px; }
+  table {
+    width: 100%; border-collapse: collapse; margin: 10px 0 14px;
+    font-size: 9pt; page-break-inside: avoid;
+  }
+  th {
+    background: #eef6f4; color: #0f3d3a; text-align: left;
+    padding: 6px 8px; border: 1px solid #cfd8d5; font-weight: 600;
+  }
+  td { padding: 5px 8px; border: 1px solid #d8dfdc; vertical-align: top; }
+  code {
+    font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 8.5pt;
+    background: #f3f4f2; padding: 1px 4px; border-radius: 3px;
+  }
+  .note {
+    background: #f4f7f6; border-left: 3px solid #0f766e;
+    padding: 9px 12px; margin: 10px 0 14px; font-size: 9.3pt;
+    page-break-inside: avoid;
+  }
+  .warn {
+    background: #fdf6ec; border-left: 3px solid #b45309;
+    padding: 9px 12px; margin: 10px 0 14px; font-size: 9.3pt;
+    page-break-inside: avoid;
+  }
+  .cover { page: cover; height: 297mm; display: flex; flex-direction: column; }
+  .cover-band { background: #0f3d3a; height: 88mm; color: #fff; padding: 26mm 22mm 0; box-sizing: border-box; }
+  .cover-brand { font-size: 10pt; letter-spacing: 0.18em; text-transform: uppercase; color: #9fd8cf; }
+  .cover-band h1 { color: #fff; font-size: 30pt; margin: 8mm 0 2mm; font-weight: 700; }
+  .cover-band .sub { color: #cfe9e4; font-size: 12pt; }
+  .cover-body { padding: 18mm 22mm 0; flex: 1; }
+  .cover-body .doctype { font-size: 9pt; letter-spacing: 0.12em; text-transform: uppercase; color: #6b7280; }
+  .cover-body h2 { border: none; font-size: 20pt; margin: 3mm 0 10mm; padding: 0; color: #0f3d3a; }
+  .cover-meta { width: 100%; font-size: 10pt; border: none; }
+  .cover-meta td { border: none; padding: 3px 0; }
+  .cover-meta td:first-child { width: 42mm; color: #6b7280; }
+  .cover-foot {
+    border-top: 2px solid #0f3d3a; margin: 0 22mm; padding: 4mm 0 12mm;
+    font-size: 8.5pt; color: #6b7280;
+    display: flex; justify-content: space-between;
+  }
+
+  /* ===== Halaman hadapan ===== */
+  .frontmatter h2 { string-set: sectiontitle content(); }
+  .doc-control td:first-child { width: 48mm; font-weight: 600; background: #fafbfa; }
+  .doc-control td { font-size: 9pt; }
+  .sig-table td { height: 12mm; }
+
+  /* ===== TOC ===== */
+  .toc { page-break-before: always; page-break-after: always; }
+  .toc h2 { border-bottom: 2px solid #0f766e; }
+  .toc ol { list-style: none; margin: 8px 0 0; padding: 0; }
+  .toc li { margin: 0; padding: 5px 0; border-bottom: 1px dotted #c9d2ce; font-size: 10pt; }
+  .toc li a { color: #1f2933; text-decoration: none; display: flex; justify-content: space-between; }
+  .toc li a::after { content: target-counter(attr(href), page); color: #0f766e; font-weight: 600; }
+  .toc .lvl2 { padding-left: 14px; font-size: 9.3pt; color: #52605b; }
+
+  section.chapter { page-break-before: always; }
+  section.chapter:first-of-type { page-break-before: auto; }
+  .doc-id { font-size: 8pt; color: #6b7280; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+</style>
+<script src="https://unpkg.com/pagedjs@0.4.3/dist/paged.polyfill.js"></script>
+</head>
+<body>
+
+<!-- ================= KULIT ================= -->
+<div class="cover">
+  <div class="cover-band">
+    <div class="cover-brand">Dokumen Serahan Projek</div>
+    <h1>NotaMesyuarat</h1>
+    <div class="sub">Rakaman, transkripsi dan penjanaan minit mesyuarat</div>
+  </div>
+  <div class="cover-body">
+    <div class="doctype">Panduan Pengguna</div>
+    <h2>Manual Pengguna Aplikasi<br>NotaMesyuarat</h2>
+    <table class="cover-meta">
+      <tr><td>ID Dokumen</td><td>NM-PG-001</td></tr>
+      <tr><td>Versi</td><td>1.0</td></tr>
+      <tr><td>Tarikh Keluaran</td><td>16 November 2026</td></tr>
+      <tr><td>Status</td><td>Muktamad (Final)</td></tr>
+      <tr><td>Klasifikasi</td><td>Dalaman</td></tr>
+      <tr><td>Disediakan oleh</td><td>Pasukan Projek NotaMesyuarat</td></tr>
+      <tr><td>Pemilik Dokumen</td><td>Pemilik Produk NotaMesyuarat</td></tr>
+      <tr><td>Versi Aplikasi</td><td>0.1.0 (binaan produksi)</td></tr>
+    </table>
+  </div>
+  <div class="cover-foot">
+    <span>NotaMesyuarat · Panduan Pengguna v1.0</span>
+    <span>Hak cipta terpelihara © 2026</span>
+  </div>
+</div>
+
+<!-- ================= KAWALAN DOKUMEN ================= -->
+<section class="frontmatter">
+  <div class="doc-id">NM-PG-001</div>
+  <h2>Kawalan Dokumen</h2>
+
+  <table class="doc-control">
+    <tr><td>Nama Dokumen</td><td>Manual Pengguna Aplikasi NotaMesyuarat</td></tr>
+    <tr><td>ID Dokumen</td><td>NM-PG-001</td></tr>
+    <tr><td>Versi</td><td>1.0</td></tr>
+    <tr><td>Status</td><td>Muktamad (Final) — untuk kelulusan pemilik produk</td></tr>
+    <tr><td>Tarikh</td><td>16 November 2026</td></tr>
+    <tr><td>Penulis</td><td>Pasukan Projek NotaMesyuarat</td></tr>
+    <tr><td>Penyemak</td><td>Pemilik Produk NotaMesyuarat</td></tr>
+    <tr><td>Klasifikasi</td><td>Dalaman</td></tr>
+    <tr><td>Edaran</td><td>Pengguna aplikasi NotaMesyuarat; pasukan projek; pihak berkepentingan dalaman</td></tr>
+    <tr><td>Dokumen Berkaitan</td><td>NM-AU-001 Laporan Audit Aplikasi; README projek; AGENTS.md</td></tr>
+  </table>
+
+  <h3>Sejarah Semakan</h3>
+  <table>
+    <thead>
+      <tr><th>Versi</th><th>Tarikh</th><th>Penerangan Perubahan</th><th>Penulis</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1.0</td><td>16 Nov 2026</td><td>Keluaran pertama — selaras dengan aplikasi selepas pelaksanaan pembetulan audit (AAERA).</td><td>Pasukan Projek</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Kelulusan</h3>
+  <table class="sig-table">
+    <thead>
+      <tr><th>Peranan</th><th>Nama &amp; Jawatan</th><th>Tandatangan</th><th>Tarikh</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Disediakan oleh</td><td>Pasukan Projek NotaMesyuarat</td><td></td><td></td></tr>
+      <tr><td>Disemak oleh</td><td>Pemilik Produk</td><td></td><td></td></tr>
+      <tr><td>Diluluskan oleh</td><td>Pemilik Projek</td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    Dokumen ini menerangkan cara menggunakan aplikasi NotaMesyuarat. Ia
+    mencerminkan tingkah laku aplikasi pada tarikh keluaran dan hendaklah
+    disemak semula apabila antara muka atau fungsi utama berubah.
+  </div>
+</section>
+
+<!-- ================= KANDUNGAN ================= -->
+<div class="toc">
+  <h2>Kandungan</h2>
+  <ol>
+    <li><a href="#s1">1. Pengenalan</a></li>
+    <li><a href="#s2">2. Keperluan Sistem dan Pemasangan</a></li>
+    <li><a href="#s3">3. Gambaran Antara Muka</a></li>
+    <li><a href="#s4">4. Langkah 1 — Sediakan Audio</a></li>
+    <li><a href="#s5">5. Langkah 2 — Transkripsi</a></li>
+    <li><a href="#s6">6. Langkah 3 — Jana Nota</a></li>
+    <li><a href="#s7">7. Mengurus Mesyuarat Tersimpan</a></li>
+    <li><a href="#s8">8. Tetapan Awan</a></li>
+    <li><a href="#s9">9. Tema dan Paparan</a></li>
+    <li><a href="#s10">10. Privasi dan Keselamatan Data</a></li>
+    <li><a href="#s11">11. Penyelesaian Masalah</a></li>
+    <li><a href="#s12">12. Soalan Lazim</a></li>
+    <li><a href="#s13">13. Batasan yang Diketahui</a></li>
+    <li><a href="#s14">14. Maklumat Teknikal untuk Pentadbir</a></li>
+    <li><a href="#sA">Lampiran A — Glosari</a></li>
+    <li><a href="#sB">Lampiran B — Rujukan Dokumen</a></li>
+  </ol>
+</div>
+
+<!-- ================= 1 ================= -->
+<section class="chapter" id="s1">
+  <div class="doc-id">NM-PG-001 · Bahagian 1</div>
+  <h2>1. Pengenalan</h2>
+  <p>NotaMesyuarat ialah aplikasi web yang membolehkan pengguna merakam
+  mesyuarat, menjana transkrip secara automatik, dan menghasilkan minit
+  mesyuarat atau draf skop keperluan. Aplikasi ini berjalan dalam pelayar
+  dan direka untuk memelihara privasi: secara lalai, audio diproses
+  <strong>sepenuhnya pada peranti pengguna</strong> dan tidak dihantar ke
+  mana-mana pelayan.</p>
+
+  <h3>1.1 Tujuan Dokumen</h3>
+  <p>Dokumen ini menyediakan arahan langkah demi langkah untuk pengguna
+  akhir, termasuk penyediaan audio, pemilihan enjin transkripsi, penjanaan
+  dan eksport nota, konfigurasi storan awan, serta penyelesaian masalah
+  asas.</p>
+
+  <h3>1.2 Skop</h3>
+  <p>Panduan ini merangkumi semua fungsi utama aplikasi versi 0.1.0:
+  rakaman langsung, muat naik fail, import awan, transkripsi on-device dan
+  OpenCode, penjanaan nota, penyimpanan setempat, eksport PDF/Word/Markdown,
+  tetapan awan (WebDAV dan Google Drive), dan tema paparan.</p>
+
+  <h3>1.3 Kumpulan Pengguna</h3>
+  <table>
+    <thead><tr><th>Kumpulan</th><th>Keperluan utama</th></tr></thead>
+    <tbody>
+      <tr><td>Setiausaha / urus setia mesyuarat</td><td>Minit mesyuarat pantas dan eksport Word/PDF</td></tr>
+      <tr><td>Penganalisis perniagaan</td><td>Draf skop keperluan daripada transkrip</td></tr>
+      <tr><td>Pengurus projek</td><td>Rakaman mesyuarat, tindakan dan simpanan rekod</td></tr>
+      <tr><td>Pentadbir sistem</td><td>Konfigurasi awan dan pengurusan akses API</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><strong>Prinsip privasi.</strong> Mod on-device tidak
+  membuat sebarang panggilan rangkaian untuk audio. Audio hanya dihantar
+  keluar apabila pengguna memilih mod OpenCode atau mengaktifkan muat naik
+  automatik ke awan secara eksplisit.</div>
+</section>
+
+<!-- ================= 2 ================= -->
+<section class="chapter" id="s2">
+  <div class="doc-id">NM-PG-001 · Bahagian 2</div>
+  <h2>2. Keperluan Sistem dan Pemasangan</h2>
+
+  <h3>2.1 Keperluan</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Keperluan</th></tr></thead>
+    <tbody>
+      <tr><td>Pelayar</td><td>Chrome, Edge atau Chromium terkini (disyorkan). Firefox dan Safari moden sepatutnya berfungsi tetapi belum diuji sepenuhnya.</td></tr>
+      <tr><td>Sambungan internet</td><td>Diperlukan sekali untuk memuat turun model Whisper (50–250 MB) dan untuk mod OpenCode.</td></tr>
+      <tr><td>Peranti</td><td>Komputer riba/desktop disyorkan untuk mesyuarat panjang; telefon dan tablet disokong.</td></tr>
+      <tr><td>Mikrofon</td><td>Diperlukan untuk rakaman langsung; kebenaran pelayar mesti dibenarkan.</td></tr>
+      <tr><td>Storan</td><td>IndexedDB pelayar untuk rekod mesyuarat; ruang cakera untuk cache model.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.2 Pemasangan sebagai Aplikasi (PWA)</h3>
+  <ol>
+    <li>Buka aplikasi dalam Chrome atau Edge.</li>
+    <li>Klik ikon <strong>Pasang</strong> pada bar alamat, atau menu ⋮ → <strong>Install NotaMesyuarat</strong>.</li>
+    <li>Aplikasi akan dibuka seperti aplikasi biasa tanpa bar pelayar.</li>
+  </ol>
+  <p>Kemas kini aplikasi berlaku secara automatik apabila aplikasi dibuka
+  semula dengan sambungan internet.</p>
+</section>
+
+<!-- ================= 3 ================= -->
+<section class="chapter" id="s3">
+  <div class="doc-id">NM-PG-001 · Bahagian 3</div>
+  <h2>3. Gambaran Antara Muka</h2>
+  <p>Aplikasi berfungsi dalam tiga langkah yang dipaparkan di bahagian atas
+  skrin.</p>
+  <table>
+    <thead><tr><th>Langkah</th><th>Nama</th><th>Fungsi</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Audio</td><td>Rakam, muat naik fail atau import daripada awan</td></tr>
+      <tr><td>2</td><td>Transkrip</td><td>Tukar audio kepada teks</td></tr>
+      <tr><td>3</td><td>Nota</td><td>Jana minit mesyuarat atau draf skop keperluan</td></tr>
+    </tbody>
+  </table>
+  <p>Panel sisi mengandungi <strong>Mesyuarat terkini</strong> (senarai rekod
+  tersimpan) dan <strong>Inspirasi Rohani</strong>. Bar atas mengandungi
+  <strong>Tetapan awan</strong> dan pilihan tema <strong>Sistem / Cerah /
+  Gelap</strong>.</p>
+  <p>Langkah 2 dan 3 dikunci sehingga audio dan transkrip disediakan. Ini
+  memastikan aliran kerja sentiasa lengkap sebelum nota dijana.</p>
+</section>
+
+<!-- ================= 4 ================= -->
+<section class="chapter" id="s4">
+  <div class="doc-id">NM-PG-001 · Bahagian 4</div>
+  <h2>4. Langkah 1 — Sediakan Audio</h2>
+
+  <h3>4.1 Rakaman Terus</h3>
+  <ol>
+    <li>Pilih tab <strong>Rakam</strong>.</li>
+    <li>Pilih mikrofon daripada senarai jika terdapat lebih daripada satu peranti.</li>
+    <li>Tekan butang mikrofon untuk mula merakam; tekan sekali lagi untuk berhenti.</li>
+    <li>Rakaman akan sedia untuk transkripsi dan aplikasi beralih ke langkah 2.</li>
+  </ol>
+  <div class="note"><strong>Tip:</strong> pastikan kebenaran mikrofon telah
+  dibenarkan dan peranti tidak tidur semasa mesyuarat panjang.</div>
+
+  <h3>4.2 Muat Naik Fail</h3>
+  <ol>
+    <li>Pilih tab <strong>Muat naik fail</strong>.</li>
+    <li>Klik <strong>Pilih fail</strong> atau seret dan lepas fail ke kawasan muat naik.</li>
+  </ol>
+  <p>Format disokong: <strong>mp3, m4a, wav, webm, ogg, mp4, mov, aac,
+  flac</strong> — termasuk rakaman Zoom, Google Meet dan video iPhone.
+  Fail yang bukan audio/video akan ditolak dengan mesej ralat.</p>
+
+  <h3>4.3 Import daripada Awan</h3>
+  <ol>
+    <li>Pilih tab <strong>Import awan</strong>.</li>
+    <li>Jika belum dikonfigurasi, klik <strong>Buka Tetapan Awan</strong> (Bahagian 8).</li>
+    <li>Pilih fail audio daripada senarai, kemudian klik <strong>Pilih</strong>.</li>
+  </ol>
+
+  <h3>4.4 Butiran Mesyuarat (Pilihan)</h3>
+  <p>Klik <strong>Butiran mesyuarat</strong> untuk mengisi tajuk, tarikh,
+  bahasa, lokasi, organisasi dan senarai ahli. Butiran ini diserap ke dalam
+  pengepala minit yang dijana. Medan kosong tidak akan direka-reka.</p>
+  <table>
+    <thead><tr><th>Medan</th><th>Keterangan</th></tr></thead>
+    <tbody>
+      <tr><td>Tajuk mesyuarat</td><td>Tajuk nota dan nama dalam senarai mesyuarat</td></tr>
+      <tr><td>Tarikh</td><td>Tarikh mesyuarat (lalai: hari ini)</td></tr>
+      <tr><td>Bahasa</td><td>Bahasa pertuturan — membantu ketepatan transkripsi</td></tr>
+      <tr><td>Lokasi</td><td>Contoh: Bilik Mesyuarat A / Zoom</td></tr>
+      <tr><td>Organisasi</td><td>Contoh: Jabatan IT</td></tr>
+      <tr><td>Ahli mesyuarat</td><td>Satu nama setiap baris atau dipisahkan dengan koma</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= 5 ================= -->
+<section class="chapter" id="s5">
+  <div class="doc-id">NM-PG-001 · Bahagian 5</div>
+  <h2>5. Langkah 2 — Transkripsi</h2>
+
+  <h3>5.1 Mod On-Device (Percuma dan Peribadi)</h3>
+  <ol>
+    <li>Pilih tab <strong>On-device</strong>.</li>
+    <li>Pilih model transkripsi.</li>
+    <li>Klik <strong>Jana transkrip</strong>.</li>
+  </ol>
+  <table>
+    <thead><tr><th>Model</th><th>Saiz muat turun</th><th>Kelajuan</th><th>Ketepatan</th></tr></thead>
+    <tbody>
+      <tr><td>Tiny</td><td>~50 MB</td><td>Paling pantas</td><td>Asas</td></tr>
+      <tr><td>Base (disyorkan)</td><td>~80 MB</td><td>Seimbang</td><td>Baik</td></tr>
+      <tr><td>Small</td><td>~250 MB</td><td>Paling lambat</td><td>Paling tepat</td></tr>
+    </tbody>
+  </table>
+  <p>Model dimuat turun sekali sahaja dan disimpan dalam cache pelayar.
+  Selepas itu, transkripsi boleh berjalan tanpa internet.</p>
+  <div class="note"><strong>Tip ketepatan:</strong> pilih bahasa yang betul
+  dalam Butiran mesyuarat, gunakan audio yang jelas, dan pecahkan rakaman
+  yang sangat panjang kepada beberapa bahagian.</div>
+
+  <h3>5.2 Mod OpenCode (Ketepatan Tinggi)</h3>
+  <ol>
+    <li>Pilih tab <strong>OpenCode</strong>.</li>
+    <li>Tampal API key OpenCode. Kunci disimpan dalam pelayar sahaja.</li>
+    <li>(Pilihan) Tandakan <strong>Kenal pasti pembicara</strong> untuk label Pembicara 1, 2, dan seterusnya.</li>
+    <li>Klik <strong>Jana transkrip</strong>.</li>
+  </ol>
+  <div class="warn"><strong>Amaran privasi:</strong> dalam mod ini audio
+  dihantar ke perkhidmatan OpenCode untuk diproses. Jangan gunakan mod ini
+  untuk audio yang tidak dibenarkan dihantar ke perkhidmatan luar.</div>
+
+  <h3>5.3 Semakan dan Eksport Transkrip</h3>
+  <p>Transkrip boleh diedit terus dalam kotak teks. Klik
+  <strong>Eksport transkrip</strong> untuk memuat turun fail Markdown, atau
+  <strong>Teruskan ke nota</strong> apabila selesai.</p>
+</section>
+
+<!-- ================= 6 ================= -->
+<section class="chapter" id="s6">
+  <div class="doc-id">NM-PG-001 · Bahagian 6</div>
+  <h2>6. Langkah 3 — Jana Nota</h2>
+
+  <h3>6.1 Jenis Nota</h3>
+  <table>
+    <thead><tr><th>Jenis</th><th>Kegunaan</th></tr></thead>
+    <tbody>
+      <tr><td>Minit mesyuarat</td><td>Rumasan, keputusan dan item tindakan</td></tr>
+      <tr><td>Skop keperluan</td><td>Objektif, fungsi dicadangkan dan nota tambahan</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.2 Penjanaan</h3>
+  <p>Klik <strong>Jana nota</strong>. Kaedah pantas berjalan sepenuhnya di
+  dalam pelayar. Jika pilihan <strong>Jana dengan AI OpenCode</strong>
+  ditandakan, aplikasi akan menggunakan model AI yang dipilih; jika AI gagal
+  atau tiada API key, aplikasi gugur secara automatik ke kaedah pantas
+  supaya nota tetap terhasil.</p>
+  <div class="warn">Nota dijana secara automatik. Sila semak nama, tarikh,
+  keputusan dan item tindakan sebelum diedarkan.</div>
+
+  <h3>6.3 Simpan</h3>
+  <p>Klik <strong>Simpan</strong> untuk menyimpan rekod ke dalam pelayar.
+  Butang Simpan dilumpuhkan selepas penyimpanan dan aktif semula apabila
+  kandungan berubah — ini mengelakkan rekod pendua.</p>
+
+  <h3>6.4 Eksport</h3>
+  <table>
+    <thead><tr><th>Format</th><th>Hasil</th></tr></thead>
+    <tbody>
+      <tr><td>PDF</td><td>Fail .pdf sedia untuk dicetak atau dihantar</td></tr>
+      <tr><td>Word</td><td>Fail .doc yang dibuka dalam Microsoft Word / Google Docs</td></tr>
+      <tr><td>Markdown</td><td>Fail .md teks biasa</td></tr>
+      <tr><td>Salin</td><td>Salin nota ke papan keratan</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= 7 ================= -->
+<section class="chapter" id="s7">
+  <div class="doc-id">NM-PG-001 · Bahagian 7</div>
+  <h2>7. Mengurus Mesyuarat Tersimpan</h2>
+  <p>Panel <strong>Mesyuarat terkini</strong> memaparkan mesyuarat yang
+  disimpan pada peranti ini.</p>
+  <ul>
+    <li><strong>Buka</strong> — klik ikon ⋮ → <strong>Buka</strong> untuk memuatkan semula transkrip dan nota.</li>
+    <li><strong>Padam</strong> — klik ikon ⋮ → <strong>Padam</strong>. Dialog pengesahan akan dipaparkan; pilih Batal jika tersilap.</li>
+  </ul>
+  <div class="warn"><strong>Penting:</strong> fail audio asal tidak disimpan
+  bersama rekod mesyuarat — hanya transkrip dan nota disimpan. Simpan fail
+  audio anda sendiri jika diperlukan kemudian.</div>
+  <p>Data disimpan dalam IndexedDB pelayar pada peranti ini sahaja dan
+  tidak disegerakkan antara peranti.</p>
+</section>
+
+<!-- ================= 8 ================= -->
+<section class="chapter" id="s8">
+  <div class="doc-id">NM-PG-001 · Bahagian 8</div>
+  <h2>8. Tetapan Awan</h2>
+  <p>Klik ikon tetapan di bar atas untuk membuka dialog Tetapan Awan.</p>
+
+  <h3>8.1 WebDAV (Nextcloud, ownCloud dan Lain-lain)</h3>
+  <ol>
+    <li>Pilih <strong>WebDAV</strong>.</li>
+    <li>Masukkan URL pelayan WebDAV anda.</li>
+    <li>Tetapkan folder (lalai: <code>notamesyuarat</code>).</li>
+    <li>Masukkan nama pengguna dan kata laluan.</li>
+    <li>Klik <strong>Uji sambungan &amp; simpan</strong>.</li>
+  </ol>
+  <p>Folder mesti wujud terlebih dahulu di pelayan anda. Kredensial
+  disimpan dalam pelayar pengguna sahaja.</p>
+
+  <h3>8.2 Google Drive</h3>
+  <ol>
+    <li>Pilih <strong>Google Drive</strong> dan tampal OAuth Client ID.</li>
+    <li>Klik <strong>Uji sambungan &amp; simpan</strong> dan benarkan akses dalam tetingkap Google.</li>
+  </ol>
+  <p><strong>Cara mencipta OAuth Client ID:</strong></p>
+  <ol>
+    <li>Buka Google Cloud Console dan cipta projek.</li>
+    <li>Aktifkan <strong>Google Drive API</strong>.</li>
+    <li>Cipta <strong>OAuth Client ID</strong> jenis <em>Web application</em>.</li>
+    <li>Tambah origin aplikasi pada <em>Authorized JavaScript origins</em>.</li>
+    <li>Salin Client ID ke tetapan aplikasi.</li>
+  </ol>
+  <p>Fail disimpan dalam folder <strong>notamesyuarat</strong> di Drive
+  pengguna. Aplikasi meminta akses minimum (<code>drive.file</code>);
+  akses penuh hanya diminta jika pilihan "Cari keseluruhan Drive"
+  diaktifkan.</p>
+
+  <h3>8.3 Pilihan Tambahan</h3>
+  <table>
+    <thead><tr><th>Pilihan</th><th>Kesan</th></tr></thead>
+    <tbody>
+      <tr><td>Auto-upload audio ke awan</td><td>Audio dimuat naik secara automatik selepas rakaman atau muat naik</td></tr>
+      <tr><td>Cari keseluruhan Drive</td><td>Menyenaraikan semua fail audio/video dalam Drive, bukan hanya folder aplikasi</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= 9 ================= -->
+<section class="chapter" id="s9">
+  <div class="doc-id">NM-PG-001 · Bahagian 9</div>
+  <h2>9. Tema dan Paparan</h2>
+  <ul>
+    <li><strong>Sistem</strong> — mengikut tetapan cerah/gelap peranti.</li>
+    <li><strong>Cerah</strong> — tema terang.</li>
+    <li><strong>Gelap</strong> — tema gelap.</li>
+  </ul>
+  <p>Pilihan tema disimpan untuk sesi seterusnya. Aplikasi juga menghormati
+  tetapan sistem <em>prefers-reduced-motion</em> untuk mengurangkan animasi.</p>
+</section>
+
+<!-- ================= 10 ================= -->
+<section class="chapter" id="s10">
+  <div class="doc-id">NM-PG-001 · Bahagian 10</div>
+  <h2>10. Privasi dan Keselamatan Data</h2>
+  <table>
+    <thead><tr><th>Data</th><th>Lokasi Simpanan</th><th>Dihantar Keluar</th></tr></thead>
+    <tbody>
+      <tr><td>Audio (mod on-device)</td><td>Memori pelayar sahaja</td><td>Tidak</td></tr>
+      <tr><td>Transkrip dan nota</td><td>IndexedDB pelayar</td><td>Tidak</td></tr>
+      <tr><td>API key OpenCode</td><td>localStorage pelayar</td><td>Hanya kepada OpenCode apabila digunakan</td></tr>
+      <tr><td>Kredensial WebDAV</td><td>localStorage pelayar</td><td>Hanya kepada pelayan WebDAV pengguna</td></tr>
+      <tr><td>Token OAuth Drive</td><td>Memori pelayar (luput ~1 jam)</td><td>Hanya kepada Google API</td></tr>
+      <tr><td>Tetapan tema/zikir</td><td>localStorage pelayar</td><td>Tidak</td></tr>
+    </tbody>
+  </table>
+  <h3>10.1 Amalan Disyorkan</h3>
+  <ul>
+    <li>Gunakan mod on-device untuk mesyuarat sulit.</li>
+    <li>Elakkan berkongsi sesi pelayar dengan pengguna lain bagi data sensitif.</li>
+    <li>Padam mesyuarat lama yang tidak diperlukan.</li>
+    <li>Sahkan dasar penggunaan API pihak ketiga dengan organisasi anda.</li>
+  </ul>
+</section>
+
+<!-- ================= 11 ================= -->
+<section class="chapter" id="s11">
+  <div class="doc-id">NM-PG-001 · Bahagian 11</div>
+  <h2>11. Penyelesaian Masalah</h2>
+  <table>
+    <thead><tr><th>Masalah</th><th>Punca Biasa</th><th>Penyelesaian</th></tr></thead>
+    <tbody>
+      <tr><td>Tidak dapat mengakses mikrofon</td><td>Kebenaran mic ditolak</td><td>Benarkan mikrofon pada ikon kunci di bar alamat, kemudian muat semula</td></tr>
+      <tr><td>Transkripsi mengambil masa lama</td><td>Model dimuat turun kali pertama</td><td>Tunggu muat turun selesai; larian seterusnya lebih pantas</td></tr>
+      <tr><td>Tiada suara dikesan</td><td>Audio senyap atau terlalu rendah</td><td>Semak audio; cuba model Small</td></tr>
+      <tr><td>Transkrip mengulang ayat</td><td>Halusinasi model kecil</td><td>Guna model Base/Small dan tetapkan bahasa dengan betul</td></tr>
+      <tr><td>Sila masukkan OpenCode API key</td><td>Kunci belum diisi</td><td>Tampal API key dalam tab OpenCode</td></tr>
+      <tr><td>OpenCode API: HTTP 401</td><td>Kunci tidak sah atau luput</td><td>Jana kunci baharu di OpenCode Console</td></tr>
+      <tr><td>Sambungan gagal: Failed to fetch</td><td>URL salah, CORS atau tiada internet</td><td>Semak URL dan pastikan pelayan membenarkan CORS</td></tr>
+      <tr><td>Butang Simpan tidak boleh ditekan</td><td>Kandungan tidak berubah sejak simpanan</td><td>Dijangkakan — edit nota untuk aktifkan semula</td></tr>
+      <tr><td>Eksport PDF/Word tidak berlaku</td><td>Muat turun disekat</td><td>Benarkan muat turun automatik untuk laman ini</td></tr>
+      <tr><td>Aplikasi tidak berfungsi luar talian</td><td>Cache service worker belum lengkap</td><td>Buka aplikasi sekali dengan internet</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= 12 ================= -->
+<section class="chapter" id="s12">
+  <div class="doc-id">NM-PG-001 · Bahagian 12</div>
+  <h2>12. Soalan Lazim</h2>
+
+  <h3>Adakah audio saya dihantar ke pelayan?</h3>
+  <p>Tidak, melainkan anda memilih mod OpenCode atau mengaktifkan
+  auto-upload awan. Mod on-device kekal dalam pelayar.</p>
+
+  <h3>Bolehkah saya menggunakan aplikasi tanpa internet?</h3>
+  <p>Ya, selepas model Whisper dimuat turun sekali. Mod OpenCode dan import
+  awan memerlukan internet.</p>
+
+  <h3>Bolehkah saya edit nota yang dijana?</h3>
+  <p>Ya — kotak nota boleh diedit sepenuhnya sebelum disimpan atau dieksport.</p>
+
+  <h3>Di mana fail eksport disimpan?</h3>
+  <p>Dalam folder Muat Turun (Downloads) pelayar anda.</p>
+
+  <h3>Adakah data disegerakkan antara peranti?</h3>
+  <p>Tidak. Data tersimpan pada peranti yang digunakan. Gunakan eksport
+  atau awan untuk memindahkan hasil.</p>
+
+  <h3>Bahasa apa yang disokong?</h3>
+  <p>Bahasa Melayu, English, Bahasa Indonesia, Mandarin, Tamil dan mod
+  auto-kenal.</p>
+</section>
+
+<!-- ================= 13 ================= -->
+<section class="chapter" id="s13">
+  <div class="doc-id">NM-PG-001 · Bahagian 13</div>
+  <h2>13. Batasan yang Diketahui</h2>
+  <ul>
+    <li>Rakaman audio tidak disimpan dalam rekod mesyuarat.</li>
+    <li>Audio sangat panjang memerlukan masa dan memori yang lebih tinggi — pecahkan kepada bahagian jika perlu.</li>
+    <li>Kualiti transkripsi bergantung pada kualiti audio; bising latar belakang menjejaskan ketepatan.</li>
+    <li>Nota automatik ialah draf dan mesti disemak sebelum diedarkan.</li>
+    <li>WebKit (Safari) dan Firefox belum diuji sepenuhnya; Chrome/Edge/Chromium disyorkan.</li>
+  </ul>
+</section>
+
+<!-- ================= 14 ================= -->
+<section class="chapter" id="s14">
+  <div class="doc-id">NM-PG-001 · Bahagian 14</div>
+  <h2>14. Maklumat Teknikal untuk Pentadbir</h2>
+  <p>Aplikasi boleh dijalankan secara setempat untuk tujuan pembangunan atau
+  penggunaan dalaman.</p>
+  <table>
+    <thead><tr><th>Arahan</th><th>Fungsi</th></tr></thead>
+    <tbody>
+      <tr><td><code>npm install</code></td><td>Pasang kebergantungan</td></tr>
+      <tr><td><code>npm run dev</code></td><td>Pelayan pembangunan di http://localhost:5173</td></tr>
+      <tr><td><code>npm run build</code></td><td>Binaan produksi ke folder dist/</td></tr>
+      <tr><td><code>npm run preview</code></td><td>Pratonton binaan produksi</td></tr>
+      <tr><td><code>npx vitest run</code></td><td>Jalankan ujian unit</td></tr>
+    </tbody>
+  </table>
+  <p>Dokumentasi audit, keputusan kejuruteraan dan daftar kecacatan terdapat
+  dalam folder <code>audit/</code> projek.</p>
+</section>
+
+<!-- ================= LAMPIRAN A ================= -->
+<section class="chapter" id="sA">
+  <div class="doc-id">NM-PG-001 · Lampiran A</div>
+  <h2>Lampiran A — Glosari</h2>
+  <table>
+    <thead><tr><th>Istilah</th><th>Maksud</th></tr></thead>
+    <tbody>
+      <tr><td>On-device</td><td>Pemprosesan yang berlaku dalam pelayar/peranti pengguna tanpa menghantar data ke pelayan.</td></tr>
+      <tr><td>Transkripsi</td><td>Proses menukar audio kepada teks.</td></tr>
+      <tr><td>Diarization</td><td>Pengenalpastian pembicara berbeza dalam transkrip.</td></tr>
+      <tr><td>PWA</td><td>Progressive Web App — aplikasi web yang boleh dipasang seperti aplikasi biasa.</td></tr>
+      <tr><td>WebDAV</td><td>Protokol storan fail berasaskan web (contoh: Nextcloud).</td></tr>
+      <tr><td>OAuth Client ID</td><td>Pengenal pasti aplikasi yang digunakan untuk mendapatkan kebenaran akses Google Drive.</td></tr>
+      <tr><td>API key</td><td>Kunci akses peribadi untuk perkhidmatan OpenCode.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= LAMPIRAN B ================= -->
+<section class="chapter" id="sB">
+  <div class="doc-id">NM-PG-001 · Lampiran B</div>
+  <h2>Lampiran B — Rujukan Dokumen</h2>
+  <table>
+    <thead><tr><th>Dokumen</th><th>Lokasi</th></tr></thead>
+    <tbody>
+      <tr><td>README projek</td><td><code>README.md</code></td></tr>
+      <tr><td>Panduan pengguna (sumber Markdown)</td><td><code>PANDUAN-PENGGUNA.md</code></td></tr>
+      <tr><td>Laporan audit dan papan pemuka</td><td><code>audit/audit-summary.md</code>, <code>audit/audit-dashboard.html</code></td></tr>
+      <tr><td>Daftar kecacatan</td><td><code>audit/defects/defect-register.json</code></td></tr>
+      <tr><td>Arahan projek untuk pembangun</td><td><code>AGENTS.md</code></td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:14px;font-size:8.5pt;color:#6b7280">
+    — Tamat Dokumen —</p>
+</section>
+
+</body>
+</html>

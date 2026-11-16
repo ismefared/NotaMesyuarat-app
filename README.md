@@ -4,6 +4,13 @@ App web untuk merakam mesyuarat, menjana transkrip, dan menghasilkan
 minit mesyuarat atau draf skop keperluan — **semuanya on-device** dalam
 pelayar, tanpa hantar audio ke pelayan.
 
+📘 **Panduan Pengguna:**
+- [Versi PDF rasmi (NM-PG-001 v1.0)](docs/PANDUAN-PENGGUNA-NotaMesyuarat-v1.0.pdf) — dokumen serahan projek
+- [Versi Markdown](PANDUAN-PENGGUNA.md) — sumber kandungan
+
+Panduan merangkumi cara rakam, transkripsi, jana nota, tetapan awan dan
+penyelesaian masalah.
+
 ## Ciri
 
 - 🎙️ Rakaman suara dengan visualisasi gelombang, atau muat naik fail audio (mp3, m4a, wav, webm, ogg — termasuk rakaman Zoom/Meet)
