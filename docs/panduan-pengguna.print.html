@@ -2,7 +2,7 @@
 <html lang="ms">
 <head>
 <meta charset="utf-8">
-<title>Panduan Pengguna NotaMesyuarat v1.1</title>
+<title>Panduan Pengguna NotaMesyuarat v1.2</title>
 <meta name="author" content="Pasukan Projek NotaMesyuarat">
 <meta name="description" content="Panduan pengguna rasmi aplikasi NotaMesyuarat — rakaman, transkripsi dan penjanaan minit mesyuarat.">
 <meta name="keywords" content="NotaMesyuarat, panduan pengguna, minit mesyuarat, transkripsi, dokumen serahan">
@@ -17,7 +17,7 @@
       font-size: 7.5pt; color: #6b7280;
     }
     @top-right {
-      content: "NM-PG-001 · Versi 1.1";
+      content: "NM-PG-001 · Versi 1.2";
       font-family: "Helvetica Neue", Arial, sans-serif;
       font-size: 7.5pt; color: #6b7280;
     }
@@ -126,17 +126,17 @@
     <h2>Manual Pengguna Aplikasi<br>NotaMesyuarat</h2>
     <table class="cover-meta">
       <tr><td>ID Dokumen</td><td>NM-PG-001</td></tr>
-      <tr><td>Versi</td><td>1.1</td></tr>
+      <tr><td>Versi</td><td>1.2</td></tr>
       <tr><td>Tarikh Keluaran</td><td>16 November 2026</td></tr>
       <tr><td>Status</td><td>Muktamad (Final)</td></tr>
       <tr><td>Klasifikasi</td><td>Dalaman</td></tr>
       <tr><td>Disediakan oleh</td><td>Pasukan Projek NotaMesyuarat</td></tr>
       <tr><td>Pemilik Dokumen</td><td>Pemilik Produk NotaMesyuarat</td></tr>
-      <tr><td>Versi Aplikasi</td><td>0.1.0 (binaan produksi)</td></tr>
+      <tr><td>Versi Aplikasi</td><td>0.2.1 (binaan produksi)</td></tr>
     </table>
   </div>
   <div class="cover-foot">
-    <span>NotaMesyuarat · Panduan Pengguna v1.1</span>
+    <span>NotaMesyuarat · Panduan Pengguna v1.2</span>
     <span>Hak cipta terpelihara © 2026</span>
   </div>
 </div>
@@ -149,7 +149,7 @@
   <table class="doc-control">
     <tr><td>Nama Dokumen</td><td>Manual Pengguna Aplikasi NotaMesyuarat</td></tr>
     <tr><td>ID Dokumen</td><td>NM-PG-001</td></tr>
-    <tr><td>Versi</td><td>1.1</td></tr>
+    <tr><td>Versi</td><td>1.2</td></tr>
     <tr><td>Status</td><td>Muktamad (Final) — untuk kelulusan pemilik produk</td></tr>
     <tr><td>Tarikh</td><td>16 November 2026</td></tr>
     <tr><td>Penulis</td><td>Pasukan Projek NotaMesyuarat</td></tr>
@@ -167,6 +167,7 @@
     <tbody>
       <tr><td>1.0</td><td>16 Nov 2026</td><td>Keluaran pertama — selaras dengan aplikasi selepas pelaksanaan pembetulan audit (AAERA).</td><td>Pasukan Projek</td></tr>
       <tr><td>1.1</td><td>16 Nov 2026</td><td>Audio kini disimpan bersama rekod mesyuarat; penyuntingan mesyuarat tersimpan mengemas kini rekod sedia ada; tempoh audio dipaparkan; dokumentasi privasi dan storan dikemas kini.</td><td>Pasukan Projek</td></tr>
+      <tr><td>1.2</td><td>16 Nov 2026</td><td>Selaras dengan v0.2.1: pengesahan auto-upload Google Drive; nota kuota OpenCode; baris penyelesaian masalah "Failed to fetch" untuk OpenCode; versi aplikasi dikemas kini.</td><td>Pasukan Projek</td></tr>
     </tbody>
   </table>
 
@@ -384,6 +385,9 @@
   <div class="warn"><strong>Amaran privasi:</strong> dalam mod ini audio
   dihantar ke perkhidmatan OpenCode untuk diproses. Jangan gunakan mod ini
   untuk audio yang tidak dibenarkan dihantar ke perkhidmatan luar.</div>
+  <div class="note"><strong>Kuota:</strong> kunci percuma OpenCode mempunyai
+  had penggunaan. Jika kuota habis, transkripsi OpenCode gagal walaupun kunci
+  sah — gunakan mod <strong>On-device</strong> atau tunggu kuota dipulihkan.</div>
 
   <h3>5.3 Semakan dan Eksport Transkrip</h3>
   <p>Transkrip boleh diedit terus dalam kotak teks. Klik
@@ -548,6 +552,7 @@
       <tr><td>Transkrip mengulang ayat</td><td>Halusinasi model kecil</td><td>Guna model Base/Small dan tetapkan bahasa dengan betul</td></tr>
       <tr><td>Sila masukkan OpenCode API key</td><td>Kunci belum diisi</td><td>Tampal API key dalam tab OpenCode</td></tr>
       <tr><td>OpenCode API: HTTP 401</td><td>Kunci tidak sah atau luput</td><td>Jana kunci baharu di OpenCode Console</td></tr>
+      <tr><td>Transkripsi OpenCode gagal: Failed to fetch</td><td>Kuota percuma habis, atau perkhidmatan tidak membenarkan permintaan terus dari pelayar</td><td>Gunakan mod On-device; semak kuota/kunci OpenCode jika berterusan</td></tr>
       <tr><td>Sambungan gagal: Failed to fetch</td><td>URL salah, CORS atau tiada internet</td><td>Semak URL dan pastikan pelayan membenarkan CORS</td></tr>
       <tr><td>Butang Simpan tidak boleh ditekan</td><td>Kandungan tidak berubah sejak simpanan</td><td>Dijangkakan — edit nota untuk aktifkan semula</td></tr>
       <tr><td>Eksport PDF/Word tidak berlaku</td><td>Muat turun disekat</td><td>Benarkan muat turun automatik untuk laman ini</td></tr>

@@ -146,6 +146,10 @@ internet.
 > (Gemini Flash Lite) untuk ditranskripsi. Jangan gunakan mod ini untuk audio
 > sulit jika anda tidak dibenarkan menghantarnya ke perkhidmatan luar.
 
+> ℹ️ **Kuota:** kunci percuma OpenCode mempunyai had penggunaan. Jika kuota
+> habis, transkripsi OpenCode akan gagal walaupun kunci sah — gunakan mod
+> **On-device** atau tunggu kuota dipulihkan.
+
 ### 4.3 Edit & eksport transkrip
 
 - Transkrip muncul dalam kotak teks dan **boleh diedit terus** — betulkan
@@ -303,6 +307,7 @@ Pilihan tema disimpan untuk sesi seterusnya. Aplikasi juga menyokong
 | Transkrip mengulang ayat | Halusinasi model kecil | Guna model Base/Small, tetapkan bahasa dengan betul |
 | "Sila masukkan OpenCode API key" | Kunci belum diisi | Tampal API key dalam tab OpenCode |
 | "OpenCode API: HTTP 401" | Kunci tidak sah/luput | Jana kunci baharu di OpenCode Console |
+| "Transkripsi OpenCode gagal: Failed to fetch" | Kuota percuma habis, atau perkhidmatan OpenCode tidak membenarkan permintaan terus dari pelayar | Gunakan mod **On-device**; jika berterusan, semak kuota/kunci OpenCode |
 | "Sambungan gagal: Failed to fetch" (WebDAV) | URL salah, pelayan tiada CORS, tiada internet | Semak URL, pastikan pelayan membenarkan CORS, uji dalam pelayar |
 | Butang Simpan tidak boleh ditekan | Kandungan tidak berubah sejak simpanan terakhir | Ini dijangkakan — edit nota/transkrip untuk aktifkan semula |
 | Export PDF/Word tidak berlaku | Pop-up/download disekat | Benarkan muat turun automatik untuk laman ini |
@@ -371,5 +376,5 @@ Dokumentasi audit dan keputusan kejuruteraan: folder [`audit/`](audit/).
 
 ---
 
-*Panduan ini dikemas kini pada 16 November 2026 (v1.1). Jika antara muka berubah,
+*Panduan ini dikemas kini pada 16 November 2026 (v1.2). Jika antara muka berubah,
 sila kemas kini panduan ini bersama perubahan tersebut.*

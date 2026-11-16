@@ -1,8 +1,19 @@
 # Manual Pengguna Dikemas Kini — Penunjuk
 
-**Manual rasmi terkini:** [`PANDUAN-PENGGUNA.md`](../PANDUAN-PENGGUNA.md) (v1.1)
-**PDF serahan:** [`PANDUAN-PENGGUNA-NotaMesyuarat-v1.1.pdf`](PANDUAN-PENGGUNA-NotaMesyuarat-v1.1.pdf)
-**Versi terdahulu:** [`PANDUAN-PENGGUNA-NotaMesyuarat-v1.0.pdf`](PANDUAN-PENGGUNA-NotaMesyuarat-v1.0.pdf)
+**Manual rasmi terkini:** [`PANDUAN-PENGGUNA.md`](../PANDUAN-PENGGUNA.md) (v1.2)
+**PDF serahan:** [`PANDUAN-PENGGUNA-NotaMesyuarat-v1.2.pdf`](PANDUAN-PENGGUNA-NotaMesyuarat-v1.2.pdf)
+**Versi terdahulu:** [v1.1](PANDUAN-PENGGUNA-NotaMesyuarat-v1.1.pdf) · [v1.0](PANDUAN-PENGGUNA-NotaMesyuarat-v1.0.pdf)
+
+## Perubahan dalam v1.2 (16 Nov 2026)
+
+1. **Auto-upload Google Drive disahkan berfungsi** selaras dengan v0.2.1
+   (pembetulan DEF-INT-014).
+2. **Nota kuota OpenCode** — kunci percuma mempunyai had penggunaan; jika
+   habis, mod OpenCode gagal walaupun kunci sah.
+3. **Penyelesaian masalah baharu** untuk "Transkripsi OpenCode gagal:
+   Failed to fetch" — sebab kuota/CORS, cadangan guna mod On-device.
+4. Versi aplikasi pada kulit dokumen dikemas kini kepada **0.2.1**.
+5. Sejarah semakan dokumen mencatat v1.0 → v1.1 → v1.2; PDF dijana semula.
 
 ## Perubahan dalam v1.1 (16 Nov 2026)
 

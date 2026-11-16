@@ -40,7 +40,7 @@ Tarikh: 16 November 2026 · Baseline: v0.1.0 (commit `ff2bd3c`)
 ## Versi
 
 - Aplikasi: 0.1.0 → **0.2.0** (ciri baharu + pembetulan).
-- Manual: NM-PG-001 v1.0 → **v1.1**.
+- Manual: NM-PG-001 v1.0 → v1.1 → **v1.2** (selaras v0.2.1).
 
 ## Tambahan 16 Nov 2026 — v0.2.1 (e2e kredensial sebenar)
 
@@ -51,3 +51,9 @@ Tarikh: 16 November 2026 · Baseline: v0.1.0 (commit `ff2bd3c`)
 
 Bukti: `audit/test-cases/e2e-credentials-results.json` — Drive 5/5 PASS;
 OpenCode disekat 429/CORS (DEF-INT-015, tiada ubahan kod).
+
+### Manual v1.2 (16 Nov 2026)
+- Kulit/pengepala: versi manual 1.2, versi aplikasi 0.2.1.
+- Sejarah semakan: baris v1.2 ditambah.
+- Nota kuota OpenCode dan baris penyelesaian masalah "Failed to fetch".
+- PDF dijana semula (19 halaman A4); v1.0/v1.1 dikekalkan sebagai sejarah.
