@@ -1,4 +1,4 @@
-# Changelog Teknikal — NotaMesyuarat v0.2.1
+# Changelog Teknikal — NotaMesyuarat v0.3.0
 
 Tarikh: 16 November 2026 · Baseline: v0.1.0 (commit `ff2bd3c`)
 
@@ -57,3 +57,21 @@ OpenCode disekat 429/CORS (DEF-INT-015, tiada ubahan kod).
 - Sejarah semakan: baris v1.2 ditambah.
 - Nota kuota OpenCode dan baris penyelesaian masalah "Failed to fetch".
 - PDF dijana semula (19 halaman A4); v1.0/v1.1 dikekalkan sebagai sejarah.
+
+## 16 Nov 2026 — v0.3.0: kualiti audio & audio panjang
+
+| Fail | Perubahan | Sebab |
+|---|---|---|
+| `src/lib/audioTools.js` (baharu) | decodeMono, analyseSamples, enhanceSamples, splitSamples, encodeWav | Analisis kualiti, enhancement, pemecahan segmen |
+| `src/lib/audioTools.test.js` (baharu) | 10 ujian unit | Analisis, enhancement, WAV, pepecahan |
+| `src/lib/whisper.js` | `transcribeFlexible()` — decode sekali, segmen automatik >15 min, enhancement | KL-002/KL-003 |
+| `src/App.jsx` | State kualiti/enhance; analisis selepas muat naik/rakaman; panel kualiti; notis audio panjang; laluan transkripsi pintar | UX |
+| `src/styles.css` | Gaya panel kualiti (baik/sederhana/lemah) | UI |
+| `package.json` | Versi 0.3.0 | Minor release |
+| Manual NM-PG-001 | v1.3 (21 halaman) | Dokumentasi |
+
+Pepijat ditemui oleh ujian unit: normalisasi enhancement menggunakan puncak
+selepas tapisan → menguatkan dengung. Dibetulkan: keputusan gain berdasarkan
+puncak input.
+
+Bukti: `audit/test-cases/quality-results.json` (Q-01..05 PASS), Vitest 19/19.

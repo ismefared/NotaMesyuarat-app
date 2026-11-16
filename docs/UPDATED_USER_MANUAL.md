@@ -1,8 +1,18 @@
 # Manual Pengguna Dikemas Kini — Penunjuk
 
-**Manual rasmi terkini:** [`PANDUAN-PENGGUNA.md`](../PANDUAN-PENGGUNA.md) (v1.2)
-**PDF serahan:** [`PANDUAN-PENGGUNA-NotaMesyuarat-v1.2.pdf`](PANDUAN-PENGGUNA-NotaMesyuarat-v1.2.pdf)
-**Versi terdahulu:** [v1.1](PANDUAN-PENGGUNA-NotaMesyuarat-v1.1.pdf) · [v1.0](PANDUAN-PENGGUNA-NotaMesyuarat-v1.0.pdf)
+**Manual rasmi terkini:** [`PANDUAN-PENGGUNA.md`](../PANDUAN-PENGGUNA.md) (v1.3)
+**PDF serahan:** [`PANDUAN-PENGGUNA-NotaMesyuarat-v1.3.pdf`](PANDUAN-PENGGUNA-NotaMesyuarat-v1.3.pdf)
+**Versi terdahulu:** [v1.2](PANDUAN-PENGGUNA-NotaMesyuarat-v1.2.pdf) · [v1.1](PANDUAN-PENGGUNA-NotaMesyuarat-v1.1.pdf) · [v1.0](PANDUAN-PENGGUNA-NotaMesyuarat-v1.0.pdf)
+
+## Perubahan dalam v1.3 (16 Nov 2026)
+
+1. **Panel Kualiti Audio** — penilaian Baik/Sederhana/Lemah dengan SNR,
+   aras dBFS, peratus senyap dan tip pembetulan.
+2. **Pilihan "Tingkatkan audio"** — tapisan high-pass 100 Hz + normalisasi
+   aras, diproses dalam pelayar sebelum transkripsi.
+3. **Pemecahan automatik audio panjang** — audio >15 minit diproses dalam
+   segmen ~10 minit dengan status "bahagian X/Y".
+4. Versi aplikasi pada kulit: **0.3.0**. PDF dijana semula (21 halaman).
 
 ## Perubahan dalam v1.2 (16 Nov 2026)
 

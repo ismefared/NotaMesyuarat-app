@@ -150,7 +150,45 @@ internet.
 > habis, transkripsi OpenCode akan gagal walaupun kunci sah — gunakan mod
 > **On-device** atau tunggu kuota dipulihkan.
 
-### 4.3 Edit & eksport transkrip
+### 4.3 Kualiti audio
+
+Selepas audio dimuatkan, aplikasi menganalisis kualiti secara automatik dan
+memaparkan panel **Kualiti audio**:
+
+| Penunjuk | Maksud |
+|---|---|
+| **Baik / Sederhana / Lemah** | Penilaian keseluruhan untuk transkripsi |
+| **SNR** | Nisbah suara berbanding bunyi latar (lebih tinggi lebih baik) |
+| **Aras** | Kekuatan audio dalam dBFS (terlalu rendah = sukar ditranskripsi) |
+| **Senyap** | Peratus bahagian audio yang senyap |
+
+Aplikasi turut memberikan tip khusus (contoh: dekatkan mikrofon, kurangkan
+gain, guna model Small).
+
+**Tingkatkan audio** — tandakan pilihan ini untuk:
+- menapis dengung/rumble frekuensi rendah (high-pass 100 Hz), dan
+- menormalkan aras audio yang terlalu perlahan atau hampir terpotong.
+
+Pemprosesan ini berlaku **dalam pelayar** (on-device) sebelum transkripsi.
+Ia membantu audio perlahan/dengung, tetapi tidak boleh menghilangkan bunyi
+bising bercampur suara sepenuhnya.
+
+> Tip: untuk audio bising, pilih model **Small** dan aktifkan
+> **Tingkatkan audio** untuk hasil terbaik.
+
+### 4.4 Audio panjang
+
+Audio melebihi **15 minit** dipecahkan secara automatik kepada bahagian
+~10 minit dan ditranskripsi satu demi satu. Ini mengurangkan penggunaan
+memori dan membolehkan mesyuarat panjang diproses pada peranti biasa.
+
+- Status akan memaparkan "Mentranskripsi bahagian X/Y...".
+- Transkrip setiap bahagian digabungkan mengikut urutan.
+- Masa pemprosesan bergantung pada panjang audio, model dan peranti.
+- Jika peranti kehabisan memori, pecahkan fail audio secara manual kepada
+  beberapa fail yang lebih kecil.
+
+### 4.5 Edit & eksport transkrip
 
 - Transkrip muncul dalam kotak teks dan **boleh diedit terus** — betulkan
   nama, istilah, atau ayat yang tersilap.
@@ -350,8 +388,11 @@ Melayu, English, Indonesia, Mandarin, Tamil, dan mod auto-kenal.
 
 ## 12. Batasan yang diketahui
 
-- Audio yang sangat panjang mungkin memerlukan masa pemprosesan lama dan
-  memori besar — pecahkan kepada bahagian jika perlu.
+- Audio melebihi 15 minit diproses dalam segmen automatik; masa pemprosesan
+  tetap bergantung pada panjang audio, model dan peranti.
+- Kualiti transkripsi bergantung pada kualiti audio. Panel kualiti dan
+  pilihan **Tingkatkan audio** membantu, tetapi bunyi latar yang kuat masih
+  boleh menjejaskan ketepatan.
 - Storan audio tertakluk pada kuota IndexedDB pelayar; padam rekod lama jika
   ruang tidak mencukupi.
 - Kualiti transkripsi bergantung pada kualiti audio; bising latar belakang
@@ -376,5 +417,5 @@ Dokumentasi audit dan keputusan kejuruteraan: folder [`audit/`](audit/).
 
 ---
 
-*Panduan ini dikemas kini pada 16 November 2026 (v1.2). Jika antara muka berubah,
+*Panduan ini dikemas kini pada 16 November 2026 (v1.3). Jika antara muka berubah,
 sila kemas kini panduan ini bersama perubahan tersebut.*

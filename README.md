@@ -5,8 +5,8 @@ minit mesyuarat atau draf skop keperluan — **semuanya on-device** dalam
 pelayar, tanpa hantar audio ke pelayan.
 
 📘 **Panduan Pengguna:**
-- [Versi PDF rasmi (NM-PG-001 v1.2)](docs/PANDUAN-PENGGUNA-NotaMesyuarat-v1.2.pdf) — dokumen serahan projek
-  - Sejarah: [v1.1](docs/PANDUAN-PENGGUNA-NotaMesyuarat-v1.1.pdf) · [v1.0](docs/PANDUAN-PENGGUNA-NotaMesyuarat-v1.0.pdf)
+- [Versi PDF rasmi (NM-PG-001 v1.3)](docs/PANDUAN-PENGGUNA-NotaMesyuarat-v1.3.pdf) — dokumen serahan projek
+  - Sejarah: [v1.2](docs/PANDUAN-PENGGUNA-NotaMesyuarat-v1.2.pdf) · [v1.1](docs/PANDUAN-PENGGUNA-NotaMesyuarat-v1.1.pdf) · [v1.0](docs/PANDUAN-PENGGUNA-NotaMesyuarat-v1.0.pdf)
 - [Versi Markdown](PANDUAN-PENGGUNA.md) — sumber kandungan
 
 Panduan merangkumi cara rakam, transkripsi, jana nota, tetapan awan dan

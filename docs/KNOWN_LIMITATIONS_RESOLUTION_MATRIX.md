@@ -6,8 +6,8 @@ Sumber batasan: `PANDUAN-PENGGUNA.md` §12, `README.md`, `audit/audit-config.jso
 | ID | Batasan asal | Punca akar | Penyelesaian dilaksanakan | Status | Bukti pengesahan |
 |---|---|---|---|---|---|
 | KL-001 | Rakaman audio tidak disimpan dalam rekod mesyuarat | `saveMeeting()` tidak menulis audio ke storan; tidak ada kunci audio | Audio disimpan dalam IndexedDB (`notamesyuarat:audio:<id>`) sebagai **ArrayBuffer** + jenis/ nama; dipulihkan semasa buka; dipadam bersama rekod | **RESOLVED** | KL-001 PASS — audio `blob:` dipulihkan selepas reload; KL-001b padam membersihkan rekod |
-| KL-002 | Audio panjang memerlukan masa/memori; tempoh tidak dipaparkan | `durationSec` menggunakan pemasa rakaman sahaja (fail muat naik = 0) | Helper `getAudioDuration()` membaca metadata; tempoh disimpan & dipaparkan (saat/minit); nasihat pecah audio kekal | **RESOLVED (mitigasi)** | KL-002 PASS — sidebar memaparkan "3 s" untuk WAV ujian; teks panduan dikemas kini |
-| KL-003 | Kualiti transkripsi bergantung kualiti audio | Ciri model ASR | Tiada ubahan kod; tip audio & model kekal dalam panduan | **ACCEPTED (inherent)** | Dokumentasi |
+| KL-002 | Audio panjang memerlukan masa/memori; tempoh tidak dipaparkan | `durationSec` menggunakan pemasa rakaman sahaja; audio panjang diproses sekali gus | Tempoh dibaca & dipaparkan; **pemecahan automatik >15 min kepada segmen ~10 min** dengan status bahagian X/Y; decode mono 16 kHz untuk jimat memori | **RESOLVED** | Q-04 PASS (16 min → 2 bahagian); ujian unit splitSamples 2/2 |
+| KL-003 | Kualiti transkripsi bergantung kualiti audio | Ciri model ASR; tiada maklum balas kualiti | **Panel kualiti** (SNR/aras/senyap/clipping + tip) dan **Tingkatkan audio** (high-pass 100 Hz + normalisasi) sebelum transkripsi | **RESOLVED (mitigasi)** | Q-01/Q-02/Q-03 PASS; ujian unit enhancement 3/3 |
 | KL-004 | Nota automatik ialah draf | Pilihan reka bentuk keselamatan | Amaran kekal dalam UI dan panduan | **ACCEPTED (by design)** | Semakan UI |
 | KL-005 | WebKit/Firefox belum diuji | Enjin tidak dipasang | Playwright WebKit & Firefox dipasang; ujian asas 4 kriteria dijalankan | **RESOLVED** | 3 enjin × (load/upload/notes/save) = 12/12 PASS (`cross-browser-results.json`) |
 | KL-006 | OpenCode e2e tidak diuji | Perlu API key sebenar | Diuji dengan kunci sebenar: endpoint pulangkan **429 FreeUsageLimitError** dan respons tanpa header CORS → pelayar "Failed to fetch". Bukan ralat kod aplikasi | **BLOCKED (external)** | E2E-OC-01 gagal (kuota/CORS); ralat 401/mock 200/gugur 500 PASS |
@@ -26,6 +26,6 @@ Sumber batasan: `PANDUAN-PENGGUNA.md` §12, `README.md`, `audit/audit-config.jso
 
 ## Ringkasan
 
-- 10 batasan didaftarkan: **6 diselesaikan** (KL-001, KL-002 mitigasi, KL-005, KL-007, KL-009 mitigasi, KL-010), **2 diterima** (inherent/by design: KL-003, KL-004), **2 disekat** (KL-006 kuota/CORS perkhidmatan luar; KL-008 persekitaran sandbox).
+- 10 batasan didaftarkan: **8 diselesaikan** (KL-001, KL-002, KL-003 mitigasi, KL-005, KL-007, KL-009 mitigasi, KL-010), **1 diterima** (KL-004 by design), **1 disekat** (KL-006 kuota/CORS perkhidmatan luar; KL-008 persekitaran ujian).
 - 3 cacat tambahan ditemui dan diselesaikan dalam kitaran yang sama (DEF-COMPAT-013, DEF-INT-014) + 1 disekat luaran (DEF-INT-015).
 - Tiada batasan "resolved" ditanda tanpa bukti ujian; KL-007 disahkan dengan token Drive sebenar.

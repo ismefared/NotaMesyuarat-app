@@ -8,6 +8,7 @@
  * membantu mengelakkan gelung pengulangan (loop) pada model kecil.
  */
 import { pipeline, env } from '@huggingface/transformers';
+import { decodeMono, encodeWav, enhanceSamples, splitSamples } from './audioTools';
 
 env.allowLocalModels = false;
 
@@ -111,6 +112,40 @@ function cleanTranscript(text) {
   // Rapatkan koma/ruang berkembar dan koma sebelum titik
   out = out.replace(/([,\s])\1+/g, '$1').replace(/,+\s*\./g, '.').trim();
   return out;
+}
+
+/**
+ * Transkripsi pintar:
+ * - Audio panjang (> thresholdSec) dipecah automatik kepada segmen dan
+ *   ditranskripsi berurutan — mengurangkan beban memori dan masa per larian.
+ * - `enhance` mengaktifkan tapisan bising ringan + normalisasi sebelum ASR.
+ * - onProgress({ phase, part, total }) untuk status UI.
+ */
+export async function transcribeFlexible(
+  blob,
+  modelKey = DEFAULT_MODEL,
+  language = 'auto',
+  { enhance = false, thresholdSec = 900, segmentSec = 600, onProgress } = {}
+) {
+  const { samples, sampleRate, duration } = await decodeMono(blob);
+  let data = samples;
+  if (enhance) {
+    onProgress?.({ phase: 'enhance' });
+    data = enhanceSamples(samples, sampleRate);
+  }
+
+  if (!Number.isFinite(duration) || duration <= thresholdSec) {
+    return transcribe(encodeWav(data, sampleRate), modelKey, language);
+  }
+
+  const parts = splitSamples(data, sampleRate, segmentSec);
+  const results = [];
+  for (let i = 0; i < parts.length; i++) {
+    onProgress?.({ phase: 'segment', part: i + 1, total: parts.length });
+    const text = await transcribe(encodeWav(parts[i], sampleRate), modelKey, language);
+    if (text) results.push(text);
+  }
+  return results.join('\n\n');
 }
 
 export async function transcribe(blob, modelKey = DEFAULT_MODEL, language = 'auto') {

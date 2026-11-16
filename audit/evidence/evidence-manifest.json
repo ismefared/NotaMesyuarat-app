@@ -166,6 +166,24 @@
       "testId": "E2E-OC-01",
       "viewport": "1440x900",
       "description": "Percubaan transkripsi OpenCode (disekat 429/CORS)"
+    },
+    {
+      "file": "Q-01_QUALITY_PANEL.png",
+      "testId": "Q-01",
+      "viewport": "1440x960",
+      "description": "Panel kualiti audio untuk fail bising"
+    },
+    {
+      "file": "Q-03_ENHANCED_TRANSCRIBE.png",
+      "testId": "Q-03",
+      "viewport": "1440x960",
+      "description": "Transkripsi dengan enhancement"
+    },
+    {
+      "file": "Q-04_LONG_AUDIO_NOTICE.png",
+      "testId": "Q-04",
+      "viewport": "1440x960",
+      "description": "Notis pecahan automatik audio 16 min"
     }
   ],
   "testFiles": [
@@ -200,6 +218,10 @@
     {
       "file": "../test-cases/e2e-credentials-results.json",
       "description": "e2e OpenCode & Google Drive dengan kredensial sebenar"
+    },
+    {
+      "file": "../test-cases/quality-results.json",
+      "description": "Ujian kualiti audio & pemecahan audio panjang"
     }
   ],
   "consoleErrors": [

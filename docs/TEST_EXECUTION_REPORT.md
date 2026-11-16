@@ -10,11 +10,12 @@ Alat: Playwright 1.59.1 (Chromium, WebKit, Firefox), Vitest 5.1, axe-core 4.10.2
 | Regresi fungsional (Chromium) | 20 | 20 | 0 | 0 |
 | Batasan diketahui (KL suite) | 6 | 5 | 0 | 1 (KL-008 mic) |
 | Silang pelayar (Chromium/WebKit/Firefox) | 12 | 12 | 0 | 0 |
-| Ujian unit (Vitest) | 9 | 9 | 0 | 0 |
+| Ujian unit (Vitest) | 19 | 19 | 0 | 0 |
 | Integrasi API (intercept) | 4 | 4 | 0 | 0 |
 | Aksesibiliti (axe-core) | 4 imbasan | 4 | 0 | 0 |
 | Prestasi (navigation timing) | 3 larian | — | — | — |
 | e2e kredensial sebenar | 7 | 6 | 0 | 1 (OpenCode kuota/CORS) |
+| e2e kualiti audio & panjang | 5 | 5 | 0 | 0 |
 
 ## 2. Regresi fungsional — hasil
 
@@ -50,7 +51,7 @@ Sumber: `audit/test-cases/cross-browser-results.json`, tangkapan `XB-*.png`.
 
 ## 5. Ujian unit
 
-`npx vitest run`: **9/9 PASS** (2 fail ujian) — `minutes.js` (seksyen minit/skop, butiran, kes tepi) dan `exporters.js` (markdown→HTML, pengekodan XSS, senarai/pengepala).
+`npx vitest run`: **19/19 PASS** (3 fail ujian) — `minutes.js`, `exporters.js`, dan `audioTools.js` (analisis kualiti, enhancement, pemecahan segmen, pengekodan WAV).
 
 ## 6. Integrasi API (intercept)
 
@@ -112,7 +113,25 @@ lalai dan berfungsi.
 
 | Kategori | Jumlah | Lulus | Gagal aplikasi | Disekat luaran |
 |---|---|---|---|---|
-| Semua kategori | **62** | **60** | **0** | **2** (KL-008 mic, E2E-OC-01) |
+| Semua kategori | **67** | **65** | **0** | **2** (KL-008 mic, E2E-OC-01) |
 
 Nota: E2E-OC-01 dikira "disekat luaran", bukan kegagalan aplikasi — punca
 adalah kuota/CORS perkhidmatan, bukan kod.
+
+
+## 11. Mekanisme kualiti audio & audio panjang (v0.3.0)
+
+Sumber: `audit/test-cases/quality-results.json`.
+
+| ID | Semakan | Keputusan | Bukti |
+|---|---|---|---|
+| Q-01 | Panel kualiti muncul untuk fail bising | PASS | Rating "Lemah", SNR ~3 dB, tip dipaparkan |
+| Q-02 | Pilihan "Tingkatkan audio" tersedia | PASS | Checkbox hadir dan boleh ditanda |
+| Q-03 | Transkripsi dengan enhancement berjaya | PASS | Mara ke langkah Nota (model tiny) |
+| Q-04 | Notis pecahan automatik audio panjang | PASS | 16 min → 2 bahagian |
+| Q-05 | Ralat JS sepanjang ujian | PASS | 0 ralat aplikasi |
+
+Ujian unit baharu: `src/lib/audioTools.test.js` (10 ujian — analisis baik/lemah/
+clipping, penapisan dengung, normalisasi, pemecahan segmen, pengepala WAV).
+Pepijat enhancement (normalisasi menggunakan puncak selepas tapisan) ditemui
+oleh ujian unit dan dibetulkan sebelum keluaran.

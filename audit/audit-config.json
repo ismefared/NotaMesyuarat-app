@@ -2,7 +2,7 @@
   "tool": "AIAAA",
   "version": "1.0.0",
   "application": "NotaMesyuarat",
-  "appVersion": "0.2.1",
+  "appVersion": "0.3.0",
   "auditDate": "2026-11-16",
   "gitCommit": "akan dikemas kini",
   "uncommittedChanges": false,
@@ -39,6 +39,6 @@
     "KL-008: Rakaman mikrofon automatik disekat sandbox getUserMedia",
     "KL-009: Lighthouse tidak dijalankan; diganti navigation timing"
   ],
-  "cycle": 6,
-  "cycleNote": "Kitaran v6: ujian e2e dengan kredensial sebenar. Drive 5/5 PASS (termasuk pembetulan DEF-INT-014). OpenCode disekat kuota/CORS (DEF-INT-015)."
+  "cycle": 7,
+  "cycleNote": "Kitaran v7: mekanisme kualiti audio (analisis + enhancement) dan pemecahan automatik audio panjang. Ujian 67 semakan; 65 PASS; 0 gagal aplikasi; 2 disekat."
 }

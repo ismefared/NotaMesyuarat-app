@@ -7,7 +7,7 @@ Tarikh pendaftaran: 16 Nov 2026 · Baseline: commit `ff2bd3c`
 |---|---|---|---|---|---|---|---|
 | KL-001 | Rakaman audio tidak disimpan dalam rekod mesyuarat (§12) | Disahkan — `saveMeeting()` tidak menyimpan blob | Blob audio tidak pernah ditulis ke IndexedDB | Pengguna kehilangan audio asal; tidak boleh semak/transkripsi semula | Functional Gap | **P1** | **SELESAI**: audio disimpan (ArrayBuffer), dipulihkan, dipadam bersama rekod |
 | KL-002 | Audio panjang memerlukan masa/memori (§12) | Sebahagian — Whisper chunk 30s/stride 5s | Had pengiraan model/peranti | Pemprosesan lama; risiko memori | Inherent Constraint | P3 | Mitigasi UX: papar tempoh audio & anggaran; nasihat pecah bahagian |
-| KL-003 | Kualiti transkripsi bergantung kualiti audio (§12) | Inherent | Ciri model ASR | Ketepatan berubah | Inherent Constraint | P3 | Dokumentasi + tip (sedia ada) |
+| KL-003 | Kualiti transkripsi bergantung kualiti audio (§12) | **MITIGASI** — panel kualiti + enhancement | Ciri model ASR | Ketepatan berubah | UX Improvement | P2 | **SELESAI (mitigasi)**: analisis audio + Tingkatkan audio |
 | KL-004 | Nota automatik ialah draf (§12) | By design | Pilihan reka bentuk keselamatan | Pengguna mesti semak | Inherent Constraint | P3 | Kekalkan amaran (sedia ada) |
 | KL-005 | WebKit/Firefox belum diuji (§12) | Tidak diuji | Enjin pelayar tidak dipasang | Risiko keserasian tidak diketahui | Test Gap | **P2** | **SELESAI**: 3 enjin × 4 kriteria = 12/12 PASS |
 | KL-006 | OpenCode e2e tidak diuji (audit-config) | Diuji dengan kunci sebenar — disekat 429 kuota + CORS tidak disahkan | Kuota percuma habis; respons tanpa ACAO | Integrasi OpenCode tidak dapat disahkan hujung-ke-hujung | External Dependency | P2 | **BLOCKED** — lihat DEF-INT-015 |

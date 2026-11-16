@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-16T07:24:46.465Z",
+  "timestamp": "2026-11-16T09:20:05.587Z",
   "browser": "chromium (playwright 1.59.1)",
   "baseUrl": "http://localhost:4173",
   "results": [
@@ -56,7 +56,7 @@
       "id": "TC-08",
       "name": "Eksport PDF/Word/Markdown",
       "status": "PASS",
-      "note": "fail dimuat turun: minit-mesyuarat-1794813847127.pdf, minit-mesyuarat-1794813847162.doc, minit-mesyuarat-1794813847183.md",
+      "note": "fail dimuat turun: minit-mesyuarat-1794820766231.pdf, minit-mesyuarat-1794820766264.doc, minit-mesyuarat-1794820766284.md",
       "evidence": ""
     },
     {
@@ -161,7 +161,7 @@
       "id": "TC-19",
       "name": "Ralat konsol pelayar",
       "status": "WARN",
-      "note": "2 ralat: Failed to load resource: net::ERR_NAME_NOT_RESOLVED | TypeError: Failed to fetch\n    at W$ (http://localhost:4173/assets/index-DDv-Hbw6.js:130:1388)\n    at Aa (http://localhost:4173/assets/index-DDv-Hbw6.js:130:24697)\n    at Object.yi (http://localhost:4173/assets/index-DDv-Hbw6.js:5:9843)\n    at Mi",
+      "note": "2 ralat: Failed to load resource: net::ERR_NAME_NOT_RESOLVED | TypeError: Failed to fetch\n    at J$ (http://localhost:4173/assets/index-LEc2BRds.js:132:1388)\n    at Qn (http://localhost:4173/assets/index-LEc2BRds.js:132:25210)\n    at Object.na (http://localhost:4173/assets/index-LEc2BRds.js:5:9843)\n    at Si",
       "evidence": ""
     }
   ]

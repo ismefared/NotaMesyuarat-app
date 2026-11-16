@@ -1,8 +1,15 @@
-# Nota Keluaran — NotaMesyuarat v0.2.1
+# Nota Keluaran — NotaMesyuarat v0.3.0
 
-Tarikh: 16 November 2026 · Sebelum ini: v0.2.0
+Tarikh: 16 November 2026 · Sebelum ini: v0.2.1
 
 ## Ciri baharu
+
+- **Analisis kualiti audio** — penilaian Baik/Sederhana/Lemah dengan SNR,
+  aras dBFS, peratus senyap dan tip pembetulan sebelum transkripsi.
+- **Tingkatkan audio** — tapisan high-pass 100 Hz + normalisasi aras,
+  diproses on-device sebelum ASR.
+- **Pemecahan automatik audio panjang** — audio >15 minit dipecah kepada
+  segmen ~10 minit dan ditranskripsi berurutan dengan status kemajuan.
 
 - **Audio disimpan bersama mesyuarat** — rakaman/fail kekal dalam storan
   pelayar dan boleh dimainkan semula melalui langkah Transkrip.
@@ -40,6 +47,9 @@ Tarikh: 16 November 2026 · Sebelum ini: v0.2.0
 
 ## Batasan yang tinggal
 
+- Audio panjang (>15 min) diproses dalam segmen; masa masih bergantung pada
+  peranti dan model. Kualiti audio sangat bising masih menjejaskan ketepatan
+  walaupun selepas enhancement.
 - Integrasi OpenCode: kunci sebenar diuji tetapi disekat kuota percuma (429)
   dan CORS yang tidak disahkan (DEF-INT-015). Google Drive e2e **lulus 5/5**.
 - Rakaman mikrofon tidak diuji automatik dalam sandbox.

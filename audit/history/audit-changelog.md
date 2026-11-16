@@ -122,3 +122,14 @@
 - Pemilih skrip ujian TC-06/TC-17 dibetulkan — suite utama kini 20/20 PASS
   (sebelum ini dilaporkan sebagai artifak skrip).
 - Jumlah muktamad: 62 semakan — 60 PASS, 0 gagal aplikasi, 2 disekat luaran.
+
+## 16 November 2026 — Kitaran v7: kualiti audio & audio panjang (v0.3.0)
+
+- KL-002 RESOLVED: audio >15 min dipecah automatik kepada segmen ~10 min,
+  ditranskripsi berurutan dengan status bahagian X/Y; decode mono 16 kHz.
+- KL-003 MITIGATED: panel kualiti (SNR/aras/senyap/clipping + tip) dan
+  pilihan "Tingkatkan audio" (high-pass 100 Hz + normalisasi) on-device.
+- Ujian: 19/19 unit (10 baharu audioTools); Q-01..Q-05 PASS; regresi 20/20.
+- Pepijat enhancement ditemui oleh ujian unit (normalisasi guna puncak
+  selepas tapisan) — dibetulkan sebelum keluaran.
+- Manual NM-PG-001 v1.3 (21 halaman). Versi aplikasi 0.3.0.

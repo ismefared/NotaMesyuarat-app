@@ -2,7 +2,7 @@
 <html lang="ms">
 <head>
 <meta charset="utf-8">
-<title>Panduan Pengguna NotaMesyuarat v1.2</title>
+<title>Panduan Pengguna NotaMesyuarat v1.3</title>
 <meta name="author" content="Pasukan Projek NotaMesyuarat">
 <meta name="description" content="Panduan pengguna rasmi aplikasi NotaMesyuarat — rakaman, transkripsi dan penjanaan minit mesyuarat.">
 <meta name="keywords" content="NotaMesyuarat, panduan pengguna, minit mesyuarat, transkripsi, dokumen serahan">
@@ -17,7 +17,7 @@
       font-size: 7.5pt; color: #6b7280;
     }
     @top-right {
-      content: "NM-PG-001 · Versi 1.2";
+      content: "NM-PG-001 · Versi 1.3";
       font-family: "Helvetica Neue", Arial, sans-serif;
       font-size: 7.5pt; color: #6b7280;
     }
@@ -126,17 +126,17 @@
     <h2>Manual Pengguna Aplikasi<br>NotaMesyuarat</h2>
     <table class="cover-meta">
       <tr><td>ID Dokumen</td><td>NM-PG-001</td></tr>
-      <tr><td>Versi</td><td>1.2</td></tr>
+      <tr><td>Versi</td><td>1.3</td></tr>
       <tr><td>Tarikh Keluaran</td><td>16 November 2026</td></tr>
       <tr><td>Status</td><td>Muktamad (Final)</td></tr>
       <tr><td>Klasifikasi</td><td>Dalaman</td></tr>
       <tr><td>Disediakan oleh</td><td>Pasukan Projek NotaMesyuarat</td></tr>
       <tr><td>Pemilik Dokumen</td><td>Pemilik Produk NotaMesyuarat</td></tr>
-      <tr><td>Versi Aplikasi</td><td>0.2.1 (binaan produksi)</td></tr>
+      <tr><td>Versi Aplikasi</td><td>0.3.0 (binaan produksi)</td></tr>
     </table>
   </div>
   <div class="cover-foot">
-    <span>NotaMesyuarat · Panduan Pengguna v1.2</span>
+    <span>NotaMesyuarat · Panduan Pengguna v1.3</span>
     <span>Hak cipta terpelihara © 2026</span>
   </div>
 </div>
@@ -149,7 +149,7 @@
   <table class="doc-control">
     <tr><td>Nama Dokumen</td><td>Manual Pengguna Aplikasi NotaMesyuarat</td></tr>
     <tr><td>ID Dokumen</td><td>NM-PG-001</td></tr>
-    <tr><td>Versi</td><td>1.2</td></tr>
+    <tr><td>Versi</td><td>1.3</td></tr>
     <tr><td>Status</td><td>Muktamad (Final) — untuk kelulusan pemilik produk</td></tr>
     <tr><td>Tarikh</td><td>16 November 2026</td></tr>
     <tr><td>Penulis</td><td>Pasukan Projek NotaMesyuarat</td></tr>
@@ -168,6 +168,7 @@
       <tr><td>1.0</td><td>16 Nov 2026</td><td>Keluaran pertama — selaras dengan aplikasi selepas pelaksanaan pembetulan audit (AAERA).</td><td>Pasukan Projek</td></tr>
       <tr><td>1.1</td><td>16 Nov 2026</td><td>Audio kini disimpan bersama rekod mesyuarat; penyuntingan mesyuarat tersimpan mengemas kini rekod sedia ada; tempoh audio dipaparkan; dokumentasi privasi dan storan dikemas kini.</td><td>Pasukan Projek</td></tr>
       <tr><td>1.2</td><td>16 Nov 2026</td><td>Selaras dengan v0.2.1: pengesahan auto-upload Google Drive; nota kuota OpenCode; baris penyelesaian masalah "Failed to fetch" untuk OpenCode; versi aplikasi dikemas kini.</td><td>Pasukan Projek</td></tr>
+      <tr><td>1.3</td><td>16 Nov 2026</td><td>Selaras dengan v0.3.0: panel kualiti audio (SNR/aras/senyap + tip), pilihan Tingkatkan audio, dan pemecahan automatik audio panjang (&gt;15 min).</td><td>Pasukan Projek</td></tr>
     </tbody>
   </table>
 
@@ -389,7 +390,39 @@
   had penggunaan. Jika kuota habis, transkripsi OpenCode gagal walaupun kunci
   sah — gunakan mod <strong>On-device</strong> atau tunggu kuota dipulihkan.</div>
 
-  <h3>5.3 Semakan dan Eksport Transkrip</h3>
+  <h3>5.3 Kualiti Audio</h3>
+  <p>Selepas audio dimuatkan, aplikasi menganalisis kualiti secara automatik
+  dan memaparkan panel <strong>Kualiti audio</strong>:</p>
+  <table>
+    <thead><tr><th>Penunjuk</th><th>Maksud</th></tr></thead>
+    <tbody>
+      <tr><td>Baik / Sederhana / Lemah</td><td>Penilaian keseluruhan untuk transkripsi</td></tr>
+      <tr><td>SNR</td><td>Nisbah suara berbanding bunyi latar — lebih tinggi lebih baik</td></tr>
+      <tr><td>Aras</td><td>Kekuatan audio dalam dBFS</td></tr>
+      <tr><td>Senyap</td><td>Peratus bahagian audio yang senyap</td></tr>
+    </tbody>
+  </table>
+  <p>Aplikasi turut memberikan tip khusus (dekatkan mikrofon, kurangkan gain,
+  guna model Small) berdasarkan keputusan analisis.</p>
+  <div class="note"><strong>Tingkatkan audio:</strong> tandakan pilihan ini untuk
+  menapis dengung/rumble frekuensi rendah (high-pass 100 Hz) dan menormalkan
+  aras audio yang terlalu perlahan. Pemprosesan berlaku dalam pelayar
+  (on-device) sebelum transkripsi. Ia membantu audio perlahan/dengung tetapi
+  tidak menghilangkan bunyi latar bercampur suara sepenuhnya.</div>
+
+  <h3>5.4 Audio Panjang</h3>
+  <p>Audio melebihi <strong>15 minit</strong> dipecahkan secara automatik
+  kepada bahagian ~10 minit dan ditranskripsi satu demi satu — mengurangkan
+  penggunaan memori dan membolehkan mesyuarat panjang diproses pada peranti
+  biasa.</p>
+  <ul>
+    <li>Status memaparkan "Mentranskripsi bahagian X/Y...".</li>
+    <li>Transkrip setiap bahagian digabungkan mengikut urutan.</li>
+    <li>Masa pemprosesan bergantung pada panjang audio, model dan peranti.</li>
+    <li>Jika peranti kehabisan memori, pecahkan fail secara manual.</li>
+  </ul>
+
+  <h3>5.5 Semakan dan Eksport Transkrip</h3>
   <p>Transkrip boleh diedit terus dalam kotak teks. Klik
   <strong>Eksport transkrip</strong> untuk memuat turun fail Markdown, atau
   <strong>Teruskan ke nota</strong> apabila selesai.</p>
@@ -594,7 +627,8 @@
   <div class="doc-id">NM-PG-001 · Bahagian 13</div>
   <h2>13. Batasan yang Diketahui</h2>
   <ul>
-    <li>Audio sangat panjang memerlukan masa dan memori yang lebih tinggi — pecahkan kepada bahagian jika perlu.</li>
+    <li>Audio melebihi 15 minit diproses dalam segmen automatik; masa pemprosesan tetap bergantung pada panjang audio, model dan peranti.</li>
+    <li>Kualiti transkripsi bergantung pada kualiti audio. Panel kualiti dan pilihan Tingkatkan audio membantu, tetapi bunyi latar kuat masih boleh menjejaskan ketepatan.</li>
     <li>Storan audio tertakluk pada kuota IndexedDB pelayar; padam rekod lama jika ruang tidak mencukupi.</li>
     <li>Kualiti transkripsi bergantung pada kualiti audio; bising latar belakang menjejaskan ketepatan.</li>
     <li>Nota automatik ialah draf dan mesti disemak sebelum diedarkan.</li>

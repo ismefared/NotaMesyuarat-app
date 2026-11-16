@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { get, set, del } from 'idb-keyval';
 import { Recorder, formatClock, getAudioDuration } from './lib/recorder';
-import { transcribe, loadASR, MODELS, LANGUAGES } from './lib/whisper';
+import { transcribe, transcribeFlexible, loadASR, MODELS, LANGUAGES } from './lib/whisper';
+import { decodeMono, analyseSamples } from './lib/audioTools';
 import {
   transcribeWithOpenCode,
   generateNotesWithOpenCode,
@@ -189,6 +190,8 @@ export default function App() {
   const [meetingsLoading, setMeetingsLoading] = useState(true); // UX-AUDIT #3
   const [savedSig, setSavedSig] = useState(null); // DEF-FUNC-005
   const [audioDuration, setAudioDuration] = useState(0); // KL-002
+  const [audioQuality, setAudioQuality] = useState(null); // kualiti audio
+  const [enhanceAudio, setEnhanceAudio] = useState(false); // tingkatkan audio
   const [currentId, setCurrentId] = useState(null); // KL-010: id rekod yang sedang disunting
   const [toast, setToast] = useState('');
   const [theme, setTheme] = useState(getStoredTheme());
@@ -197,6 +200,18 @@ export default function App() {
   const showToast = useCallback((msg) => {
     setToast(msg);
     setTimeout(() => setToast(''), 2600);
+  }, []);
+
+  // Analisis kualiti audio (SNR anggaran, aras, senyap, clipping).
+  // Dilangkau untuk audio sangat panjang (>30 min) bagi menjimatkan memori.
+  const analyseBlob = useCallback(async (blob) => {
+    try {
+      const { samples, sampleRate } = await decodeMono(blob);
+      setAudioQuality(analyseSamples(samples, sampleRate));
+    } catch (err) {
+      console.error(err);
+      setAudioQuality(null);
+    }
   }, []);
 
   const loadMeetings = useCallback(async () => {
@@ -293,6 +308,8 @@ export default function App() {
       setElapsed(0);
       setAudioBlob(null);
       setAudioDuration(0);
+      setAudioQuality(null);
+      setEnhanceAudio(false);
       setCurrentId(null);
       setSavedSig(null);
       setTranscript('');
@@ -316,6 +333,9 @@ export default function App() {
     setAudioName(`${name} (${formatBytes(blob.size)})`);
     setAudioUrl(URL.createObjectURL(blob));
     setAudioDuration(elapsed);
+    setAudioQuality(null);
+    setEnhanceAudio(false);
+    if (elapsed > 0 && elapsed <= 1800) analyseBlob(blob);
     setCurrentId(null);
     setSavedSig(null);
     setStatus('Rakaman selesai.');
@@ -334,6 +354,8 @@ export default function App() {
     setAudioName(`${file.name} (${formatBytes(file.size)})`);
     setAudioUrl(URL.createObjectURL(file));
     setAudioDuration(0);
+    setAudioQuality(null);
+    setEnhanceAudio(false);
     setCurrentId(null);
     setSavedSig(null);
     setTranscript('');
@@ -341,7 +363,12 @@ export default function App() {
     setStatus(`Fail "${file.name}" sedia untuk ditranskripsi.`);
     setStep(2);
     // KL-002: baca tempoh sebenar fail (sebelum ini durationSec sentiasa 0)
-    getAudioDuration(file).then(setAudioDuration).catch(() => {});
+    getAudioDuration(file)
+      .then((d) => {
+        setAudioDuration(d);
+        if (d > 0 && d <= 1800) analyseBlob(file);
+      })
+      .catch(() => {});
     maybeAutoUpload(file, file.name);
   };
 
@@ -386,8 +413,17 @@ export default function App() {
     try {
       await loadASR(({ percent }) => setModelPercent(percent), modelKey);
       setModelPercent(null);
-      setStatus('Mentranskripsi rakaman...');
-      const text = await transcribe(audioBlob, modelKey, language);
+      const smart = enhanceAudio || audioDuration > 900;
+      setStatus(smart ? 'Menyediakan audio...' : 'Mentranskripsi rakaman...');
+      const text = smart
+        ? await transcribeFlexible(audioBlob, modelKey, language, {
+            enhance: enhanceAudio,
+            onProgress: ({ phase, part, total }) => {
+              if (phase === 'enhance') setStatus('Menambah baik audio...');
+              else if (phase === 'segment') setStatus(`Mentranskripsi bahagian ${part}/${total}...`);
+            },
+          })
+        : await transcribe(audioBlob, modelKey, language);
       setTranscript(text);
       setStatus(text ? 'Transkrip siap.' : 'Tiada suara dikesan dalam rakaman.');
       if (text) setStep(3);
@@ -1075,6 +1111,45 @@ export default function App() {
                     <div style={{ width: `${modelPercent}%` }} />
                   </div>
                 </div>
+              )}
+
+              {/* Kualiti audio: analisis automatik + pilihan tingkatkan audio */}
+              {audioQuality && (
+                <div className={`audio-quality quality-${audioQuality.rating}`}>
+                  <p className="hint">
+                    Kualiti audio:{' '}
+                    <strong>
+                      {audioQuality.rating === 'good'
+                        ? 'Baik'
+                        : audioQuality.rating === 'fair'
+                          ? 'Sederhana'
+                          : 'Lemah'}
+                    </strong>
+                    {' '}· SNR ~{Math.round(audioQuality.snr)} dB · aras {Math.round(audioQuality.rmsDb)} dBFS · senyap {audioQuality.silencePct}%
+                  </p>
+                  <ul className="quality-tips">
+                    {audioQuality.tips.map((tip) => <li key={tip}>{tip}</li>)}
+                  </ul>
+                  {source === 'device' && (
+                    <label className="check-row">
+                      <input
+                        type="checkbox"
+                        checked={enhanceAudio}
+                        onChange={(e) => setEnhanceAudio(e.target.checked)}
+                        disabled={busy !== null}
+                      />
+                      Tingkatkan audio sebelum transkripsi (tapisan bising ringan + normalisasi)
+                    </label>
+                  )}
+                </div>
+              )}
+
+              {audioDuration > 900 && (
+                <p className="hint">
+                  Audio panjang ({Math.round(audioDuration / 60)} min) — transkripsi akan
+                  dipecahkan kepada <strong>{Math.ceil(audioDuration / 600)} bahagian</strong> secara
+                  automatik untuk mengurangkan penggunaan memori.
+                </p>
               )}
 
               {busy === 'transcribe' && (

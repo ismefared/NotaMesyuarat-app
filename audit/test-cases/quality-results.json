@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-11-16T09:18:11.008Z",
+  "results": [
+    {
+      "id": "Q-01",
+      "name": "Panel kualiti audio muncul (fail bising)",
+      "status": "PASS",
+      "note": "panel=1, rating=\"Lemah\", teks=\"Kualiti audio: Lemah · SNR ~3 dB · aras -12 dBFS · senyap 0%Bunyi latar tinggi berbanding suara — cuba mikrofon lebih dekat atau model Small.Tingkatkan audio sebelum transkripsi (tapisan bising ringan + normalisasi)\""
+    },
+    {
+      "id": "Q-02",
+      "name": "Pilihan \"Tingkatkan audio\" tersedia",
+      "status": "PASS",
+      "note": "checkbox=1"
+    },
+    {
+      "id": "Q-03",
+      "name": "Transkripsi dengan enhancement berjaya",
+      "status": "PASS",
+      "note": "transkrip=0 aksara, langkah nota=1"
+    },
+    {
+      "id": "Q-04",
+      "name": "Notis pecahan automatik untuk audio panjang",
+      "status": "PASS",
+      "note": "min=16, bahagian=2"
+    },
+    {
+      "id": "Q-05",
+      "name": "Ralat JS sepanjang ujian",
+      "status": "PASS",
+      "note": ""
+    }
+  ]
+}
