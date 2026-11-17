@@ -1,8 +1,17 @@
 # Manual Pengguna Dikemas Kini — Penunjuk
 
-**Manual rasmi terkini:** [`PANDUAN-PENGGUNA.md`](../PANDUAN-PENGGUNA.md) (v1.3)
-**PDF serahan:** [`PANDUAN-PENGGUNA-NotaMesyuarat-v1.3.pdf`](PANDUAN-PENGGUNA-NotaMesyuarat-v1.3.pdf)
-**Versi terdahulu:** [v1.2](PANDUAN-PENGGUNA-NotaMesyuarat-v1.2.pdf) · [v1.1](PANDUAN-PENGGUNA-NotaMesyuarat-v1.1.pdf) · [v1.0](PANDUAN-PENGGUNA-NotaMesyuarat-v1.0.pdf)
+**Manual rasmi terkini:** [`PANDUAN-PENGGUNA.md`](../PANDUAN-PENGGUNA.md) (v1.4)
+**PDF serahan:** [`PANDUAN-PENGGUNA-NotaMesyuarat-v1.4.pdf`](PANDUAN-PENGGUNA-NotaMesyuarat-v1.4.pdf)
+**Versi terdahulu:** [v1.3](PANDUAN-PENGGUNA-NotaMesyuarat-v1.3.pdf) · [v1.2](PANDUAN-PENGGUNA-NotaMesyuarat-v1.2.pdf) · [v1.1](PANDUAN-PENGGUNA-NotaMesyuarat-v1.1.pdf) · [v1.0](PANDUAN-PENGGUNA-NotaMesyuarat-v1.0.pdf)
+
+## Perubahan dalam v1.4 (17 Nov 2026)
+
+1. **Senarai Rajah** baharu dengan nombor halaman sebenar.
+2. **Rajah aliran kerja** dan **rajah seni bina privasi** (SVG).
+3. **Enam tangkapan skrin UI sebenar**: Langkah 1, Langkah 2 (kualiti audio),
+   kualiti lemah, notis audio panjang, Langkah 3, dan dialog Tetapan Awan.
+4. PDF dijana semula: **27 halaman**, 2.5 MB.
+5. Sumber Markdown turut memautkan gambar dalam `docs/figures/`.
 
 ## Perubahan dalam v1.3 (16 Nov 2026)
 

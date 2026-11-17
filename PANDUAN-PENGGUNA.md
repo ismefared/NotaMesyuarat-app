@@ -81,6 +81,8 @@ termasuk rakaman Zoom, Google Meet, atau video iPhone.
 
 Selepas fail dimuatkan, aplikasi akan terus melompat ke langkah 2.
 
+![Rajah 3 — Langkah 1: kaedah input audio dan butiran mesyuarat](docs/figures/fig-03-langkah-1.png)
+
 ### 3.3 Import dari awan
 
 1. Pilih tab **Import awan**.
@@ -123,6 +125,8 @@ Pilih enjin transkripsi:
 | Small | ~250 MB | Paling lambat | Paling tepat |
 
 3. Klik **Jana transkrip**.
+
+![Rajah 4 — Langkah 2: pilihan enjin, kualiti audio dan transkrip](docs/figures/fig-04-langkah-2.png)
 
 **Kali pertama** menggunakan model, ia akan dimuat turun sekali sahaja dan
 disimpan dalam cache pelayar. Seterusnya, transkripsi boleh berjalan tanpa
@@ -176,6 +180,8 @@ bising bercampur suara sepenuhnya.
 > Tip: untuk audio bising, pilih model **Small** dan aktifkan
 > **Tingkatkan audio** untuk hasil terbaik.
 
+![Rajah 5 — Contoh panel kualiti audio lemah](docs/figures/fig-05-kualiti-lemah.png)
+
 ### 4.4 Audio panjang
 
 Audio melebihi **15 minit** dipecahkan secara automatik kepada bahagian
@@ -187,6 +193,8 @@ memori dan membolehkan mesyuarat panjang diproses pada peranti biasa.
 - Masa pemprosesan bergantung pada panjang audio, model dan peranti.
 - Jika peranti kehabisan memori, pecahkan fail audio secara manual kepada
   beberapa fail yang lebih kecil.
+
+![Rajah 6 — Notis pemecahan automatik audio panjang](docs/figures/fig-06-audio-panjang.png)
 
 ### 4.5 Edit & eksport transkrip
 
@@ -240,6 +248,8 @@ Klik **Simpan**. Mesyuarat akan muncul dalam senarai **Mesyuarat terkini**.
 | **Markdown** | Fail `.md` teks biasa |
 | **Salin** | Salin nota ke papan keratan |
 
+![Rajah 7 — Langkah 3: nota dijana, simpan dan eksport](docs/figures/fig-07-langkah-3.png)
+
 ---
 
 ## 6. Mengurus mesyuarat tersimpan
@@ -275,6 +285,8 @@ Klik ikon ⚙️ di bar atas.
 
 > Folder mesti wujud terlebih dahulu di pelayan anda. Kredensial disimpan
 > dalam pelayar anda sahaja.
+
+![Rajah 8 — Dialog Tetapan Awan](docs/figures/fig-08-tetapan-awan.png)
 
 ### 7.2 Google Drive
 

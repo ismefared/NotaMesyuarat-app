@@ -2,7 +2,7 @@
 <html lang="ms">
 <head>
 <meta charset="utf-8">
-<title>Panduan Pengguna NotaMesyuarat v1.3</title>
+<title>Panduan Pengguna NotaMesyuarat v1.4</title>
 <meta name="author" content="Pasukan Projek NotaMesyuarat">
 <meta name="description" content="Panduan pengguna rasmi aplikasi NotaMesyuarat — rakaman, transkripsi dan penjanaan minit mesyuarat.">
 <meta name="keywords" content="NotaMesyuarat, panduan pengguna, minit mesyuarat, transkripsi, dokumen serahan">
@@ -17,7 +17,7 @@
       font-size: 7.5pt; color: #6b7280;
     }
     @top-right {
-      content: "NM-PG-001 · Versi 1.3";
+      content: "NM-PG-001 · Versi 1.4";
       font-family: "Helvetica Neue", Arial, sans-serif;
       font-size: 7.5pt; color: #6b7280;
     }
@@ -109,6 +109,38 @@
   section.chapter { page-break-before: always; }
   section.chapter:first-of-type { page-break-before: auto; }
   .doc-id { font-size: 8pt; color: #6b7280; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+
+  /* ===== Rajah & gambar ===== */
+  figure {
+    margin: 12px 0 16px;
+    page-break-inside: avoid;
+    text-align: center;
+  }
+  figure img {
+    max-width: 100%;
+    border: 1px solid #d8dfdc;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(15, 61, 58, 0.08);
+  }
+  figure.diagram {
+    border: 1px solid #e4e0d8;
+    border-radius: 8px;
+    padding: 10px 8px 6px;
+    background: #fbfcfb;
+  }
+  figcaption {
+    font-size: 8.5pt;
+    color: #52605b;
+    margin-top: 6px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .fig-num { font-weight: 700; font-style: normal; color: #0f3d3a; }
+  .figlist { page-break-before: always; page-break-after: always; }
+  .figlist ol { list-style: none; margin: 8px 0 0; padding: 0; }
+  .figlist li { padding: 6px 0; border-bottom: 1px dotted #c9d2ce; font-size: 10pt; }
+  .figlist li a { color: #1f2933; text-decoration: none; display: flex; justify-content: space-between; }
+  .figlist li a::after { content: target-counter(attr(href), page); color: #0f766e; font-weight: 600; }
 </style>
 <script src="https://unpkg.com/pagedjs@0.4.3/dist/paged.polyfill.js"></script>
 </head>
@@ -126,7 +158,7 @@
     <h2>Manual Pengguna Aplikasi<br>NotaMesyuarat</h2>
     <table class="cover-meta">
       <tr><td>ID Dokumen</td><td>NM-PG-001</td></tr>
-      <tr><td>Versi</td><td>1.3</td></tr>
+      <tr><td>Versi</td><td>1.4</td></tr>
       <tr><td>Tarikh Keluaran</td><td>16 November 2026</td></tr>
       <tr><td>Status</td><td>Muktamad (Final)</td></tr>
       <tr><td>Klasifikasi</td><td>Dalaman</td></tr>
@@ -136,7 +168,7 @@
     </table>
   </div>
   <div class="cover-foot">
-    <span>NotaMesyuarat · Panduan Pengguna v1.3</span>
+    <span>NotaMesyuarat · Panduan Pengguna v1.4</span>
     <span>Hak cipta terpelihara © 2026</span>
   </div>
 </div>
@@ -149,7 +181,7 @@
   <table class="doc-control">
     <tr><td>Nama Dokumen</td><td>Manual Pengguna Aplikasi NotaMesyuarat</td></tr>
     <tr><td>ID Dokumen</td><td>NM-PG-001</td></tr>
-    <tr><td>Versi</td><td>1.3</td></tr>
+    <tr><td>Versi</td><td>1.4</td></tr>
     <tr><td>Status</td><td>Muktamad (Final) — untuk kelulusan pemilik produk</td></tr>
     <tr><td>Tarikh</td><td>16 November 2026</td></tr>
     <tr><td>Penulis</td><td>Pasukan Projek NotaMesyuarat</td></tr>
@@ -169,6 +201,7 @@
       <tr><td>1.1</td><td>16 Nov 2026</td><td>Audio kini disimpan bersama rekod mesyuarat; penyuntingan mesyuarat tersimpan mengemas kini rekod sedia ada; tempoh audio dipaparkan; dokumentasi privasi dan storan dikemas kini.</td><td>Pasukan Projek</td></tr>
       <tr><td>1.2</td><td>16 Nov 2026</td><td>Selaras dengan v0.2.1: pengesahan auto-upload Google Drive; nota kuota OpenCode; baris penyelesaian masalah "Failed to fetch" untuk OpenCode; versi aplikasi dikemas kini.</td><td>Pasukan Projek</td></tr>
       <tr><td>1.3</td><td>16 Nov 2026</td><td>Selaras dengan v0.3.0: panel kualiti audio (SNR/aras/senyap + tip), pilihan Tingkatkan audio, dan pemecahan automatik audio panjang (&gt;15 min).</td><td>Pasukan Projek</td></tr>
+      <tr><td>1.4</td><td>17 Nov 2026</td><td>Menambah Senarai Rajah, dua rajah seni bina/aliran kerja, dan enam tangkapan skrin UI sebenar bagi setiap langkah utama.</td><td>Pasukan Projek</td></tr>
     </tbody>
   </table>
 
@@ -209,8 +242,24 @@
     <li><a href="#s12">12. Soalan Lazim</a></li>
     <li><a href="#s13">13. Batasan yang Diketahui</a></li>
     <li><a href="#s14">14. Maklumat Teknikal untuk Pentadbir</a></li>
+    <li><a href="#figures">Senarai Rajah</a></li>
     <li><a href="#sA">Lampiran A — Glosari</a></li>
     <li><a href="#sB">Lampiran B — Rujukan Dokumen</a></li>
+  </ol>
+</div>
+
+<!-- ================= SENARAI RAJAH ================= -->
+<div class="figlist" id="figures">
+  <h2>Senarai Rajah</h2>
+  <ol>
+    <li><a href="#fig1">Rajah 1: Aliran kerja tiga langkah NotaMesyuarat</a></li>
+    <li><a href="#fig2">Rajah 2: Seni bina privasi — pemprosesan on-device</a></li>
+    <li><a href="#fig3">Rajah 3: Langkah 1 — kaedah input audio dan butiran mesyuarat</a></li>
+    <li><a href="#fig4">Rajah 4: Langkah 2 — pilihan enjin, kualiti audio dan transkrip</a></li>
+    <li><a href="#fig5">Rajah 5: Contoh panel kualiti audio lemah</a></li>
+    <li><a href="#fig6">Rajah 6: Notis pemecahan automatik audio panjang</a></li>
+    <li><a href="#fig7">Rajah 7: Langkah 3 — nota dijana, simpan dan eksport</a></li>
+    <li><a href="#fig8">Rajah 8: Dialog Tetapan Awan (WebDAV / Google Drive)</a></li>
   </ol>
 </div>
 
@@ -301,6 +350,68 @@
   Gelap</strong>.</p>
   <p>Langkah 2 dan 3 dikunci sehingga audio dan transkrip disediakan. Ini
   memastikan aliran kerja sentiasa lengkap sebelum nota dijana.</p>
+  <figure class="diagram" id="fig1">
+    <svg viewBox="0 0 820 180" width="100%" role="img" aria-label="Aliran kerja tiga langkah">
+      <defs>
+        <marker id="ar" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+          <path d="M0,0 L10,4 L0,8 z" fill="#0f766e"/>
+        </marker>
+      </defs>
+      <rect x="10" y="34" width="240" height="104" rx="10" fill="#eef6f4" stroke="#0f766e" stroke-width="1.4"/>
+      <text x="130" y="66" text-anchor="middle" font-size="16" font-weight="700" fill="#0f3d3a">1 · Audio</text>
+      <text x="130" y="90" text-anchor="middle" font-size="11" fill="#52605b">Rakam · Muat naik · Import awan</text>
+      <text x="130" y="110" text-anchor="middle" font-size="11" fill="#52605b">Butiran mesyuarat (pilihan)</text>
+      <line x1="256" y1="86" x2="284" y2="86" stroke="#0f766e" stroke-width="1.6" marker-end="url(#ar)"/>
+      <rect x="290" y="34" width="240" height="104" rx="10" fill="#eef6f4" stroke="#0f766e" stroke-width="1.4"/>
+      <text x="410" y="66" text-anchor="middle" font-size="16" font-weight="700" fill="#0f3d3a">2 · Transkrip</text>
+      <text x="410" y="90" text-anchor="middle" font-size="11" fill="#52605b">On-device (Whisper) atau OpenCode</text>
+      <text x="410" y="110" text-anchor="middle" font-size="11" fill="#52605b">Kualiti audio · Edit teks</text>
+      <line x1="536" y1="86" x2="564" y2="86" stroke="#0f766e" stroke-width="1.6" marker-end="url(#ar)"/>
+      <rect x="570" y="34" width="240" height="104" rx="10" fill="#eef6f4" stroke="#0f766e" stroke-width="1.4"/>
+      <text x="690" y="66" text-anchor="middle" font-size="16" font-weight="700" fill="#0f3d3a">3 · Nota</text>
+      <text x="690" y="90" text-anchor="middle" font-size="11" fill="#52605b">Minit mesyuarat atau Skop keperluan</text>
+      <text x="690" y="110" text-anchor="middle" font-size="11" fill="#52605b">Simpan · Eksport PDF/Word/MD</text>
+    </svg>
+    <figcaption><span class="fig-num">Rajah 1:</span> Aliran kerja tiga langkah NotaMesyuarat — setiap langkah terbuka hanya selepas langkah sebelumnya selesai.</figcaption>
+  </figure>
+
+  <figure class="diagram" id="fig2">
+    <svg viewBox="0 0 820 320" width="100%" role="img" aria-label="Seni bina privasi on-device">
+      <defs>
+        <marker id="ar2" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+          <path d="M0,0 L10,4 L0,8 z" fill="#0f766e"/>
+        </marker>
+        <marker id="ar3" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+          <path d="M0,0 L10,4 L0,8 z" fill="#b45309"/>
+        </marker>
+      </defs>
+      <rect x="10" y="10" width="800" height="220" rx="12" fill="#fbfcfb" stroke="#0f766e" stroke-width="1.6"/>
+      <text x="30" y="34" font-size="12" font-weight="700" fill="#0f3d3a">PELAYAR — ON-DEVICE (audio tidak dihantar ke pelayan)</text>
+      <rect x="30" y="70" width="160" height="66" rx="8" fill="#eef6f4" stroke="#9fd8cf"/>
+      <text x="110" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#0f3d3a">Rakaman / Fail</text>
+      <text x="110" y="116" text-anchor="middle" font-size="10" fill="#52605b">MediaRecorder · upload</text>
+      <line x1="194" y1="103" x2="224" y2="103" stroke="#0f766e" stroke-width="1.4" marker-end="url(#ar2)"/>
+      <rect x="228" y="70" width="160" height="66" rx="8" fill="#eef6f4" stroke="#9fd8cf"/>
+      <text x="308" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#0f3d3a">Whisper (WASM)</text>
+      <text x="308" y="116" text-anchor="middle" font-size="10" fill="#52605b">ASR on-device</text>
+      <line x1="392" y1="103" x2="422" y2="103" stroke="#0f766e" stroke-width="1.4" marker-end="url(#ar2)"/>
+      <rect x="426" y="70" width="160" height="66" rx="8" fill="#eef6f4" stroke="#9fd8cf"/>
+      <text x="506" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#0f3d3a">Transkrip / Nota</text>
+      <text x="506" y="116" text-anchor="middle" font-size="10" fill="#52605b">Penjana extractive · AI opt-in</text>
+      <line x1="590" y1="103" x2="620" y2="103" stroke="#0f766e" stroke-width="1.4" marker-end="url(#ar2)"/>
+      <rect x="624" y="70" width="160" height="66" rx="8" fill="#eef6f4" stroke="#9fd8cf"/>
+      <text x="704" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#0f3d3a">Simpan / Eksport</text>
+      <text x="704" y="116" text-anchor="middle" font-size="10" fill="#52605b">PDF · Word · Markdown</text>
+      <rect x="228" y="160" width="356" height="44" rx="8" fill="#f3f4f2" stroke="#d8dfdc"/>
+      <text x="406" y="187" text-anchor="middle" font-size="11" fill="#52605b">IndexedDB (mesyuarat + audio) · localStorage (tetapan)</text>
+      <line x1="506" y1="136" x2="506" y2="156" stroke="#8a9791" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ar2)"/>
+      <rect x="10" y="246" width="800" height="60" rx="10" fill="#fdf6ec" stroke="#b45309" stroke-dasharray="6 4"/>
+      <text x="30" y="272" font-size="11" font-weight="700" fill="#8a4b06">LUAR PELAYAR — pilihan eksplisit pengguna</text>
+      <text x="30" y="292" font-size="10.5" fill="#8a4b06">OpenCode (Gemini / model teks) · Google Drive atau WebDAV — hanya dipanggil apabila pengguna memilih mod berkenaan.</text>
+      <line x1="406" y1="228" x2="406" y2="244" stroke="#b45309" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#ar3)"/>
+    </svg>
+    <figcaption><span class="fig-num">Rajah 2:</span> Seni bina privasi — semua pemprosesan utama berlaku dalam pelayar; perkhidmatan luar hanya digunakan apabila pengguna memilihnya secara eksplisit.</figcaption>
+  </figure>
 </section>
 
 <!-- ================= 4 ================= -->
@@ -349,6 +460,10 @@
       <tr><td>Ahli mesyuarat</td><td>Satu nama setiap baris atau dipisahkan dengan koma</td></tr>
     </tbody>
   </table>
+  <figure id="fig3">
+    <img src="figures/fig-03-langkah-1.png" alt="Paparan Langkah 1 dengan butiran mesyuarat dibuka">
+    <figcaption><span class="fig-num">Rajah 3:</span> Langkah 1 — tab Rakam, Muat naik dan Import awan, butiran mesyuarat, serta pemilih mikrofon.</figcaption>
+  </figure>
 </section>
 
 <!-- ================= 5 ================= -->
@@ -375,6 +490,10 @@
   <div class="note"><strong>Tip ketepatan:</strong> pilih bahasa yang betul
   dalam Butiran mesyuarat, gunakan audio yang jelas, dan pecahkan rakaman
   yang sangat panjang kepada beberapa bahagian.</div>
+  <figure id="fig4">
+    <img src="figures/fig-04-langkah-2.png" alt="Paparan Langkah 2 dengan panel kualiti audio dan transkrip">
+    <figcaption><span class="fig-num">Rajah 4:</span> Langkah 2 — pilihan enjin, model, panel kualiti audio, pemain audio dan kotak transkrip yang boleh diedit.</figcaption>
+  </figure>
 
   <h3>5.2 Mod OpenCode (Ketepatan Tinggi)</h3>
   <ol>
@@ -409,6 +528,10 @@
   aras audio yang terlalu perlahan. Pemprosesan berlaku dalam pelayar
   (on-device) sebelum transkripsi. Ia membantu audio perlahan/dengung tetapi
   tidak menghilangkan bunyi latar bercampur suara sepenuhnya.</div>
+  <figure id="fig5">
+    <img src="figures/fig-05-kualiti-lemah.png" alt="Panel kualiti audio menunjukkan penilaian Lemah untuk fail bising">
+    <figcaption><span class="fig-num">Rajah 5:</span> Contoh panel kualiti audio bagi rakaman bising — penilaian “Lemah” dengan tip pembetulan dan pilihan Tingkatkan audio.</figcaption>
+  </figure>
 
   <h3>5.4 Audio Panjang</h3>
   <p>Audio melebihi <strong>15 minit</strong> dipecahkan secara automatik
@@ -421,6 +544,10 @@
     <li>Masa pemprosesan bergantung pada panjang audio, model dan peranti.</li>
     <li>Jika peranti kehabisan memori, pecahkan fail secara manual.</li>
   </ul>
+  <figure id="fig6">
+    <img src="figures/fig-06-audio-panjang.png" alt="Notis audio panjang menunjukkan pemecahan kepada dua bahagian">
+    <figcaption><span class="fig-num">Rajah 6:</span> Notis pemecahan automatik bagi fail 16 minit — diproses sebagai dua bahagian untuk mengurangkan penggunaan memori.</figcaption>
+  </figure>
 
   <h3>5.5 Semakan dan Eksport Transkrip</h3>
   <p>Transkrip boleh diedit terus dalam kotak teks. Klik
@@ -469,6 +596,10 @@
       <tr><td>Salin</td><td>Salin nota ke papan keratan</td></tr>
     </tbody>
   </table>
+  <figure id="fig7">
+    <img src="figures/fig-07-langkah-3.png" alt="Paparan Langkah 3 dengan nota dijana dan butang eksport">
+    <figcaption><span class="fig-num">Rajah 7:</span> Langkah 3 — nota dijana, butang Simpan dan eksport PDF, Word, Markdown serta Salin; mesyuarat tersimpan dipaparkan di panel sisi.</figcaption>
+  </figure>
 </section>
 
 <!-- ================= 7 ================= -->
@@ -505,6 +636,10 @@
   </ol>
   <p>Folder mesti wujud terlebih dahulu di pelayan anda. Kredensial
   disimpan dalam pelayar pengguna sahaja.</p>
+  <figure id="fig8">
+    <img src="figures/fig-08-tetapan-awan.png" alt="Dialog Tetapan Awan dengan pilihan WebDAV dan Google Drive">
+    <figcaption><span class="fig-num">Rajah 8:</span> Dialog Tetapan Awan — pilih WebDAV atau Google Drive, isi kredensial dan uji sambungan sebelum menyimpan.</figcaption>
+  </figure>
 
   <h3>8.2 Google Drive</h3>
   <ol>

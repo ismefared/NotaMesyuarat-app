@@ -75,3 +75,10 @@ selepas tapisan → menguatkan dengung. Dibetulkan: keputusan gain berdasarkan
 puncak input.
 
 Bukti: `audit/test-cases/quality-results.json` (Q-01..05 PASS), Vitest 19/19.
+
+### Manual v1.4 (17 Nov 2026)
+- Tambah Senarai Rajah (8 rajah) dengan nombor halaman (Paged.js target-counter).
+- Rajah 1 (aliran kerja) dan Rajah 2 (seni bina privasi) sebagai SVG inline.
+- Rajah 3–8: tangkapan skrin UI sebenar dalam `docs/figures/` (2× DPI).
+- Gaya figure/figcaption, page-break-inside: avoid; PDF 27 halaman (2.5 MB).
+- `docs/figures/` disertakan untuk penyelenggaraan dokumen.
