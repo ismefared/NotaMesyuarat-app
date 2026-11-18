@@ -82,3 +82,18 @@ Bukti: `audit/test-cases/quality-results.json` (Q-01..05 PASS), Vitest 19/19.
 - Rajah 3–8: tangkapan skrin UI sebenar dalam `docs/figures/` (2× DPI).
 - Gaya figure/figcaption, page-break-inside: avoid; PDF 27 halaman (2.5 MB).
 - `docs/figures/` disertakan untuk penyelenggaraan dokumen.
+
+### v0.3.1 (18 Nov 2026) — sempadan ralat dan pencegahan auto-translate
+- `index.html`: `translate="no"`, `<meta name="google" content="notranslate">`,
+  `#root` ditanda `translate="no" class="notranslate"`.
+- `src/components/ErrorBoundary.jsx` (baharu): `ErrorBoundary` (dialog
+  "Aplikasi terhenti", salin butiran, muat semula) dan `GlobalErrorListener`
+  (dialog "Ralat tidak dijangka" untuk ralatasync/unhandled rejection).
+- `src/main.jsx`: App dibalut `ErrorBoundary`; `GlobalErrorListener` dipasang
+  di peringkat akar.
+- `src/styles.css`: gaya `.error-dialog`, `.error-message`, `.error-details`.
+- `package.json`: 0.3.0 → 0.3.1.
+- Punca: Chrome auto-translate membalut nod teks React → `insertBefore`
+  NotFoundError semasa commit; tiada boundary → halaman kosong.
+- Ujian: Playwright membiak semula ralat (mutasi DOM gaya terjemahan) dan
+  mengesahkan dialog pemulihan; Vitest 19/19; `npm run build` lulus.

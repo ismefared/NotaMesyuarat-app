@@ -184,6 +184,12 @@
       "testId": "Q-04",
       "viewport": "1440x960",
       "description": "Notis pecahan automatik audio 16 min"
+    },
+    {
+      "file": "DEF-REL-016_ERROR_DIALOG.png",
+      "testId": "DEF-REL-016",
+      "viewport": "1440x960",
+      "description": "Dialog pemulihan menggantikan halaman kosong selepas ralat render"
     }
   ],
   "testFiles": [
@@ -222,6 +228,10 @@
     {
       "file": "../test-cases/quality-results.json",
       "description": "Ujian kualiti audio & pemecahan audio panjang"
+    },
+    {
+      "file": "../test-cases/error-boundary-results.json",
+      "description": "Ujian sempadan ralat dan dialog ralat global (v0.3.1)"
     }
   ],
   "consoleErrors": [

@@ -397,6 +397,32 @@
       "status": "BLOCKED",
       "assignedAgent": "Integration QA",
       "verificationStatus": "Disekat oleh perkhidmatan luar (kuota/CORS)"
+    },
+    {
+      "id": "DEF-REL-016",
+      "title": "Halaman kosong selepas klik Jana transkrip apabila Chrome auto-translate aktif",
+      "module": "src/main.jsx, index.html, src/components/feedback.jsx",
+      "category": "reliability",
+      "description": "Apabila Chrome menterjemah halaman (popup Malay/English), Google Translate membalut nod teks milik React dalam elemen <font>. Bila BusyButton bertukar ke keadaan sibuk dan cuba menyisip spinner, React memanggil insertBefore dengan nod rujukan yang bukan lagi anak butang. Ralat NotFoundError tidak ditangkap, React menyahlekat seluruh pokok komponen dan pengguna melihat halaman kosong tanpa mesej.",
+      "preconditions": "App dibuka dalam Chrome; terjemahan automatik halaman diaktifkan (UI Bahasa Melayu dikesan); audio dimuatkan dan pengguna klik Jana transkrip",
+      "repro": "1. Buka app dalam Chrome dengan terjemahan automatik Malay→English. 2. Muat naik fail audio. 3. Klik Jana transkrip. 4. Halaman menjadi kosong; konsol: NotFoundError insertBefore pada Spinner/BusyButton.",
+      "expected": "Ralat dipaparkan kepada pengguna melalui dialog dengan tindakan pemulihan; app tidak menjadi kosong.",
+      "actual": "Uncaught NotFoundError: Failed to execute 'insertBefore' on 'Node' — at Spinner (feedback.jsx:19), BusyButton (feedback.jsx:63), App (App.jsx:140); halaman kosong.",
+      "severity": "HIGH",
+      "priority": "P1",
+      "environment": "Chrome (macOS), rakaman skrin pengguna 18 Nov 2026; disahkan semula dengan Playwright 1.59.1 Chromium, binaan produksi",
+      "evidence": "audit/evidence/screenshots/DEF-REL-016_ERROR_DIALOG.png; audit/test-cases/error-boundary-results.json; rakaman skrin pengguna (konsol)",
+      "rootCause": "Chrome auto-translate mengubah DOM di luar kawalan React. React 18 tidak dapat memadankan nod teks asal lalu gagal semasa commit; tiada Error Boundary untuk menangkapnya.",
+      "recommendedFix": "Halang terjemahan DOM (translate=no + meta notranslate) dan tambah ErrorBoundary + pendengar ralat global dengan dialog pemulihan.",
+      "relatedTestIds": [
+        "EB-01",
+        "EB-02",
+        "EB-04"
+      ],
+      "status": "FIXED",
+      "assignedAgent": "Reliability + Independent Verification",
+      "verificationStatus": "Pembiakan Playwright: mutasi DOM gaya Google Translate mencetuskan ralat yang sama; selepas pembetulan dialog 'Aplikasi terhenti' dipaparkan dan kandungan halaman kekal.",
+      "resolution": "18 Nov 2026 — translate=no/meta notranslate, ErrorBoundary dan dialog ralat global ditambah; binaan 0.3.1."
     }
   ]
 }

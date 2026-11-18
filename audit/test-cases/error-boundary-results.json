@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-11-18T13:00:12.104940Z",
+  "environment": "Chromium (Playwright 1.59.1), binaan produksi v0.3.1, http://localhost:4173",
+  "results": [
+    {
+      "id": "EB-01",
+      "name": "Terjemahan DOM dihalang",
+      "status": "PASS",
+      "note": "meta google=notranslate; html translate=no; #root translate=no"
+    },
+    {
+      "id": "EB-02",
+      "name": "Ralat insertBefore (gaya auto-translate) dipaparkan sebagai dialog",
+      "status": "PASS",
+      "note": "dialog 'Aplikasi terhenti' kelihatan; mesej NotFoundError insertBefore; halaman tidak kosong"
+    },
+    {
+      "id": "EB-03",
+      "name": "Butiran teknikal tersedia",
+      "status": "PASS",
+      "note": "details 'Butiran teknikal' dan butang 'Salin butiran ralat'"
+    },
+    {
+      "id": "EB-04",
+      "name": "Dialog global untuk promise tanpa catch",
+      "status": "PASS",
+      "note": "tajuk 'Ralat tidak dijangka' dipaparkan"
+    },
+    {
+      "id": "EB-05",
+      "name": "Dialog global boleh ditutup",
+      "status": "PASS",
+      "note": "butang Tutup mengeluarkan dialog"
+    },
+    {
+      "id": "EB-06",
+      "name": "Tiada pageerror tidak tertangkap selepas pembetulan",
+      "status": "PASS",
+      "note": "senarai pageerror kosong"
+    }
+  ],
+  "note": "Bukti: audit/evidence/screenshots/DEF-REL-016_ERROR_DIALOG.png"
+}

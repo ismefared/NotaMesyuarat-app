@@ -1,3 +1,25 @@
+# Nota Keluaran — NotaMesyuarat v0.3.1
+
+Tarikh: 18 November 2026 · Sebelum ini: v0.3.0
+
+## Pembetulan
+
+- **DEF-REL-016 — halaman kosong selepas Jana transkrip.** Apabila Chrome
+  menterjemah halaman secara automatik, nod teks React ditulis semula dan
+  butang sibuk gagal memasukkan spinner (`NotFoundError: insertBefore`).
+  React kemudian menyahlekat seluruh app tanpa sebarang mesej.
+  - Terjemahan DOM dihalang: `translate="no"` pada `<html>` dan `#root`,
+    serta `<meta name="google" content="notranslate">`.
+  - `ErrorBoundary` baharu memaparkan dialog **Aplikasi terhenti** dengan
+    butiran ralat, butang **Salin butiran ralat** dan **Muat semula halaman**.
+  - Pendengar ralat global memaparkan dialog **Ralat tidak dijangka** untuk
+    promise yang gagal tanpa `catch`, dengan pilihan Tutup atau muat semula.
+- Ujian pembiakan Playwright: mutasi DOM gaya Google Translate mencetuskan
+  ralat yang sama; selepas pembetulan dialog dipaparkan dan halaman tidak
+  kosong (`audit/test-cases/error-boundary-results.json`).
+
+---
+
 # Nota Keluaran — NotaMesyuarat v0.3.0
 
 Tarikh: 16 November 2026 · Sebelum ini: v0.2.1

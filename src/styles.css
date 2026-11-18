@@ -1205,6 +1205,47 @@ textarea.minutes {
   border-top: 1px solid var(--line);
 }
 
+/* ===== Dialog ralat ===== */
+.error-dialog {
+  max-width: 560px;
+}
+
+.error-dialog .modal-body p {
+  margin: 0;
+}
+
+.error-message {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+  color: var(--danger, #b91c1c);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  padding: 8px 10px;
+  overflow-wrap: anywhere;
+}
+
+.error-details summary {
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.error-details pre {
+  margin: 8px 0 0;
+  max-height: 180px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  padding: 8px 10px;
+}
+
 /* ===== Segmented (modal) ===== */
 .segmented {
   display: flex;

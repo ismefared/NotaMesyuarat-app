@@ -41,3 +41,17 @@ DEF-UI-002, DEF-UX-003, DEF-UX-004, DEF-PWA-006, DEF-PERF-007, DEF-UX-008
 (semua VERIFIED/FIXED — tiada kemerosotan). SEC-003 kini 2 high (esbuild
 selesai selepas naik taraf vite 7). Jumlah kecacatan terbuka: **5**
 (1 MEDIUM baharu + 4 sedia ada tertangguh/tertunda).
+
+## Kemas kini 18 November 2026 (v0.3.1)
+
+| ID | Tajuk | Keterukan | Keutamaan | Status |
+|---|---|---|---|---|
+| DEF-REL-016 | Halaman kosong selepas Jana transkrip apabila Chrome auto-translate aktif | HIGH | P1 | FIXED (baharu) |
+
+Punca disahkan melalui rakaman skrin pengguna (konsol: `NotFoundError`
+`insertBefore` pada `Spinner`/`BusyButton`) dan dibiakkan semula dalam
+Playwright dengan mutasi DOM gaya Google Translate. Pembetulan: `translate="no"`
+dan `<meta name="google" content="notranslate">`, `ErrorBoundary` dengan dialog
+pemulihan, dan pendengar ralat global. Bukti:
+`evidence/screenshots/DEF-REL-016_ERROR_DIALOG.png`,
+`test-cases/error-boundary-results.json`.
